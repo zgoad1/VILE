@@ -11,6 +11,7 @@ public class Controllable : MonoBehaviour {
 	// NOTE: COLLISION DETECTION MUST BE CONTINUOUS or animations will be wacky
 	#region Variables
 	[SerializeField] protected float speed = 0.225f;
+	[SerializeField] protected float runSpeed = 2f;
 	[SerializeField] protected float accel = 0.175f;
 	[SerializeField] protected float decel = 0.2f;
 	[SerializeField] protected float grav = 0.03f;
@@ -35,8 +36,8 @@ public class Controllable : MonoBehaviour {
 	protected float rightMov = 0f;
 	protected float fwdMov = 0f;
 	protected float upMov = 0f;
-	protected bool dodgeKey;
-	protected bool dodging = false;
+	protected bool sprintKey = false;
+	protected bool sprinting = false;
 	protected Quaternion playerRot = new Quaternion(0f, 0f, 0f, 0f);
 	protected Vector3 hitNormal = Vector3.zero;
 	protected bool notOnSlope = false;
@@ -52,6 +53,12 @@ public class Controllable : MonoBehaviour {
 	private Vector2 vec1 = Vector2.zero;
 	private Vector2 vec2 = Vector2.zero;
 	private Animator anim;
+	private ParticleSystem lightning;
+	private ParticleSystem burst;
+	private ParticleSystem head;
+	private MeshRenderer mesh;
+	private bool isLightning = false;
+	private Transform sprintCam;
 	#endregion
 
 	protected void Reset() {
@@ -60,6 +67,11 @@ public class Controllable : MonoBehaviour {
 		cam = FindObjectOfType<CameraControl>();
 		forwardTarget = movDirec;
 		anim = GetComponent<Animator>();
+		lightning = GetComponentsInChildren<ParticleSystem>()[0];
+		burst = GetComponentsInChildren<ParticleSystem>()[1];
+		head = GetComponentsInChildren<ParticleSystem>()[2];
+		mesh = GetComponent<MeshRenderer>();
+		sprintCam = GameObject.Find("SprintCam").transform;
 	}
 
 	// Use this for initialization
@@ -80,11 +92,20 @@ public class Controllable : MonoBehaviour {
 		//controls
 		rightKey = Input.GetAxisRaw("Horizontal");
 		fwdKey = Input.GetAxisRaw("Vertical");
-		if(Mathf.Abs(rightKey) == 1 && Mathf.Abs(fwdKey) == 1) {
+		if(Mathf.Abs(rightKey) == 1 && Mathf.Abs(fwdKey) == 1) {	// circular movement instead of square
 			rightKey = Mathf.Sign(rightKey) * 0.707f;
 			fwdKey = Mathf.Sign(fwdKey) * 0.707f;
 		}
-		dodgeKey = Input.GetButtonDown("Run") ? true : dodgeKey;
+		//sprintKey = Input.GetButtonDown("Run") ? true : sprintKey;
+		if(Input.GetButtonDown("Run")) {
+			sprintKey = true;
+			cam.SetZoomTransform(sprintCam);
+		} else if(Input.GetButtonUp("Run")) {
+			sprintKey = false;
+			burst.Play();
+			cam.SetZoomTransform(null);
+		}
+		sprinting = sprintKey;	// later change this to accout for stamina
 
 		#region Set move directions
 
@@ -92,33 +113,33 @@ public class Controllable : MonoBehaviour {
 		Vector3 tempForward = camTransform.forward;
 		tempForward.y = 0f;
 
-		if(!dodging && readInput) {
+		if(readInput) {
 			if(rightKey != 0) {
 				rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
 			} else {
 				rightMov = Mathf.Lerp(rightMov, 0f, decel);
 			}
-			if(fwdKey != 0) {
-				fwdMov = Mathf.Lerp(fwdMov, (fwdKey * speed), accel);
+			if(fwdKey != 0 || sprinting) {
+				fwdMov = Mathf.Lerp(fwdMov, sprinting ? runSpeed : (fwdKey * speed), accel);
 			} else {
 				fwdMov = Mathf.Lerp(fwdMov, 0f, decel);
 			}
 
 			// get movement direction vector
-			movDirec = tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov;
-			//anim.SetFloat("speed", movDirec.magnitude);
+			if(sprinting) {
+				TurnIntoLightning(true);
+				movDirec = Vector3.Lerp(movDirec, tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10, 0.1f);
+			} else {
+				TurnIntoLightning(false);
+				movDirec = tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov;
 
-			if(dodgeKey && (onGround)) {
-				StartCoroutine("Dodge");
-				//Debug.Log("Dodging, setting CSJ to false");
-			} else if(dodgeKey) {
-				//Debug.Log("Dodge failed. onGround = " + onGround + "\ncanStillJump = " + canStillJump);
 			}
+			//anim.SetFloat("speed", movDirec.magnitude);
 		}
 		#endregion
 
 		#region Pause
-			if(Input.GetButtonDown("Pause")) {
+		if(Input.GetButtonDown("Pause")) {
 			if(Cursor.lockState != CursorLockMode.Locked) {
 				Cursor.lockState = CursorLockMode.Locked;
 				Cursor.visible = false;
@@ -130,60 +151,61 @@ public class Controllable : MonoBehaviour {
 		#endregion
 
 		#region Calculate movement
+		onGround = false;
+
+		// calculate movement
+		movDirec.y = upMov;
+		//Character sliding of surfaces
+		float slideFriction = 0.5f;
+		if(!notOnSlope) {
+			movDirec.x += -upMov * hitNormal.x * (1f - slideFriction);
+			movDirec.z += -upMov * hitNormal.z * (1f - slideFriction);
+			hitNormal = Vector3.zero;
 			onGround = false;
+			//Debug.Log("Sliding");
+		}
+		cc.Move(movDirec);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
 
-			// calculate movement
-			movDirec.y = upMov;
-			//Character sliding of surfaces
-			float slideFriction = 0.5f;
-			if(!notOnSlope) {
-				movDirec.x += -upMov * hitNormal.x * (1f - slideFriction);
-				movDirec.z += -upMov * hitNormal.z * (1f - slideFriction);
-				hitNormal = Vector3.zero;
-				onGround = false;
-				//Debug.Log("Sliding");
-			}
-			cc.Move(movDirec);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
+		// speed is the distance from where we were last frame to where we are now
+		//Debug.Log("MovDirec: " + movDirec);
+		// remove y components of positions and set movDist to the distance between
+		// (we have to do it this way because we need their y components later) (also you can't set transform.position.y)
+		vec1.x = prevPosition.x;
+		vec1.y = prevPosition.z;
+		vec2.x = transform.position.x;
+		vec2.y = transform.position.z;
+		float movDist = Vector2.Distance(vec1, vec2);			// to check if our movement is too small to consider
+		//float yDist = transform.position.y - prevPosition.y;	// for animation (falling)
+		if(movDist < 0.05 && onGround) {						// stop if we're (presumably) running into a wall
+			transform.position = prevPosition;
+		}
+		//anim.SetFloat("speed", movDist);
+		//anim.SetFloat("yVelocity", yDist);
+		movDirec = (transform.position - prevPosition).normalized;
+		movDirec.y = 0;
+		prevPosition = transform.position;
+		SetForwardTarget();
+		//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
+		transform.forward = Vector3.Lerp(transform.forward, forwardTarget, 0.4f);
+		playerRot.y = transform.rotation.y;
+		playerRot.w = transform.rotation.w;
+		transform.rotation = playerRot;
 
-			// speed is the distance from where we were last frame to where we are now
-			//Debug.Log("MovDirec: " + movDirec);
-			// remove y components of positions and set movDist to the distance between
-			// (we have to do it this way because we need their y components later) (also you can't set transform.position.y)
-			vec1.x = prevPosition.x;
-			vec1.y = prevPosition.z;
-			vec2.x = transform.position.x;
-			vec2.y = transform.position.z;
-			float movDist = Vector2.Distance(vec1, vec2);
-			float yDist = transform.position.y - prevPosition.y;
-			if(movDist < 0.05 && onGround) {    // stop if we're (presumably) running into a wall
-				transform.position = prevPosition;
-			}
-			anim.SetFloat("speed", movDist);
-			//anim.SetFloat("yVelocity", yDist);
-			movDirec = (transform.position - prevPosition).normalized;
-			movDirec.y = 0;
-			prevPosition = transform.position;
-			SetForwardTarget();
-			//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
-			transform.forward = Vector3.Lerp(transform.forward, forwardTarget, 0.4f);
-			playerRot.y = transform.rotation.y;
-			playerRot.w = transform.rotation.w;
-			transform.rotation = playerRot;
+		// jumping & falling
+		if(!onGround || !notOnSlope) {
+			upMov -= grav;
+			//Debug.Log("Increasing gravity: " + upMov);
+		} else {
+			upMov = -grav;
+			//if(jKey) Debug.LogWarning("Apex\njKey = " + jKey + "\nonGround = " + onGround + "\ncanStillJump = " + canStillJump);
+		}
+		//sprintKey = false;
+		if(sprinting) {
 
-			// jumping & falling
-			if(!onGround || !notOnSlope) {
-				upMov -= grav;
-				//Debug.Log("Increasing gravity: " + upMov);
-			} else {
-				upMov = -grav;
-				//if(jKey) Debug.LogWarning("Apex\njKey = " + jKey + "\nonGround = " + onGround + "\ncanStillJump = " + canStillJump);
-			}
-			dodgeKey = false;
-
-			if(!dodging) {
-				movDirec.x = 0f;
-				movDirec.z = 0f;
-			}
+		} else {
+			movDirec.x = 0f;
+			movDirec.z = 0f;
+		}
 		#endregion
 	}
 
@@ -228,4 +250,23 @@ public class Controllable : MonoBehaviour {
 		readInput = true;
 		cam.readInput = true;
 	}
+
+	#region Turning into a lightning bolt
+
+	private void TurnIntoLightning(bool enable) {
+		if(enable && !isLightning) {
+			lightning.SetParticles(new ParticleSystem.Particle[0], 0);	// destroy any active particles
+			mesh.enabled = false;	// make player disappear
+			lightning.Play();		// start particles
+			head.Play();
+			isLightning = true;		// protect this part from repeated calls
+		} else if(!enable && isLightning) {
+			mesh.enabled = true;	// make player reappear
+			lightning.Stop();		// stop particles
+			head.Stop();
+			isLightning = false;	// protect this part from repeated calls
+		}
+	}
+
+	#endregion
 }

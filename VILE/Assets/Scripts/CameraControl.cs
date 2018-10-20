@@ -27,6 +27,7 @@ public class CameraControl : MonoBehaviour {
 	private float screenShake;
 	private Vector3 shakeVec = Vector3.zero;
 	private float shakeStart;
+	private Transform zoomTransform = null;
 
 	// Use this for initialization
 	void Start() {
@@ -51,28 +52,36 @@ public class CameraControl : MonoBehaviour {
 
 	void LateUpdate() {
 		// keep the camera from going through solid colliders
-		RaycastHit hit;
-		Vector3 rayDir = Vector3.zero;
-		rayDir = transform.position - (lookAt.position + lookOffset);
-		if(Physics.Raycast(lookAt.position + lookOffset, rayDir, out hit, idistance, raymask)) {
-			Vector3 newPos = hit.point + hit.normal * rad;
-			distance = Mathf.Min(idistance, Vector3.Distance(lookAt.position + lookOffset, newPos));
-			//Debug.Log("Camera raycasted upon a " + hit.transform.gameObject);
-			SetCam(distance);
-			adjTransform.position = newPos;
+		if(zoomTransform != null) {
+			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, 0.1f);	// smoothly move and rotate the
+			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, 0.1f);		// main camera
+			currentX = lookAt.rotation.eulerAngles.y;	// keep the camera behind the player when it goes back to normal tracking mode
+														// (mouse movements shouldn't affect where the camera is when we come out of
+														// lightning bolt mode)
 		} else {
-			distance = idistance;
-			SetCam(distance);
+			RaycastHit hit;
+			Vector3 rayDir = Vector3.zero;
+			rayDir = transform.position - (lookAt.position + lookOffset);
+			if(Physics.Raycast(lookAt.position + lookOffset, rayDir, out hit, idistance, raymask)) {
+				Vector3 newPos = hit.point + hit.normal * rad;
+				distance = Mathf.Min(idistance, Vector3.Distance(lookAt.position + lookOffset, newPos));
+				//Debug.Log("Camera raycasted upon a " + hit.transform.gameObject);
+				SetCam(distance);
+				adjTransform.position = newPos;
+			} else {
+				distance = idistance;
+				SetCam(distance);
+			}
+			camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac);
+			if(screenShake > 0.01f) {
+				float timeDiff = Time.time - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
+				shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (0.4f * timeDiff));
+				camTransform.position += shakeVec;
+				//Debug.Log("ShakeVec.y: " + shakeVec.y);
+				screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
+			}
+			camTransform.LookAt(lookAt);
 		}
-		camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac);
-		if(screenShake > 0.01f) {
-			float timeDiff = Time.time - shakeStart + 0.1f;	// this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
-			shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (0.4f * timeDiff));
-			camTransform.position += shakeVec;
-			//Debug.Log("ShakeVec.y: " + shakeVec.y);
-			screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
-		}
-		camTransform.LookAt(lookAt);
 	}
 
 	private void Reset() {
@@ -82,19 +91,25 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void SetCam(float distance) {
-		dir.z = -distance;
-		rot = Quaternion.Euler(currentY, currentX, 0);
+		if(zoomTransform == null) {	// only allow for camera movement via mouse if we're not sprinting
+			dir.z = -distance;
+			rot = Quaternion.Euler(currentY, currentX, 0);
 
-		// move adjusted camera position
-		adjTransform.position = (lookAt.position + lookOffset) + rot * dir;
+			// move adjusted camera position
+			adjTransform.position = (lookAt.position + lookOffset) + rot * dir;
 
-		// move desired camera position
-		Vector3 dDir = new Vector3(0, 0, -idistance);
-		transform.position = (lookAt.position + lookOffset) + rot * dDir;
+			// move desired camera position
+			Vector3 dDir = new Vector3(0, 0, -idistance);
+			transform.position = (lookAt.position + lookOffset) + rot * dDir;
+		}
 	}
 
 	public void ScreenShake(float intensity) {
 		screenShake = intensity;
 		shakeStart = Time.time;
+	}
+
+	public void SetZoomTransform(Transform t) {
+		zoomTransform = t;
 	}
 }
