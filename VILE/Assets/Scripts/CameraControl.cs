@@ -28,6 +28,7 @@ public class CameraControl : MonoBehaviour {
 	private Vector3 shakeVec = Vector3.zero;
 	private float shakeStart;
 	private Transform zoomTransform = null;
+	private float zoomLerpFac = 0.1f;
 
 	// Use this for initialization
 	void Start() {
@@ -53,8 +54,8 @@ public class CameraControl : MonoBehaviour {
 	void LateUpdate() {
 		// keep the camera from going through solid colliders
 		if(zoomTransform != null) {
-			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, 0.1f);	// smoothly move and rotate the
-			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, 0.1f);		// main camera
+			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac);	// smoothly move and rotate the
+			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac);		// main camera
 			currentX = lookAt.rotation.eulerAngles.y;	// keep the camera behind the player when it goes back to normal tracking mode
 														// (mouse movements shouldn't affect where the camera is when we come out of
 														// lightning bolt mode)
@@ -109,7 +110,13 @@ public class CameraControl : MonoBehaviour {
 		shakeStart = Time.time;
 	}
 
+	public void SetZoomTransform(Transform t, float zoomSpeed) {
+		zoomTransform = t;
+		zoomLerpFac = zoomSpeed;
+	}
+
 	public void SetZoomTransform(Transform t) {
 		zoomTransform = t;
+		zoomLerpFac = 0.1f;
 	}
 }

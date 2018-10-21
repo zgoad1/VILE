@@ -59,6 +59,7 @@ public class Controllable : MonoBehaviour {
 	private MeshRenderer mesh;
 	private bool isLightning = false;
 	private Transform sprintCam;
+	private EpilepsyController flasher;
 	#endregion
 
 	protected void Reset() {
@@ -72,6 +73,7 @@ public class Controllable : MonoBehaviour {
 		head = GetComponentsInChildren<ParticleSystem>()[2];
 		mesh = GetComponent<MeshRenderer>();
 		sprintCam = GameObject.Find("SprintCam").transform;
+		flasher = FindObjectOfType<EpilepsyController>();
 	}
 
 	// Use this for initialization
@@ -99,11 +101,8 @@ public class Controllable : MonoBehaviour {
 		//sprintKey = Input.GetButtonDown("Run") ? true : sprintKey;
 		if(Input.GetButtonDown("Run")) {
 			sprintKey = true;
-			cam.SetZoomTransform(sprintCam);
 		} else if(Input.GetButtonUp("Run")) {
 			sprintKey = false;
-			burst.Play();
-			cam.SetZoomTransform(null);
 		}
 		sprinting = sprintKey;	// later change this to accout for stamina
 
@@ -259,11 +258,16 @@ public class Controllable : MonoBehaviour {
 			mesh.enabled = false;	// make player disappear
 			lightning.Play();		// start particles
 			head.Play();
+			cam.SetZoomTransform(sprintCam, 0.1f);
+			flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;		// protect this part from repeated calls
 		} else if(!enable && isLightning) {
 			mesh.enabled = true;	// make player reappear
 			lightning.Stop();		// stop particles
 			head.Stop();
+			cam.SetZoomTransform(null);
+			burst.Play();
+			flasher.FlashStop();
 			isLightning = false;	// protect this part from repeated calls
 		}
 	}
