@@ -56,7 +56,7 @@ public class Controllable : MonoBehaviour {
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
 	private ParticleSystem head;
-	private MeshRenderer mesh;
+	private SkinnedMeshRenderer mesh;
 	private bool isLightning = false;
 	private Transform sprintCam;
 	private EpilepsyController flasher;
@@ -71,7 +71,7 @@ public class Controllable : MonoBehaviour {
 		lightning = GetComponentsInChildren<ParticleSystem>()[0];
 		burst = GetComponentsInChildren<ParticleSystem>()[1];
 		head = GetComponentsInChildren<ParticleSystem>()[2];
-		mesh = GetComponentInChildren<MeshRenderer>();
+		mesh = GetComponentInChildren<SkinnedMeshRenderer>();
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 	}
@@ -113,16 +113,20 @@ public class Controllable : MonoBehaviour {
 		tempForward.y = 0f;
 
 		if(readInput) {
+			bool in1 = true, in2 = true;	// used in conjunction to determine whether the player is doing any input
 			if(rightKey != 0) {
 				rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
 			} else {
+				in1 = false;
 				rightMov = Mathf.Lerp(rightMov, 0f, decel);
 			}
 			if(fwdKey != 0 || sprinting) {
 				fwdMov = Mathf.Lerp(fwdMov, sprinting ? runSpeed : (fwdKey * speed), accel);
 			} else {
+				in2 = false;
 				fwdMov = Mathf.Lerp(fwdMov, 0f, decel);
 			}
+			anim.SetBool("input", in1 || in2);
 
 			// get movement direction vector
 			if(sprinting) {
@@ -178,7 +182,7 @@ public class Controllable : MonoBehaviour {
 		if(movDist < 0.05 && onGround) {						// stop if we're (presumably) running into a wall
 			transform.position = prevPosition;
 		}
-		//anim.SetFloat("speed", movDist);
+		anim.SetFloat("speed", movDist);
 		//anim.SetFloat("yVelocity", yDist);
 		movDirec = (transform.position - prevPosition).normalized;
 		movDirec.y = 0;
@@ -268,6 +272,9 @@ public class Controllable : MonoBehaviour {
 			cam.SetZoomTransform(null);
 			burst.Play();
 			flasher.FlashStop();
+			if(rightKey <= 0.1f && fwdKey <= 0.1f) {
+				anim.SetTrigger("recover");
+			}
 			isLightning = false;	// protect this part from repeated calls
 		}
 	}

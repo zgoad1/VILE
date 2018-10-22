@@ -82,7 +82,6 @@ public class CameraControl : MonoBehaviour {
 				screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
 			}
 			camTransform.LookAt(lookAt);
-			Debug.Log("Looking at: " + lookAt.gameObject.name);
 		}
 	}
 
