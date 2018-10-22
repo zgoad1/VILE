@@ -32,7 +32,7 @@ public class CameraControl : MonoBehaviour {
 
 	// Use this for initialization
 	void Start() {
-		Reset();
+		//Reset();
 
 		dir = new Vector3(0, 0, -distance);
 		lookOffset = new Vector3(0f, height, 0f);
@@ -82,6 +82,7 @@ public class CameraControl : MonoBehaviour {
 				screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
 			}
 			camTransform.LookAt(lookAt);
+			Debug.Log("Looking at: " + lookAt.gameObject.name);
 		}
 	}
 

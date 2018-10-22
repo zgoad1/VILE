@@ -67,11 +67,11 @@ public class Controllable : MonoBehaviour {
 		cc = GetComponent<CharacterController>();
 		cam = FindObjectOfType<CameraControl>();
 		forwardTarget = movDirec;
-		anim = GetComponent<Animator>();
+		anim = GetComponentInChildren<Animator>();
 		lightning = GetComponentsInChildren<ParticleSystem>()[0];
 		burst = GetComponentsInChildren<ParticleSystem>()[1];
 		head = GetComponentsInChildren<ParticleSystem>()[2];
-		mesh = GetComponent<MeshRenderer>();
+		mesh = GetComponentInChildren<MeshRenderer>();
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 	}
