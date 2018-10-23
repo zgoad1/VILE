@@ -33,10 +33,14 @@ public class MapGenerator : MonoBehaviour {
 	void GenerateMap() {
 		map = new GameObject[(int)gridSize.y, (int)gridSize.x];
 		SetMapSeed(seed);                                       
-		// set start room to center of map
-		map[Mathf.FloorToInt(gridSize.y / 2), Mathf.FloorToInt(gridSize.x / 2)] = Array.Find(rooms, r => r.name == "Start");
+		// place start room at center of map
+		SetRoom(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(gridSize.y / 2), Array.Find(rooms, r => r.name == "Start"));
 		// try to place rooms (ignore non-head rooms)
-		
+		// while open list is not empty, connect rooms to the first open room
+		while(open.Count > 0) {
+
+		}
+		// once the map is in an acceptable state, instantiate the room objects
 	}
 
 	// set RNG to use specified seed (if it's been changed from "random")
@@ -61,6 +65,11 @@ public class MapGenerator : MonoBehaviour {
 				foreach(RoomPart p in parts) {
 					map[(int)p.loc.y, (int)p.loc.x] = p.part;
 				}
+			}
+			thisRoom.coords = new Vector2(x, y);
+			// add room to open list if it's not an end room
+			if(thisRoom.IsOpen()) {													// TODO: CHECK thisRoom'S ADJACENT ROOMS IN ITS DOOR DIRECTIONS AND ONLY ADD IT TO open IF THERE IS STILL A SPACE TO FILL
+				open.Add(thisRoom);
 			}
 			return true;
 		} else {

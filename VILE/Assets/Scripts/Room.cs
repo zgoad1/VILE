@@ -18,8 +18,9 @@ public class Room : MonoBehaviour {
 	[Range(0, 1)] public float frequency = 0.2f;		// how common this room is
 	public int limit = -1;                              // how many of this room there can be (negative for unlimited)
 	public bool head = true;                            // whether this room is the head of a big room, or a single small room
-	public bool end = false;                            // whether this room has no openings/doorways (dead end, etc.)
-	public bool necessary = false;						// whether the room absolutely has to spawn (end, etc.)
+	public bool necessary = false;                      // whether the room absolutely has to spawn (end, etc.)
+	public List<direction> doors;						// which sides of the room can connect to a new room
+	[HideInInspector] public Vector2 coords;			// map coordinates of the room
 
 	// NOTE: For big rooms, do not make loops in these lists. i.e., if room2 is in upList of room1, don't put room1
 	// in downList of room2.
@@ -36,22 +37,17 @@ public class Room : MonoBehaviour {
 	private Vector2 left = new Vector2(-1, 0), right = new Vector2(1, 0), up = new Vector2(0, -1), down = new Vector2(0, 1);
 
 	// Don't use rotation, instead use Unity's new inheritance system to make prefabs that are the same as others but rotated
-	/*private float rot;
-	[HideInInspector] public float rotation {           // rotation of this room along the y-axis
-		get {
-			return rot;
-		}
-		set {
-			// keep rotation positive and below 360 for convenient computations
-			while(value < 0) value += 360;
-			rot = value % 360;
-		}
-	}			
-	*/
 
 	public enum direction {
 		LEFT, RIGHT, UP, DOWN
 	};
+
+	/**Whether this room needs another room connected to it after it's placed by
+	 * the map generator. Doesn't take other rooms on the map into account.
+	 */
+	public bool IsOpen() {
+		return doors.Count > 1;
+	}
 
 	/**Whether this room can have a specified room in the given direction
 	 */
