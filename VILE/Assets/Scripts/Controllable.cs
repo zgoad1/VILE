@@ -263,6 +263,7 @@ public class Controllable : MonoBehaviour {
 			lightning.Play();		// start particles
 			head.Play();
 			cam.SetZoomTransform(sprintCam, 0.1f);
+			burst.Play();
 			flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;		// protect this part from repeated calls
 		} else if(!enable && isLightning) {
