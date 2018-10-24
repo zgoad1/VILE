@@ -20,6 +20,7 @@ public class MapGenerator : MonoBehaviour {
 	[HideInInspector] public int[] amounts;             // how many of each room we've placed
 	[HideInInspector] public List<Room> roomInstances;  // list of all room instances placed on the map
 
+	private List<GameObject> roomsList;					// a list data structure that's otherwise exactly the same as the rooms array
 	private GameObject[,] map;							// the map to be generated
 	private List<Room> open;							// rooms that still need to be closed with end rooms
 	private List<Room> necessary;						// rooms that have to be spawned at least once
@@ -36,8 +37,8 @@ public class MapGenerator : MonoBehaviour {
 
 
 	private void Reset() {
-		Debug.LogWarning("4 - up: " + (Room.direction)(4 - (int)Room.direction.UP));
 		rooms = Resources.LoadAll<GameObject>("Rooms");
+		roomsList = new List<GameObject>(rooms);
 		amounts = new int[rooms.Length];
 		foreach(GameObject o in rooms) {
 			Room thisRoom = o.GetComponent<Room>();
@@ -53,11 +54,11 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	void Start () {
-		GenerateMap();
+		GenerateMap(seed);
 	}
 
 	[ContextMenu("Generate")]
-	void GenerateMap() {
+	public void GenerateMap(string seed) {
 		Reset();
 
 		// destroy old map
@@ -65,7 +66,11 @@ public class MapGenerator : MonoBehaviour {
 		Room[] toDestroy = GetComponentsInChildren<Room>();
 		foreach(Room r in toDestroy) {
 			//Debug.Log("Destroying " + r.gameObject.name);
-			DestroyImmediate(r.gameObject);
+			if(r != null) {
+				DestroyImmediate(r.gameObject);
+			} else {
+				Debug.LogWarning("THAT MAKES ME SAD\na child of a room object might have an extra room component");
+			}
 		}
 
 		SetMapSeed(seed);                                       
@@ -75,25 +80,22 @@ public class MapGenerator : MonoBehaviour {
 
 		// while open list is not empty, connect rooms to the first open room
 		// NOTE: For this not to be an infinite loop, we need to have every possible intersection in our room list.
-		Debug.Log("Attempting to attempt to attach rooms to start...");
-		int loops = 0;
+		Room prevRoom;	// need to keep track of this in case it's removed from the open list (can't call it open[0] later)
 		while(open.Count > 0) {
-			loops++;
-			if(loops > 1000000) {
-				Debug.Log("cat");
-			}
-			Debug.Log("open.count > 0");
+			prevRoom = open[0];
 
 			// try to connect a random room to the first open room's first opening until it works
 			bool success = false;
 			Vector2 newCoords = open[0].coords + directions[(int)GetOpenDirection(open[0])];
 			do {
-				success = TryPlaceRoom(newCoords, GetRandomRoom());
+				// choose a random room to place out of all the rooms that could fit there
+				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
+				success = TryPlaceRoom(newCoords, GetRandomRoom(canFit));
 			} while(!success);
 
 			// set distFromStart to that of the previous room plus one
 			Room thisRoom = map[(int)newCoords.y, (int)newCoords.x].GetComponent<Room>();
-			thisRoom.distFromStart = open[0].distFromStart + 1;
+			thisRoom.distFromStart = prevRoom.distFromStart + 1;
 
 			// add this room instance to the distance dictionary
 			if(!distLists.ContainsKey(thisRoom.distFromStart)) {
@@ -103,68 +105,74 @@ public class MapGenerator : MonoBehaviour {
 		}
 		Debug.Log("Generated " + roomsMade + " rooms");
 
-		// place exit room as close to the desired position as possible
-		GameObject endRoom = Array.Find(rooms, r => r.name == "End");
-		int dist = roomsToExit;
-		while(!TryPlaceAtDist(dist, endRoom)) {
-			dist--;
-			if(dist < 1) {
-				Debug.LogError("MAP GENERATION FAILED COULDN'T FIND A PLACE TO PUT EXIT HELP ME MOMMY");
-				break;
+		// try again if we made too few rooms
+		if(roomsMade < minRooms) {
+			GenerateMap(seed == "random" ? seed : seed + "_");
+		} else {
+			// place exit room as close to the desired position as possible
+			GameObject endRoom = Array.Find(rooms, r => r.name == "End");
+			int dist = roomsToExit;
+			while(!TryPlaceAtDist(dist, endRoom)) {
+				dist--;
+				if(dist < 1) {
+					Debug.LogError("MAP GENERATION FAILED COULDN'T FIND A PLACE TO PUT EXIT HELP ME MOMMY");
+					break;
+				}
 			}
-		}
 
-		// make sure at least one of each necessary room is placed
-		foreach(Room r in necessary) {
-			List<Room> similar = GetSimilarRooms(roomInstances, r);
-			if(similar.Count == 0) {
-				Debug.LogError("Could not place necessary room: " + r.gameObject.name);
-				continue;
+			// make sure at least one of each necessary room is placed
+			foreach(Room r in necessary) {
+				List<Room> similar = GetSimilarRooms(roomInstances, r);
+				if(similar.Count == 0) {
+					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
+					continue;
+				}
+				int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, similar.Count));
+				ReplaceRoom(similar[randIndex], r);
 			}
-			int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, similar.Count));
-			ReplaceRoom(similar[randIndex], r);
 		}
 	}
 
 	#region RNG stuff
 	// set RNG to use specified seed (if it's been changed from "random")
 	void SetMapSeed(string seed) {
-		if(seed != "random") {		// if the seed has been set by the player, use it
-			int seedInt = 0;
-			for(int i = 0; i < seed.Length; i++) {
-				seedInt += seed[i] * i;
-			}
-			UnityEngine.Random.InitState(seedInt);
-		}							// else I think Unity uses start time as a seed?
-		Debug.Log("RNG: Setting seed to " + UnityEngine.Random.state);
+		int seedInt = 0;
+		if(seed == "random") { 
+			seed = "" + Mathf.RoundToInt(UnityEngine.Random.Range(0, 10000) % 10000);
+			Debug.Log("Random seed: " + seed);
+			Console.WriteLine("Random seed: " + seed);
+		}
+		for(int i = 0; i < seed.Length; i++) {
+			seedInt += seed[i] * (i + 1);
+		}
+		UnityEngine.Random.InitState(seedInt);
 	}
 
-	/**Randomly pick a room that satisfies:
+	/**Randomly pick a room from a list that satisfies:
 	 * - frequency > 0
 	 * - independent == true
 	 * - haven't already placed the max amount
 	 * - won't cause map generation to finish prematurely
 	 */
-	GameObject GetRandomRoom() {
+	GameObject GetRandomRoom(List<GameObject> list) {
 		GameObject choice = null;
 		do {
-			int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, rooms.Length));
+			int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, list.Count));
 			float rand = UnityEngine.Random.Range(0, 1);
-			Room thisRoom = rooms[randIndex].GetComponent<Room>();
+			Room thisRoom = list[randIndex].GetComponent<Room>();
 			// choose this room if: 
 			// probability says so (probabilities of start and end rooms are 0)
 			// and it's independent
 			// and it hasn't reached its amount limit
 			// and it won't cause us to stop before generating min amount of rooms
+			// or it's the only room we CAN place
 			if(rand < thisRoom.frequency 
-					&& thisRoom.indep 
-					&& (thisRoom.limit < 0 || amounts[randIndex] < thisRoom.limit) 
-					&& !(!thisRoom.IsOpen() && roomsMade < minRooms && open.Count == 1)) 
+				&& thisRoom.indep 
+				&& (thisRoom.limit < 0 || amounts[randIndex] < thisRoom.limit) 
+				&& !(!thisRoom.IsOpen() && roomsMade < minRooms && open.Count == 1)
+				|| list.Count == 1) 
 			{
-				choice = rooms[randIndex];
-				if(choice.tag == "StartRoom") {
-					Debug.Log("cat");
-				}
+				choice = list[randIndex];
 			}
 		} while(choice == null);
 		return choice;
@@ -226,9 +234,7 @@ public class MapGenerator : MonoBehaviour {
 		if(map[y, x] != null) return false;     // there's already a room here
 		foreach(Room.direction d in r.doors) {
 			Vector2 newCoords = new Vector2(x, y);
-			if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map		
-			Room adj = RoomAt(r.coords + directions[(int)d]);
-			if(adj != null && !adj.doors.Contains((Room.direction)(4 - (int)d))) return false;  // there's a doorway into a room that doesn't connect to this doorway
+			if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
 		}
 		#region check constraints of surrounding rooms
 		Room left = RoomAt(x - 1, y);
@@ -298,7 +304,6 @@ public class MapGenerator : MonoBehaviour {
 		map[y, x].transform.position = new Vector3(thisRoom.coords.x, 0, -thisRoom.coords.y) * roomSize + tileOffset;
 		map[y, x].transform.SetParent(transform);
 		if(IsOpen(thisRoom)) {
-			Debug.Log("Adding room to open list");
 			open.Add(thisRoom);
 		}
 		// remove any adjacent rooms from open list if they've been closed by placing this room
@@ -340,9 +345,7 @@ public class MapGenerator : MonoBehaviour {
 		if(r.IsOpen() || r.gameObject.tag == "StartRoom") {
 			// return the first direction where there's a door in that direction with no room beyond it
 			foreach(Room.direction d in r.doors) {
-				Debug.Log("Considering door " + d + " of " + r.gameObject.name);
 				if(RoomAt(r.coords + directions[(int)d]) == null) {
-					Debug.Log("This door is open!!!1");
 					return d;
 				}
 			}
@@ -379,7 +382,19 @@ public class MapGenerator : MonoBehaviour {
 		GameObject toDestroy = replacee.gameObject;
 		Vector2 pos = toDestroy.GetComponent<Room>().coords;
 		PlaceRoom((int)pos.x, (int)pos.y, replacer.gameObject);
-		Destroy(toDestroy);
+		DestroyImmediate(toDestroy);
+	}
+
+	// get a list of all rooms that can fit at a specified location
+	List<GameObject> GetFittingRooms(int x, int y, List<GameObject> list) {
+		List<GameObject> fits = new List<GameObject>();
+		foreach(GameObject o in list) {
+			if(CanFitAt(x, y, o.GetComponent<Room>())) fits.Add(o);
+		}
+		return fits;
+	}
+	List<GameObject> GetFittingRooms(Vector2 pos, List<GameObject> list) {
+		return GetFittingRooms((int)pos.x, (int)pos.y, list);
 	}
 	#endregion
 }

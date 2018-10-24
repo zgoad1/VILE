@@ -16,7 +16,7 @@ using UnityEngine;
 public class Room : MonoBehaviour {
 	
 	// READ ONLY (I'd use readonly but that makes stuff invisible in the inspector)
-	[Range(0, 1)] public float frequency = 0.2f;		// how common this room is (0 for start and end room)
+	[Range(0, 1)] public float frequency = 1f;		// how common this room is (0 for start and end room)
 	public int limit = -1;								// how many of this room there can be (negative for unlimited)
 	public bool indep = true;							// whether this room is the head of a big room, or a single small room
 	public bool necessary = false;						// whether the room absolutely has to spawn (end, etc.)
@@ -24,11 +24,13 @@ public class Room : MonoBehaviour {
 
 	// NOTE: For big rooms, do not make loops in these lists. i.e., if room2 is in upList of room1, don't put room1
 	// in downList of room2.
+	[Space]
 	public List<Room> leftList = new List<Room>();      // which rooms are allowed to be to the left (empty for any)
 	public List<Room> rightList = new List<Room>();     // which rooms are allowed to be to the right (empty for any)
 	public List<Room> upList = new List<Room>();        // which rooms are allowed to be to the up (empty for any)
 	public List<Room> downList = new List<Room>();      // which rooms are allowed to be to the down (empty for any)
 
+	[Space]
 	public List<Room> leftExclude = new List<Room>();   // which rooms are not allowed to be to the left (empty for none)
 	public List<Room> rightExclude = new List<Room>();  // which rooms are not allowed to be to the right (empty for none)
 	public List<Room> upExclude = new List<Room>();     // which rooms are not allowed to be to the up (empty for none)

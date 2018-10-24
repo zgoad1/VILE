@@ -264,7 +264,7 @@ public class Controllable : MonoBehaviour {
 			head.Play();
 			cam.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
-			flasher.FlashStart(Color.red, Color.white, -1);
+			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;		// protect this part from repeated calls
 		} else if(!enable && isLightning) {
 			mesh.enabled = true;	// make player reappear
@@ -272,7 +272,7 @@ public class Controllable : MonoBehaviour {
 			head.Stop();
 			cam.SetZoomTransform(null);
 			burst.Play();
-			flasher.FlashStop();
+			//flasher.FlashStop();
 			if(rightKey <= 0.1f && fwdKey <= 0.1f) {
 				anim.SetTrigger("recover");
 			}
