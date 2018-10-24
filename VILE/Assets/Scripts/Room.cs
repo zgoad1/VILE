@@ -14,13 +14,13 @@ using UnityEngine;
  * 
  */
 public class Room : MonoBehaviour {
-
-	[Range(0, 1)] public float frequency = 0.2f;		// how common this room is
-	public int limit = -1;                              // how many of this room there can be (negative for unlimited)
-	public bool head = true;                            // whether this room is the head of a big room, or a single small room
-	public bool necessary = false;                      // whether the room absolutely has to spawn (end, etc.)
+	
+	// READ ONLY (I'd use readonly but that makes stuff invisible in the inspector)
+	[Range(0, 1)] public float frequency = 0.2f;		// how common this room is (0 for start and end room)
+	public int limit = -1;								// how many of this room there can be (negative for unlimited)
+	public bool indep = true;							// whether this room is the head of a big room, or a single small room
+	public bool necessary = false;						// whether the room absolutely has to spawn (end, etc.)
 	public List<direction> doors;						// which sides of the room can connect to a new room
-	[HideInInspector] public Vector2 coords;			// map coordinates of the room
 
 	// NOTE: For big rooms, do not make loops in these lists. i.e., if room2 is in upList of room1, don't put room1
 	// in downList of room2.
@@ -34,13 +34,17 @@ public class Room : MonoBehaviour {
 	public List<Room> upExclude = new List<Room>();     // which rooms are not allowed to be to the up (empty for none)
 	public List<Room> downExclude = new List<Room>();   // which rooms are not allowed to be to the down (empty for none)
 
-	private Vector2 left = new Vector2(-1, 0), right = new Vector2(1, 0), up = new Vector2(0, -1), down = new Vector2(0, 1);
+	// READ + WRITE
+	[HideInInspector] public int distFromStart;			// how far this room is placed from the start room
+	[HideInInspector] public Vector2 coords;            // map coordinates of the room
 
-	// Don't use rotation, instead use Unity's new inheritance system to make prefabs that are the same as others but rotated
+	private readonly Vector2 left = new Vector2(-1, 0), right = new Vector2(1, 0), up = new Vector2(0, -1), down = new Vector2(0, 1);
 
 	public enum direction {
-		LEFT, RIGHT, UP, DOWN
+		LEFT = 2, RIGHT = 0, UP = 1, DOWN = 3
 	};
+
+
 
 	/**Whether this room needs another room connected to it after it's placed by
 	 * the map generator. Doesn't take other rooms on the map into account.
@@ -49,18 +53,21 @@ public class Room : MonoBehaviour {
 		return doors.Count > 1;
 	}
 
-	/**Whether this room can have a specified room in the given direction
+	/**Whether this room can have a specified room in the given direction.
+	 * Takes inclusion/exclusion lists into account, as well as whether the
+	 * given room matches up with the opening.
+	 * (either both or neither rooms have an opening into each other)
 	 */
-	public bool CanHave(Room r, direction d) {
+	public bool CanHave(Room that, direction d) {
 		switch(d) {
 			case direction.LEFT:
-				return (leftList.Count == 0 || leftList.Contains(r)) && !leftExclude.Contains(r);
+				return (leftList.Count == 0 || leftList.Contains(that)) && !leftExclude.Contains(that) && !(doors.Contains(direction.LEFT) ^ that.doors.Contains(direction.RIGHT));
 			case direction.RIGHT:
-				return (rightList.Count == 0 || rightList.Contains(r)) && !rightExclude.Contains(r);
+				return (rightList.Count == 0 || rightList.Contains(that)) && !rightExclude.Contains(that) && !(doors.Contains(direction.RIGHT) ^ that.doors.Contains(direction.LEFT));
 			case direction.UP:
-				return (upList.Count == 0 || upList.Contains(r)) && !upExclude.Contains(r);
+				return (upList.Count == 0 || upList.Contains(that)) && !upExclude.Contains(that) && !(doors.Contains(direction.UP) ^ that.doors.Contains(direction.DOWN));
 			case direction.DOWN:
-				return (downList.Count == 0 || downList.Contains(r)) && !downExclude.Contains(r);
+				return (downList.Count == 0 || downList.Contains(that)) && !downExclude.Contains(that) && !(doors.Contains(direction.DOWN) ^ that.doors.Contains(direction.UP));
 			default:
 				Debug.LogError("Room.CanMove() - invalid direction");
 				return false;
@@ -70,7 +77,7 @@ public class Room : MonoBehaviour {
 	/**Whether this room is the head (starting point for generator) of a big room
 	 */
 	public bool IsBig() {
-		return head && (leftList.Count == 1 || rightList.Count == 1 || upList.Count == 1 || downList.Count == 1);
+		return indep && (leftList.Count == 1 || rightList.Count == 1 || upList.Count == 1 || downList.Count == 1);
 	}
 
 	/**Get all other parts of a big room given the head, as well as the position of
@@ -79,7 +86,7 @@ public class Room : MonoBehaviour {
 	public List<RoomPart> GetParts(Vector2 pos) {
 		List<RoomPart> parts = new List<RoomPart>();
 
-		if(!head) {
+		if(!indep) {
 			parts.Add(new RoomPart(gameObject, pos));
 		}
 
@@ -97,5 +104,16 @@ public class Room : MonoBehaviour {
 		}
 
 		return parts;
+	}
+
+	/**Whether two rooms have the same amount of openings in the same places. 
+	 * i.e. whether this room could safely be replaced by that room
+	 */
+	public bool SameDoors(Room that) {
+		if(doors.Count != that.doors.Count) return false;
+		foreach(direction d in doors) {
+			if(!that.doors.Contains(d)) return false;
+		}
+		return true;
 	}
 }
