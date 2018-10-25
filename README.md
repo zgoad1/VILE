@@ -15,6 +15,8 @@ vide gmae
 ## Bugs
 
 **- A -**
+- map generator still hits infinite loop with some seeds
+	- seed "dog"
 
 **- B -**
 

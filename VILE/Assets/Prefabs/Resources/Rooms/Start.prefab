@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23198701616883734}
   - component: {fileID: 64316502562250164}
   - component: {fileID: 114816725880178276}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Start
   m_TagString: StartRoom
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 33872947925048304}
   - component: {fileID: 23706689811825674}
   - component: {fileID: 64494492457945530}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}

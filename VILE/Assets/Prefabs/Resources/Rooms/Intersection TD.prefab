@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33638968595935014}
   - component: {fileID: 23440452932556594}
   - component: {fileID: 64278969700703092}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -41,7 +41,7 @@ GameObject:
   - component: {fileID: 23307680502371392}
   - component: {fileID: 64463129218937650}
   - component: {fileID: 114194118207748826}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Hall sideways(Clone)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,7 +57,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4709335124174304}
   - component: {fileID: 114574693555586088}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Intersection TD
   m_TagString: Untagged
   m_Icon: {fileID: 0}

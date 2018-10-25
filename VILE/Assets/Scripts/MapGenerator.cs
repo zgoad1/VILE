@@ -62,7 +62,6 @@ public class MapGenerator : MonoBehaviour {
 		Reset();
 
 		// destroy old map
-		// destroy all existing tiles before spawning new ones
 		Room[] toDestroy = GetComponentsInChildren<Room>();
 		foreach(Room r in toDestroy) {
 			//Debug.Log("Destroying " + r.gameObject.name);
@@ -76,7 +75,7 @@ public class MapGenerator : MonoBehaviour {
 		SetMapSeed(seed);                                       
 
 		// place start room at center of map
-		PlaceRoom(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(gridSize.y / 2), Array.Find(rooms, r => r.tag == "StartRoom"));
+		PlaceRoom(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(3 * gridSize.y / 4), Array.Find(rooms, r => r.tag == "StartRoom"));
 
 		// while open list is not empty, connect rooms to the first open room
 		// NOTE: For this not to be an infinite loop, we need to have every possible intersection in our room list.
@@ -136,6 +135,7 @@ public class MapGenerator : MonoBehaviour {
 	#region RNG stuff
 	// set RNG to use specified seed (if it's been changed from "random")
 	void SetMapSeed(string seed) {
+		UnityEngine.Random.InitState((int)(Time.realtimeSinceStartup * 1000 + Time.time * 1000));
 		int seedInt = 0;
 		if(seed == "random") { 
 			seed = "" + Mathf.RoundToInt(UnityEngine.Random.Range(0, 10000) % 10000);

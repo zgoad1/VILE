@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4626657089416664}
   - component: {fileID: 114780519598506272}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Dead end U
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -38,7 +38,7 @@ GameObject:
   - component: {fileID: 33410866412427712}
   - component: {fileID: 23973710636271054}
   - component: {fileID: 64128495527449978}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
