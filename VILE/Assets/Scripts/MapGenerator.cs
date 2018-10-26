@@ -10,7 +10,7 @@ using System;
  */
 public class MapGenerator : MonoBehaviour {
 
-	public Vector2 gridSize = new Vector2(128, 128);	// width and length of grid by standard room size
+	public Vector2 gridSize = new Vector2(128, 128);	// width and length of grid in terms of rooms
 	public int roomsToExit = 20;						// how many rooms away the exit will be
 	public int minRooms = 128;							// minimum amount of rooms to generate
 	public string seed = "random";						// seed to use for RNG
@@ -74,8 +74,8 @@ public class MapGenerator : MonoBehaviour {
 
 		SetMapSeed(seed);                                       
 
-		// place start room at center of map
-		PlaceRoom(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(3 * gridSize.y / 4), Array.Find(rooms, r => r.tag == "StartRoom"));
+		// place start room
+		PlaceRoom(Mathf.FloorToInt(gridSize.x / 2), Mathf.FloorToInt(9 * gridSize.y / 10), Array.Find(rooms, r => r.tag == "StartRoom"));
 
 		// while open list is not empty, connect rooms to the first open room
 		// NOTE: For this not to be an infinite loop, we need to have every possible intersection in our room list.
@@ -161,16 +161,21 @@ public class MapGenerator : MonoBehaviour {
 			float rand = UnityEngine.Random.Range(0, 1);
 			Room thisRoom = list[randIndex].GetComponent<Room>();
 			// choose this room if: 
-			// probability says so (probabilities of start and end rooms are 0)
-			// and it's independent
-			// and it hasn't reached its amount limit
-			// and it won't cause us to stop before generating min amount of rooms
-			// or it's the only room we CAN place
+			// 1. probability says so (probabilities of start and end rooms are 0)
+			// 2. and it's independent
+			// 3. and it hasn't reached its amount limit
+			// 4. and it won't cause us to stop before generating min amount of rooms
+			// 5. or it's the only door combination we CAN place
+			/**BUG FIX
+			 * Condition 5 previously said "or it's the only *room* we CAN place"
+			 * This caused infinite loops if there were multiple rooms in the list
+			 * with the same door combination.
+			 */
 			if(rand < thisRoom.frequency 
 				&& thisRoom.indep 
 				&& (thisRoom.limit < 0 || amounts[randIndex] < thisRoom.limit) 
 				&& !(!thisRoom.IsOpen() && roomsMade < minRooms && open.Count == 1)
-				|| list.Count == 1) 
+				|| GetSimilarRooms(list, thisRoom).Count == list.Count)
 			{
 				choice = list[randIndex];
 			}
@@ -376,6 +381,13 @@ public class MapGenerator : MonoBehaviour {
 		}
 		return ret;
 	}
+	List<GameObject> GetSimilarRooms(List<GameObject> list, Room room) {
+		List<GameObject> ret = new List<GameObject>();
+		foreach(GameObject r in list) {
+			if(r.GetComponent<Room>().SameDoors(room)) ret.Add(r);
+		}
+		return ret;
+	}
 
 	// replace a room instance on the map with another
 	void ReplaceRoom(Room replacee, Room replacer) {
@@ -386,10 +398,12 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	// get a list of all rooms that can fit at a specified location
+	// exclude rooms with a frequency of 0 (start and end)
 	List<GameObject> GetFittingRooms(int x, int y, List<GameObject> list) {
 		List<GameObject> fits = new List<GameObject>();
 		foreach(GameObject o in list) {
-			if(CanFitAt(x, y, o.GetComponent<Room>())) fits.Add(o);
+			Room thisRoom = o.GetComponent<Room>();
+			if(CanFitAt(x, y, thisRoom) && thisRoom.frequency > 0) fits.Add(o);
 		}
 		return fits;
 	}

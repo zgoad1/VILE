@@ -189,7 +189,7 @@ public class Controllable : MonoBehaviour {
 		prevPosition = transform.position;
 		SetForwardTarget();
 		//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
-		transform.forward = Vector3.Lerp(transform.forward, forwardTarget, 0.4f);
+		transform.forward = Vector3.Slerp(transform.forward, forwardTarget, 0.2f);
 		playerRot.y = transform.rotation.y;
 		playerRot.w = transform.rotation.w;
 		transform.rotation = playerRot;
