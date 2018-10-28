@@ -29,7 +29,7 @@ MonoBehaviour:
     m_Settings:
       excludeSkybox: 1
   antialiasing:
-    m_Enabled: 0
+    m_Enabled: 1
     m_Settings:
       method: 0
       fxaaSettings:
@@ -42,8 +42,8 @@ MonoBehaviour:
   ambientOcclusion:
     m_Enabled: 0
     m_Settings:
-      intensity: 1
-      radius: 0.3
+      intensity: 0
+      radius: 0.12
       sampleCount: 10
       downsampling: 1
       forceForwardCompatibility: 0
@@ -81,7 +81,7 @@ MonoBehaviour:
     m_Settings:
       shutterAngle: 6
       sampleCount: 32
-      frameBlending: 0.05
+      frameBlending: 0.5
   eyeAdaptation:
     m_Enabled: 0
     m_Settings:
@@ -120,26 +120,26 @@ MonoBehaviour:
         neutralWhiteLevel: 5.3
         neutralWhiteClip: 10
       basic:
-        postExposure: 1.2
+        postExposure: 1
         temperature: 24
-        tint: 10
+        tint: 5
         hueShift: 0
-        saturation: 0.75
-        contrast: 1.1
+        saturation: 1
+        contrast: 1
       channelMixer:
         red: {x: 1.1, y: -0.5, z: 0.1}
         green: {x: 0, y: 0.9, z: -0.1}
-        blue: {x: 0, y: 0.1, z: 1}
-        currentEditingChannel: 0
+        blue: {x: 0, y: 0.1, z: 1.1}
+        currentEditingChannel: 2
       colorWheels:
-        mode: 0
+        mode: 1
         log:
           slope: {r: 1, g: 1, b: 1, a: 0}
           power: {r: 1, g: 1, b: 1, a: 0}
-          offset: {r: 1, g: 1, b: 1, a: 0}
+          offset: {r: 1, g: 1, b: 1, a: 0.034782607}
         linear:
-          lift: {r: 0.74306154, g: 0.9360592, b: 1, a: -0.0604534}
-          gamma: {r: 1, g: 1, b: 1, a: 0.06836744}
+          lift: {r: 0.74306154, g: 0.9360592, b: 1, a: -0.043062095}
+          gamma: {r: 1, g: 1, b: 1, a: -0.0011977808}
           gain: {r: 1, g: 0.62751555, b: 0.6354191, a: 0.13230212}
       curves:
         master:
