@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 4617914298169042}
   - component: {fileID: 198121889902188038}
   - component: {fileID: 199661593887867380}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -69,7 +69,7 @@ GameObject:
   - component: {fileID: 114443015862826086}
   - component: {fileID: 198991416227734876}
   - component: {fileID: 199610132258618526}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Green laser
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,6 +115,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4991413901396234}
+  - component: {fileID: 114695273526837202}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -146,7 +147,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4251600449816626}
   - component: {fileID: 108896385307049448}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -179,7 +180,7 @@ GameObject:
   - component: {fileID: 4028487802080368}
   - component: {fileID: 198154492413052220}
   - component: {fileID: 199170052273238904}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Hit sparks
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -219,7 +220,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1701226236078332}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -10.47, z: 3.05}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4401783821696852}
@@ -232,7 +233,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1879364038186440}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.82, y: 10.06, z: -1397.44}
+  m_LocalPosition: {x: 100, y: 24, z: -1400}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 4415287753848216}
@@ -246,7 +247,7 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1418503695905942}
-  m_LocalRotation: {x: -0, y: 0.7505725, z: 0.66078806, w: 0}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.36010718, z: -0.30000067}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -255,7 +256,7 @@ Transform:
   - {fileID: 4251600449816626}
   m_Father: {fileID: 4991413901396234}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 7.28, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &4415287753848216
 Transform:
   m_ObjectHideFlags: 1
@@ -407,7 +408,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   damage: 1
   sparks: {fileID: 1996275907103132}
+  parts: {fileID: 198991416227734876}
   sparkParts: {fileID: 198154492413052220}
+--- !u!114 &114695273526837202
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1657210636064116}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2fb64bd9d44fd47b423f8626de73f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!137 &137141060642668434
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1
@@ -469,12 +482,12 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1041426247261748}
   serializedVersion: 5
-  lengthInSec: 1
+  lengthInSec: 4
   simulationSpeed: 2
   stopAction: 0
-  looping: 1
+  looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -5002,12 +5015,12 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1996275907103132}
   serializedVersion: 5
-  lengthInSec: 0.5
+  lengthInSec: 0.2
   simulationSpeed: 2
   stopAction: 0
   looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -9535,12 +9548,12 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1418503695905942}
   serializedVersion: 5
-  lengthInSec: 1
+  lengthInSec: 5
   simulationSpeed: 5
   stopAction: 0
-  looping: 1
+  looping: 0
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1
@@ -13121,7 +13134,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minKillSpeed: 10000
     maxKillSpeed: 10000
-    radiusScale: 1
+    radiusScale: 0.2
     collidesWith:
       serializedVersion: 2
       m_Bits: 1536

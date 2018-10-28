@@ -2,9 +2,6 @@
 vide gmae
 
 ## To Do
-- flash eye laser raycast needs a length because the laser has a max length
-- decrease the size of the particle colliders so they're not noticeably different from a raycast
-
 - room designs
 - enemies
 - combat
@@ -19,6 +16,7 @@ vide gmae
 ## Bugs
 
 **- A -**
+- choosing a low graphics quality makes movement about 69 tyimes faster
 
 **- B -**
 

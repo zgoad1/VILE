@@ -71,11 +71,11 @@ MonoBehaviour:
   depthOfField:
     m_Enabled: 0
     m_Settings:
-      focusDistance: 10.56
-      aperture: 11.3
-      focalLength: 89
+      focusDistance: 14.85
+      aperture: 0.2
+      focalLength: 52
       useCameraFov: 0
-      kernelSize: 1
+      kernelSize: 0
   motionBlur:
     m_Enabled: 0
     m_Settings:
@@ -120,16 +120,16 @@ MonoBehaviour:
         neutralWhiteLevel: 5.3
         neutralWhiteClip: 10
       basic:
-        postExposure: 0.3
-        temperature: 0
-        tint: 0
+        postExposure: 1.2
+        temperature: 24
+        tint: 10
         hueShift: 0
-        saturation: 1.1
-        contrast: 1
+        saturation: 0.75
+        contrast: 1.1
       channelMixer:
-        red: {x: 1.1, y: -0.1, z: 0.1}
-        green: {x: 0, y: 1, z: 0}
-        blue: {x: 0, y: 0, z: 1}
+        red: {x: 1.1, y: -0.5, z: 0.1}
+        green: {x: 0, y: 0.9, z: -0.1}
+        blue: {x: 0, y: 0.1, z: 1}
         currentEditingChannel: 0
       colorWheels:
         mode: 0
@@ -138,9 +138,9 @@ MonoBehaviour:
           power: {r: 1, g: 1, b: 1, a: 0}
           offset: {r: 1, g: 1, b: 1, a: 0}
         linear:
-          lift: {r: 1, g: 1, b: 1, a: -0.0604534}
-          gamma: {r: 1, g: 1, b: 1, a: -0.14105792}
-          gain: {r: 1, g: 1, b: 1, a: 0.40302268}
+          lift: {r: 0.74306154, g: 0.9360592, b: 1, a: -0.0604534}
+          gamma: {r: 1, g: 1, b: 1, a: 0.06836744}
+          gain: {r: 1, g: 0.62751555, b: 0.6354191, a: 0.13230212}
       curves:
         master:
           curve:
@@ -302,7 +302,7 @@ MonoBehaviour:
   userLut:
     m_Enabled: 0
     m_Settings:
-      lut: {fileID: 0}
+      lut: {fileID: 2800000, guid: 3c2f1fb7e4b66e74191b7c328ada52d9, type: 3}
       contribution: 1
   chromaticAberration:
     m_Enabled: 0
@@ -312,8 +312,8 @@ MonoBehaviour:
   grain:
     m_Enabled: 0
     m_Settings:
-      colored: 0
-      intensity: 0.279
+      colored: 1
+      intensity: 0.288
       size: 0.3
       luminanceContribution: 1
   vignette:

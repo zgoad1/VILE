@@ -10,9 +10,9 @@ using System;
  */
 public class MapGenerator : MonoBehaviour {
 
-	public Vector2 gridSize = new Vector2(128, 128);	// width and length of grid in terms of rooms
-	public int roomsToExit = 20;						// how many rooms away the exit will be
-	public int minRooms = 128;							// minimum amount of rooms to generate
+	public Vector2 gridSize = new Vector2(20, 80);		// width and length of grid in terms of rooms
+	public int roomsToExit = 80;						// how many rooms away the exit will be
+	public int minRooms = 400;							// minimum amount of rooms to generate
 	public string seed = "random";						// seed to use for RNG
 	public float roomSize = 100;                        // size of standard room in units
 
@@ -26,7 +26,11 @@ public class MapGenerator : MonoBehaviour {
 	private List<Room> necessary;						// rooms that have to be spawned at least once
 	private Dictionary<int, List<Room>> distLists;      // lists of rooms at a certain distance from the start
 	private int roomsMade = 0;                          // number of rooms generated so far
-	private Vector3 tileOffset;							// how to offset the grid to put the start room at the origin
+	private Vector3 tileOffset;                         // how to offset the grid to put the start room at the origin
+
+	// stuff to move to a subclass that's specific to this game
+	private GameObject flyingPlane;
+	[SerializeField] private float flyingHeight = 24;
 
 	private readonly Vector2[] directions = {new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1)};
 
@@ -51,6 +55,9 @@ public class MapGenerator : MonoBehaviour {
 		distLists = new Dictionary<int, List<Room>>();
 		roomsMade = 0;
 		tileOffset = new Vector3(gridSize.x / 2, 0, -gridSize.y / 2) * (-roomSize);
+		flyingPlane = GameObject.Find("Flying Plane");
+		flyingPlane.transform.position = new Vector3(-roomSize / 2, flyingHeight, -roomSize / 2);
+		flyingPlane.transform.localScale = new Vector3(gridSize.x * roomSize / 10, 1, gridSize.y * roomSize / 10);
 	}
 
 	void Start () {
