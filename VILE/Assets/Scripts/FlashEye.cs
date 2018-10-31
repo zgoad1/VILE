@@ -3,39 +3,76 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class FlashEye : Controllable {
+public class FlashEye : Enemy {
 
 	private FlashEyeBall ball;
 	private Transform player;
-	private float maxVel = 80;
-	private Vector3 myRot = Vector3.zero;
+	private float maxVel = 50;
+	private Vector3 newEuler = Vector3.zero;
+	private Vector3 playerPos = Vector3.zero;
+	private Vector3 velocityPerSec = Vector3.zero;
 
 	protected override void Reset() {
 		base.Reset();
 		ball = GetComponentInChildren<FlashEyeBall>();
 		player = FindObjectOfType<Player>().transform;
 		rb.isKinematic = false;
-	}
-	
-	// Update is called once per frame
-	protected override void Update () {
-		base.Update();
-		if(control == state.AI) {
-			transform.LookAt(player);
-			Vector3 r2 = transform.rotation.eulerAngles;
-			myRot.x = Mathf.Min(rb.velocity.magnitude / 2, 15);
-			myRot.y = Mathf.Lerp(myRot.y, r2.y, 0.05f);
-			transform.rotation = Quaternion.Euler(myRot);
-		} else {
-			// player stuff (basics taken care of in base.Update)
-		}
+		camDistance = 25;
 	}
 
-	private void FixedUpdate() {
-		if(control == state.AI) {
-			Vector3 dist = player.position - transform.position;
-			dist.y = 0;
-			rb.velocity = Vector3.ClampMagnitude(rb.velocity + dist.normalized, maxVel);
+	protected override void AIUpdate() {
+		base.AIFixedUpdate();
+		// set velocity
+		Vector3 dist = target.transform.position - transform.position;
+		dist.y = 0;
+		velocityPerSec = Vector3.ClampMagnitude(velocityPerSec + dist.normalized, maxVel);  // from per second to per frame
+		velocity = velocityPerSec / 60;
+		cc.Move(velocity);
+		RotateWithVelocity();
+	}
+
+	protected override void PlayerUpdate() {
+		SetControls();
+		SetMotion();	// velocity is set here
+		velocityPerSec = velocity * 60;
+		cc.Move(velocity);
+
+		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.05f);
+		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
+		// controls for more realistic rotation
+		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
+		newEuler.y = transform.eulerAngles.y;
+		newEuler.z = transform.eulerAngles.z;
+		transform.eulerAngles = newEuler;
+
+		if(Input.GetKeyDown(KeyCode.RightControl)) {
+			target = FindObjectOfType<Player>();
+			target.SetPlayer();
 		}
+	}
+	protected override void SetVelocity() {
+		base.SetVelocity();
+		/*
+		Vector3 tempForward = fwdKey > 0 ? camTransform.forward : transform.forward;
+		tempForward.y = 0;
+		tempForward = tempForward.normalized;
+		velocity = fwdMov * tempForward + rightMov * camTransform.right;
+		*/
+	}
+
+	private void RotateWithVelocity() {
+		// i played with math until it worked
+		playerPos.x = Mathf.Lerp(playerPos.x, player.transform.position.x, 0.1f);
+		playerPos.y = transform.position.y;
+		playerPos.z = Mathf.Lerp(playerPos.z, player.transform.position.z, 0.1f);
+		Quaternion r1 = transform.rotation;
+		transform.LookAt(playerPos);
+		Quaternion r2 = transform.rotation;
+		Quaternion newRot = Quaternion.Slerp(r1, r2, 0.02f);
+		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
+		newEuler.y = newRot.eulerAngles.y;
+		newEuler.z = newRot.eulerAngles.z;
+		newRot.eulerAngles = newEuler;
+		transform.rotation = newRot;
 	}
 }

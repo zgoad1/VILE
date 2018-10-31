@@ -17,6 +17,6 @@ public class FlashEyeBall : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.forward = Vector3.Lerp(transform.forward, (player.transform.position - transform.position).normalized, 0.09f);
+		transform.forward = Vector3.Lerp(transform.forward, (player.transform.position - transform.position).normalized, 0.08f);
 	}
 }

@@ -23,53 +23,22 @@ public class Player : Controllable {
 
 	protected override void Start() {
 		base.Start();
-
-		ipos = transform.position;
+		
 		prevPosition = transform.position;
-		camDist = cam.idistance;
+		camTransform.position = transform.position;
 
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 
-		control = state.PLAYER;
+		SetPlayer();
 	}
 
-	protected override void Update() {
-		base.Update();
+	protected override void PlayerUpdate() {
 
-		#region Set move directions
-
-		if(readInput) {
-			bool in1 = true, in2 = true;    // used in conjunction to determine whether the player is doing any input
-			if(rightKey != 0) {
-				rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
-			} else {
-				in1 = false;
-				rightMov = Mathf.Lerp(rightMov, 0f, decel);
-			}
-			if(fwdKey != 0 || sprinting) {
-				fwdMov = Mathf.Lerp(fwdMov, sprinting ? runSpeed : (fwdKey * speed), accel);
-			} else {
-				in2 = false;
-				fwdMov = Mathf.Lerp(fwdMov, 0f, decel);
-			}
-			anim.SetBool("input", in1 || in2);
-
-			// change forward's y to 0 then normalize, in case the camera is pointed down or up
-			Vector3 tempForward = camTransform.forward;
-			tempForward.y = 0f;
-
-			// get movement direction vector
-			if(sprinting) {
-				TurnIntoLightning(true);
-				movDirec = Vector3.Lerp(movDirec, tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10, 0.1f);
-			} else {
-				TurnIntoLightning(false);
-				movDirec = tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov;
-			}
-			//anim.SetFloat("speed", movDirec.magnitude);
-		}
-		#endregion
+		base.PlayerUpdate();
+		
+		SetMotion();
+		SetTarget();
 
 		#region Pause
 
@@ -83,11 +52,72 @@ public class Player : Controllable {
 			}
 		}
 		#endregion
+
+		if(Input.GetKeyDown(KeyCode.LeftControl)) {
+			target = FindObjectOfType<FlashEye>();
+			target.SetPlayer();
+		}
 	}
+
+	protected override void SetTarget() {
+		Controllable t = null;
+		Debug.Log("onScreen.count: " + onScreen.Count);
+		foreach(Controllable c in onScreen) {
+			Debug.Log("name: " + c.gameObject.name + "\nscreen coords: " + camTransform.GetComponent<Camera>().WorldToScreenPoint(c.transform.position));
+		}
+	}
+
+	protected override void SetMotion() {
+		/*
+		base.SetMotion();
+		*/
+		bool inH = true, inV = true;    // used in conjunction to determine whether the player is doing any input
+		if(rightKey != 0) {
+			rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
+		} else {
+			inH = false;
+			rightMov = Mathf.Lerp(rightMov, 0f, decel);
+		}
+		if(fwdKey != 0 || sprinting) {
+			fwdMov = Mathf.Lerp(fwdMov, sprinting ? runSpeed : (fwdKey * speed), accel);
+		} else {
+			inV = false;
+			fwdMov = Mathf.Lerp(fwdMov, 0f, decel);
+		}
+		anim.SetBool("input", inH || inV);
+		SetVelocity();
+	}
+
+	protected override void SetVelocity() {
+		/*
+		base.SetVelocity();
+		*/
+		// change forward's y to 0 then normalize, in case the camera is pointed down or up
+		Vector3 tempForward = camTransform.forward;
+		tempForward.y = 0f;
+
+		// get movement direction vector
+		if(sprinting) {
+			TurnIntoLightning(true);
+			velocity = Vector3.Lerp(velocity, tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10, 0.1f);
+		} else {
+			TurnIntoLightning(false);
+			velocity = tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov;
+		}
+	}
+
+	#region Setting control input variables 
+	/*
+	protected override void SetSprintKey() {
+		sprintKey = Input.GetButtonUp("Run") ? false : Input.GetButtonDown("Run");
+	}
+	*/
+
+	#endregion
 
 	public void Pause() {
 		readInput = false;
-		movDirec = Vector3.zero;
+		velocity = Vector3.zero;
 		rightMov = 0;
 		fwdMov = 0;
 		anim.SetFloat("speed", 0);

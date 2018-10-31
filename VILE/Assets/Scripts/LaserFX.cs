@@ -9,9 +9,10 @@ public class LaserFX : MonoBehaviour {
 	[Space]
 
 	private int layerMask;
-	[SerializeField] private GameObject sparks;
-	[SerializeField] private ParticleSystem parts;
-	[SerializeField] private ParticleSystem sparkParts;
+	[SerializeField] private GameObject sparks;			// the hit point sparks' gameObject
+	[SerializeField] private ParticleSystem parts;		// laser particles
+	[SerializeField] private ParticleSystem sparkParts;	// the sparks at the hit point
+	[SerializeField] private ParticleSystem hitParts;	// creates a flashing light where the laser hits the ground
 	private bool hitting;
 	private AudioManager am;
 	private AudioSource laserSound;
@@ -21,6 +22,7 @@ public class LaserFX : MonoBehaviour {
 		parts = GetComponent<ParticleSystem>();
 		sparkParts = GetComponentsInChildren<ParticleSystem>()[1];
 		sparks = sparkParts.gameObject;
+		hitParts = GetComponentsInChildren<ParticleSystem>()[2];
 		am = FindObjectOfType<AudioManager>();
 		laserSound = GetComponent<AudioSource>();
 	}
@@ -75,7 +77,7 @@ public class LaserFX : MonoBehaviour {
 
 	// if no particles hit anything for half a second, stop playing the sparks
 	private IEnumerator WaitForStopHit() {
-		yield return new WaitForSeconds(0.2f);
+		yield return new WaitForSeconds(0.1f);
 		//am.Stop("Laser");
 		laserSound.Stop();
 		hitting = false;
