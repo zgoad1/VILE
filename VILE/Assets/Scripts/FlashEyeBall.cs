@@ -5,9 +5,14 @@ using UnityEngine;
 public class FlashEyeBall : MonoBehaviour {
 
 	private Player player;
+	private FlashEye parent;
+	private LayerMask layerMask;
 
 	void Reset() {
 		player = FindObjectOfType<Player>();
+		// ball -> armature -> flash eye
+		parent = GetComponentInParent<Transform>().GetComponentInParent<FlashEye>();
+		layerMask = 1 << LayerMask.NameToLayer("Solid");
 	}
 
 	// Use this for initialization
@@ -17,6 +22,19 @@ public class FlashEyeBall : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		transform.forward = Vector3.Lerp(transform.forward, (player.transform.position - transform.position).normalized, 0.08f);
+		if(parent.control == Controllable.state.PLAYER && parent.target == null) {
+			// if no target, raycast in the direction of the reticle and face the hit point
+			// if that hits nothing, face in that direction
+			RaycastHit hit;
+			if(Physics.Raycast(Controllable.mainCam.transform.position, Controllable.mainCam.transform.forward, out hit, 200, layerMask)) {
+				transform.forward = Vector3.Slerp(transform.forward, (hit.point - transform.position).normalized, 0.5f);
+			} else {
+				transform.forward = Vector3.Slerp(transform.forward, Controllable.mainCam.transform.forward, 0.2f);
+			}
+		} else {
+			// raise accuracy for player
+			float accuracy = parent.control == Controllable.state.AI ? 0.08f : 0.5f;
+			transform.forward = Vector3.Slerp(transform.forward, (parent.target.transform.position - transform.position).normalized, accuracy);
+		}
 	}
 }

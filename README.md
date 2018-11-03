@@ -3,6 +3,9 @@ vide gmae
 
 ## To Do
 - room designs
+- circular target-bounds-limit reticle
+- reticle mechanics (color change; fade out)
+- delta time
 - enemies
 - combat
 - win & lose conditions
@@ -12,6 +15,8 @@ vide gmae
 ## Complete
 - movement
 - random map generation
+- graphical style
+- enemy possession
 
 ## Bugs
 

@@ -6,7 +6,6 @@ using UnityEngine.AI;
 public class FlashEye : Enemy {
 
 	private FlashEyeBall ball;
-	private Transform player;
 	private float maxVel = 50;
 	private Vector3 newEuler = Vector3.zero;
 	private Vector3 playerPos = Vector3.zero;
@@ -15,13 +14,12 @@ public class FlashEye : Enemy {
 	protected override void Reset() {
 		base.Reset();
 		ball = GetComponentInChildren<FlashEyeBall>();
-		player = FindObjectOfType<Player>().transform;
 		rb.isKinematic = false;
 		camDistance = 25;
 	}
 
 	protected override void AIUpdate() {
-		base.AIFixedUpdate();
+		base.AIUpdate();
 		// set velocity
 		Vector3 dist = target.transform.position - transform.position;
 		dist.y = 0;
@@ -45,19 +43,7 @@ public class FlashEye : Enemy {
 		newEuler.z = transform.eulerAngles.z;
 		transform.eulerAngles = newEuler;
 
-		if(Input.GetKeyDown(KeyCode.RightControl)) {
-			target = FindObjectOfType<Player>();
-			target.SetPlayer();
-		}
-	}
-	protected override void SetVelocity() {
-		base.SetVelocity();
-		/*
-		Vector3 tempForward = fwdKey > 0 ? camTransform.forward : transform.forward;
-		tempForward.y = 0;
-		tempForward = tempForward.normalized;
-		velocity = fwdMov * tempForward + rightMov * camTransform.right;
-		*/
+		SetTarget();
 	}
 
 	private void RotateWithVelocity() {

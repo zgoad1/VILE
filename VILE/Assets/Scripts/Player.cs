@@ -6,17 +6,21 @@ public class Player : Controllable {
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
 	private ParticleSystem head;
-	private SkinnedMeshRenderer mesh;
 	private bool isLightning = false;
 	private Transform sprintCam;
 	private EpilepsyController flasher;
+	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
+	private bool attacking = false;
+	private bool possessing = false;
+	private Enemy possessed = null;
+
+	public static List<Enemy> targets = new List<Enemy>();
 
 	protected override void Reset() {
 		base.Reset();
-		lightning = GetComponentsInChildren<ParticleSystem>()[0];
-		burst = GetComponentsInChildren<ParticleSystem>()[1];
-		head = GetComponentsInChildren<ParticleSystem>()[2];
-		mesh = GetComponentInChildren<SkinnedMeshRenderer>();
+		lightning = GetComponentsInChildren<ParticleSystem>()[2];
+		burst = GetComponentsInChildren<ParticleSystem>()[3];
+		head = GetComponentsInChildren<ParticleSystem>()[4];
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 	}
@@ -31,6 +35,20 @@ public class Player : Controllable {
 		Cursor.visible = false;
 
 		SetPlayer();
+	}
+
+	protected override void Update() {
+		if(!possessing) base.Update();
+		else {
+			transform.position = possessed.transform.position;
+			transform.rotation = mainCam.transform.rotation;
+
+			SetTarget();
+
+			if(Input.GetButtonDown("Run")) {
+				Unpossess(true);
+			}
+		}
 	}
 
 	protected override void PlayerUpdate() {
@@ -53,18 +71,75 @@ public class Player : Controllable {
 		}
 		#endregion
 
-		if(Input.GetKeyDown(KeyCode.LeftControl)) {
-			target = FindObjectOfType<FlashEye>();
-			target.SetPlayer();
+		// home in on an enemy to possess it
+		if(Input.GetButtonDown("Run") && target != null) {
+			control = state.AI;
 		}
 	}
 
-	protected override void SetTarget() {
-		Controllable t = null;
-		Debug.Log("onScreen.count: " + onScreen.Count);
-		foreach(Controllable c in onScreen) {
-			Debug.Log("name: " + c.gameObject.name + "\nscreen coords: " + camTransform.GetComponent<Camera>().WorldToScreenPoint(c.transform.position));
+	// use this for homing in on enemies
+	protected override void AIUpdate() {
+		if(Input.GetButtonUp("Run")) {
+			// switch state
+			control = state.PLAYER;
 		}
+		cc.Move((target.transform.position - transform.position).normalized * runSpeed / 2f);
+	}
+
+	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
+		base.OnControllerColliderHit(hit);
+		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
+			Possess((Enemy)target);
+		}
+	}
+
+	/**Set the target to the closest enemy in the targets array
+	 */
+	protected override void SetTarget() {
+		// add any onscreen enemies that are close enough to the center of the screen
+		// to the targets array (and remove those who aren't)
+		foreach(Enemy e in Enemy.onScreen) {
+			bool inRange = IsInRange(e);
+			// don't consider the player (if possessing an enemy)
+			if(e != possessed) {
+				if(!e.isTarget && inRange) {
+					e.isTarget = true;
+					targets.Add(e);
+				} else if(e.isTarget && !inRange) {
+					e.isTarget = false;
+					targets.Remove(e);
+				}
+			}
+		}
+		// find the closest enemy in the targets array
+		float minDist = Mathf.Infinity;
+		if(targets.Count > 0) {
+			Enemy newTarget = targets[0];
+			foreach(Enemy e in targets) {
+				if(e.distanceFromPlayer < minDist) {
+					minDist = e.distanceFromPlayer;
+					newTarget = e;
+				}
+			}
+			// if we're not in the middle of an attack or combo, update target
+			if(!attacking) {
+				target = newTarget;
+			}
+		} else {
+			target = null;
+		}
+	}
+
+	public static bool IsInRange(Enemy e) {
+		float maxDist = 0.175f;  // only check objects in a circle of a radius of this fraction of the screen size
+		e.screenCoords = mainCam.WorldToScreenPoint(e.transform.position);
+		e.screenCoords.x /= Screen.width;
+		e.screenCoords.y /= Screen.height;;
+		float dist = Vector2.Distance(e.screenCoords, screenCenter);
+		if(dist < maxDist) {
+			return true;
+		}
+		return false;
 	}
 
 	protected override void SetMotion() {
@@ -129,20 +204,21 @@ public class Player : Controllable {
 		cam.readInput = true;
 	}
 
-	#region Turning into a lightning bolt
+	#region Abilities
 
 	private void TurnIntoLightning(bool enable) {
 		if(enable && !isLightning) {
 			lightning.SetParticles(new ParticleSystem.Particle[0], 0);  // destroy any active particles
-			mesh.enabled = false;   // make player disappear
+			renderer.enabled = false;   // make player disappear
 			lightning.Play();       // start particles
 			head.Play();
+			transform.rotation = camTransform.rotation;
 			cam.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
 			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;     // protect this part from repeated calls
 		} else if(!enable && isLightning) {
-			mesh.enabled = true;    // make player reappear
+			renderer.enabled = true;    // make player reappear
 			lightning.Stop();       // stop particles
 			head.Stop();
 			cam.SetZoomTransform(null);
@@ -155,6 +231,48 @@ public class Player : Controllable {
 		}
 	}
 
+	private void Possess(Enemy e) {
+		e.SetPlayer();
+		TurnIntoLightning(false);
+		renderer.enabled = false;
+		possessing = true;
+		gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");
+		targets.Remove(e);
+		possessed = e;
+		fwdMov = 0;		// instantly decelerate these so momentum doesn't carry
+		rightMov = 0;	// over when we Unpossess
+	}
+
+	/**If the run key is pressed, we're manually un-possessing an enemy;
+	 * otherwise, our control is being revoked, likely because it's dying.
+	 */
+	private void Unpossess(bool runKey) {
+		if(runKey) {
+			possessing = false;
+			//gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");	// ignore collisions for 2 frames
+			//StartCoroutine("EnableCollision");
+			gameObject.layer = LayerMask.NameToLayer("Characters");
+			possessed = null;
+			SetPlayer();
+			TurnIntoLightning(true);
+			if(target != null) {
+				control = state.AI;
+			} else {
+				control = state.PLAYER;
+			}
+		} else {
+			TurnIntoLightning(false);
+			SetPlayer();
+		}
+	}
+
 	#endregion
+
+	//private IEnumerator EnableCollision() {
+	//	yield return null;
+	//	yield return null;
+	//	yield return new WaitForSeconds(0.1f);
+	//	gameObject.layer = LayerMask.NameToLayer("Characters");
+	//}
 
 }

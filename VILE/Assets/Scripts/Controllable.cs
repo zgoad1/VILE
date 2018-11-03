@@ -27,6 +27,7 @@ public class Controllable : MonoBehaviour {
 		}
 	}
 	[HideInInspector] public Vector3 velocity = Vector3.zero;    // direction of movement
+	public static Camera mainCam;
 
 	protected Transform camTransform;
 	protected CameraControl cam;
@@ -45,18 +46,17 @@ public class Controllable : MonoBehaviour {
 	protected Vector3 prevPosition;
 	protected Animator anim;
 	protected Rigidbody rb;
+	protected new Renderer renderer;
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
 	 * The target only affects where you face when you're attacking.
 	 * target can only change when you're not attacking.
 	 * target updates every non-attacking frame to the enemy nearest to the center of the screen.
 	 */
-	protected Controllable target;
 	protected Transform camLook;
-	protected new Renderer renderer;
 
 	protected static Controllable currentPlayer;
-	public static List<Controllable> onScreen = new List<Controllable>();
+	[HideInInspector] public Controllable target;
 
 	public enum state {
 		AI, PLAYER
@@ -64,6 +64,7 @@ public class Controllable : MonoBehaviour {
 	#endregion
 
 	protected virtual void Reset() {
+		mainCam = FindObjectOfType<MainCamera>().GetComponent<Camera>();
 		camTransform = FindObjectOfType<MainCamera>().transform;
 		cam = FindObjectOfType<CameraControl>();
 		cc = GetComponent<CharacterController>();
@@ -75,9 +76,12 @@ public class Controllable : MonoBehaviour {
 		renderer = GetComponentInChildren<SkinnedMeshRenderer>();
 		if(renderer == null) renderer = GetComponentInChildren<MeshRenderer>();
 		if(renderer != null) {
-			ControllableRenderer cr = renderer.GetComponent<ControllableRenderer>();
+			ControllableRenderer cr;
+			if(this is Enemy) cr = renderer.GetComponent<EnemyRenderer>();
+			else cr = renderer.GetComponent<ControllableRenderer>();
 			if(cr == null) {
-				cr = renderer.gameObject.AddComponent<ControllableRenderer>();
+				if(this is Enemy) cr = renderer.gameObject.AddComponent<EnemyRenderer>();
+				else cr = renderer.gameObject.AddComponent<ControllableRenderer>();
 			}
 			cr.parent = this;
 		} else {
@@ -241,6 +245,7 @@ public class Controllable : MonoBehaviour {
 		// revoke control from current controlled object
 		if(currentPlayer != null) {
 			currentPlayer.control = state.AI;
+			currentPlayer.SetTarget();
 		}
 
 		// give control to this object
