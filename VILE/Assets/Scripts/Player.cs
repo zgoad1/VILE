@@ -27,7 +27,7 @@ public class Player : Controllable {
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 		a2fx = GetComponentInChildren<LightningMeshEffect>();
-		a2fx.Deactivate();
+		a2fx.gameObject.SetActive(false);
 	}
 
 	protected override void Start() {

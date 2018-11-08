@@ -110,10 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ae9c602c54674d46a093e2088ef0a0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  frequency: 0.0001
-  limit: 2
+  frequency: 0.05
+  limit: 4
   indep: 1
-  necessary: 0
+  necessary: 1
   doors: 03000000
   leftList:
   - {fileID: 114227675265307564, guid: 29d00c1b587f8344fb6c87d8e29f45b1, type: 2}
