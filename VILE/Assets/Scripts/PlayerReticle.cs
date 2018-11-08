@@ -28,8 +28,10 @@ public class PlayerReticle : MonoBehaviour {
 			newPos = ((Enemy)player.target).screenCoords + originOffset;
 			newPos.x *= Screen.width * (canvas.rect.width / Screen.width);
 			newPos.y *= Screen.height * (canvas.rect.height / Screen.height);
+			Debug.Log("Moving reticle");
 		} else {
 			newPos = Vector3.zero;
+			Debug.Log("Null target");
 		}
 		transform.anchoredPosition = Vector2.Lerp(transform.anchoredPosition3D, newPos, 0.5f);
 	}

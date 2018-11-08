@@ -10,9 +10,12 @@ public class Player : Controllable {
 	private Transform sprintCam;
 	private EpilepsyController flasher;
 	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
-	private bool attacking = false;
 	private bool possessing = false;
 	private Enemy possessed = null;
+	private LightningMeshEffect a2fx;
+
+	// temp
+	[HideInInspector] public Vector3 iPos = Vector3.zero;
 
 	public static List<Enemy> targets = new List<Enemy>();
 
@@ -23,6 +26,8 @@ public class Player : Controllable {
 		head = GetComponentsInChildren<ParticleSystem>()[4];
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
+		a2fx = GetComponentInChildren<LightningMeshEffect>();
+		a2fx.Deactivate();
 	}
 
 	protected override void Start() {
@@ -34,10 +39,13 @@ public class Player : Controllable {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 
+		atk2Cost = 20;
+
 		SetPlayer();
 	}
 
 	protected override void Update() {
+		/* debug */ if(transform.position.y < -1) transform.position = iPos;
 		if(!possessing) base.Update();
 		else {
 			transform.position = possessed.transform.position;
@@ -56,7 +64,15 @@ public class Player : Controllable {
 		base.PlayerUpdate();
 		
 		SetMotion();
-		SetTarget();
+		// Set the target dynamically if we're not attacking.
+		// If we're attacking, only set the target when we try to move forward.
+		if(!attacking)
+			SetTarget();
+		else if(attacking && fwdKey > 0) {
+			Controllable prevTarget = target;
+			SetTarget();
+			if(target == null) target = prevTarget;
+		}
 
 		#region Pause
 
@@ -83,7 +99,8 @@ public class Player : Controllable {
 			// switch state
 			control = state.PLAYER;
 		}
-		cc.Move((target.transform.position - transform.position).normalized * runSpeed / 2f);
+		Debug.Log("Attempting to possess");
+		cc.Move((target.transform.position - transform.position).normalized * runSpeed / 2f * 60 * Time.smoothDeltaTime);
 	}
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
@@ -91,6 +108,7 @@ public class Player : Controllable {
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Possess((Enemy)target);
 		}
+		/* debug */if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
 
 	/**Set the target to the closest enemy in the targets array
@@ -132,9 +150,7 @@ public class Player : Controllable {
 
 	public static bool IsInRange(Enemy e) {
 		float maxDist = 0.175f;  // only check objects in a circle of a radius of this fraction of the screen size
-		e.screenCoords = mainCam.WorldToScreenPoint(e.transform.position);
-		e.screenCoords.x /= Screen.width;
-		e.screenCoords.y /= Screen.height;;
+		e.SetScreenCoords();
 		float dist = Vector2.Distance(e.screenCoords, screenCenter);
 		if(dist < maxDist) {
 			return true;
@@ -264,6 +280,24 @@ public class Player : Controllable {
 			TurnIntoLightning(false);
 			SetPlayer();
 		}
+	}
+
+	protected override void Attack2() {
+		base.Attack2();
+		cooldownTimer = 2;
+		// vfx
+		anim.SetTrigger("attack2Charge");
+		anim.SetTrigger("attack2");
+		StartCoroutine("Attack2CR");
+		// exert hitbox if we decide to make it multi-hit
+		if(target != null) target.Stun();
+	}
+
+	private IEnumerator Attack2CR() {
+		yield return new WaitForSeconds(0.8f);
+		a2fx.gameObject.SetActive(true);
+		yield return new WaitForSeconds(1f);
+		a2fx.Deactivate();
 	}
 
 	#endregion

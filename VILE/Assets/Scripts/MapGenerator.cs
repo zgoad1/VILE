@@ -23,7 +23,7 @@ public class MapGenerator : MonoBehaviour {
 	private List<GameObject> roomsList;					// a list data structure that's otherwise exactly the same as the rooms array
 	private GameObject[,] map;							// the map to be generated
 	private List<Room> open;							// rooms that still need to be closed with end rooms
-	private List<Room> necessary;						// rooms that have to be spawned at least once
+	private List<Room> necessary = new List<Room>();	// rooms that have to be spawned at least once
 	private Dictionary<int, List<Room>> distLists;      // lists of rooms at a certain distance from the start
 	private int roomsMade = 0;                          // number of rooms generated so far
 	private Vector3 tileOffset;                         // how to offset the grid to put the start room at the origin
@@ -93,10 +93,14 @@ public class MapGenerator : MonoBehaviour {
 		Room prevRoom;	// need to keep track of this in case it's removed from the open list (can't call it open[0] later)
 		while(open.Count > 0) {
 			prevRoom = open[0];
+			Room thisPrevRoom = open[0].GetComponent<Room>();
 
 			// try to connect a random room to the first open room's first opening until it works
 			bool success = false;
 			Vector2 newCoords = open[0].coords + directions[(int)GetOpenDirection(open[0])];
+			if(newCoords == new Vector2(12, 72)) {
+				Debug.Log("uhhh");
+			}
 			do {
 				// choose a random room to place out of all the rooms that could fit there
 				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
@@ -151,7 +155,6 @@ public class MapGenerator : MonoBehaviour {
 		if(seed == "random") { 
 			seed = "" + Mathf.RoundToInt(UnityEngine.Random.Range(0, 10000) % 10000);
 			Debug.Log("Random seed: " + seed);
-			Console.WriteLine("Random seed: " + seed);
 		}
 		for(int i = 0; i < seed.Length; i++) {
 			seedInt += seed[i] * (i + 1);
@@ -170,7 +173,12 @@ public class MapGenerator : MonoBehaviour {
 		do {
 			int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, list.Count));
 			float rand = UnityEngine.Random.Range(0, 1);
-			Room thisRoom = list[randIndex].GetComponent<Room>();
+			Room thisRoom = null;
+			try {
+				thisRoom = list[randIndex].GetComponent<Room>();
+			} catch {
+				Debug.Log("uh oh");
+			}
 			// choose this room if: 
 			// 1. probability says so (probabilities of start and end rooms are 0)
 			// 2. and it's independent
@@ -203,7 +211,7 @@ public class MapGenerator : MonoBehaviour {
 			// place this room on the map
 			PlaceRoom(x, y, r);
 			// place the rest of this room if applicable
-			if(thisRoom.IsBig()) {
+			if(thisRoom.IsBig() && thisRoom.indep) {
 				List<RoomPart> parts = thisRoom.GetParts(new Vector2(x, y));
 				foreach(RoomPart p in parts) {
 					PlaceRoom((int)p.loc.x, (int)p.loc.y, p.part);
@@ -388,17 +396,19 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	// get all rooms in a list that have doors at the same positions at (can be replaced by) the specified room
+	// don't include any part of a big room
 	List<Room> GetSimilarRooms(List<Room> list, Room room) {
 		List<Room> ret = new List<Room>();
 		foreach(Room r in list) {
-			if(r.SameDoors(room)) ret.Add(r);
+			if(r.SameDoors(room) && !r.IsBig()) ret.Add(r);
 		}
 		return ret;
 	}
 	List<GameObject> GetSimilarRooms(List<GameObject> list, Room room) {
 		List<GameObject> ret = new List<GameObject>();
 		foreach(GameObject r in list) {
-			if(r.GetComponent<Room>().SameDoors(room)) ret.Add(r);
+			Room rm = r.GetComponent<Room>();
+			if(rm.SameDoors(room) && !rm.IsBig()) ret.Add(r);
 		}
 		return ret;
 	}

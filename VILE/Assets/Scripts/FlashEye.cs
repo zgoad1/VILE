@@ -25,7 +25,7 @@ public class FlashEye : Enemy {
 		dist.y = 0;
 		velocityPerSec = Vector3.ClampMagnitude(velocityPerSec + dist.normalized, maxVel);  // from per second to per frame
 		velocity = velocityPerSec / 60;
-		cc.Move(velocity);
+		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 		RotateWithVelocity();
 	}
 
@@ -33,7 +33,7 @@ public class FlashEye : Enemy {
 		SetControls();
 		SetMotion();	// velocity is set here
 		velocityPerSec = velocity * 60;
-		cc.Move(velocity);
+		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 
 		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.05f);
 		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
@@ -44,6 +44,19 @@ public class FlashEye : Enemy {
 		transform.eulerAngles = newEuler;
 
 		SetTarget();
+	}
+
+	public override void Stun() {
+		base.Stun();
+		if(stunCount >= 2) {
+			maxVel = 10;
+		} else {
+			// keep rotating blades if we're still in the air
+			anim.speed = prevAnimSpeed;
+		}
+		velocity = Vector3.zero;
+		velocityPerSec = Vector3.zero;
+		cc.velocity.Set(0, 0, 0);
 	}
 
 	private void RotateWithVelocity() {

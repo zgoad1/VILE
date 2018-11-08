@@ -2,6 +2,7 @@
 vide gmae
 
 ## To Do
+- figure out how to make stuff static without messing up lighting
 - room designs
 - circular target-bounds-limit reticle
 - reticle mechanics (color change; fade out)
@@ -10,7 +11,13 @@ vide gmae
 - combat
 - win & lose conditions
 - title & end screens
+- basic cutscenes
 - saving data
+
+**Post-release**
+- minimap
+- in-depth local scoreboard
+- new rooms
 
 ## Complete
 - movement
@@ -24,5 +31,8 @@ vide gmae
 - choosing a low graphics quality makes movement about 69 tyimes faster
 
 **- B -**
+- sprinting out of an enemy still doesn't always align you with the direction you're facing
+- stunning flash eyes twice does not drop them
+- still need to extend attack2 effect so that the endpoint meets the target
 
 **- C -**

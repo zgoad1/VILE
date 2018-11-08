@@ -32,4 +32,10 @@ public class Enemy : Controllable {
 		if(control == state.AI) target = FindObjectOfType<Player>();
 		else target = player.target;
 	}
+
+	public virtual void SetScreenCoords() {
+		screenCoords = mainCam.WorldToScreenPoint(transform.position);
+		screenCoords.x /= Screen.width;
+		screenCoords.y /= Screen.height;
+	}
 }

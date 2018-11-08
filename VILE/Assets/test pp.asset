@@ -314,8 +314,8 @@ MonoBehaviour:
     m_Settings:
       colored: 0
       intensity: 0.3
-      size: 1
-      luminanceContribution: 1
+      size: 0.3
+      luminanceContribution: 0.705
   vignette:
     m_Enabled: 1
     m_Settings:
@@ -329,7 +329,7 @@ MonoBehaviour:
       opacity: 1
       rounded: 0
   dithering:
-    m_Enabled: 0
+    m_Enabled: 1
   monitors:
     currentMonitorID: 0
     refreshOnPlay: 0

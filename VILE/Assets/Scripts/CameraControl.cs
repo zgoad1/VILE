@@ -73,7 +73,7 @@ public class CameraControl : MonoBehaviour {
 				distance = idistance;
 				SetCam(distance);
 			}
-			camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac);
+			camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac * 60 * Time.smoothDeltaTime);
 			if(screenShake > 0.01f) {
 				float timeDiff = Time.time - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
 				shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (0.4f * timeDiff));

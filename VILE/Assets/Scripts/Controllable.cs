@@ -17,6 +17,31 @@ public class Controllable : MonoBehaviour {
 	[SerializeField] protected float grav = 0.03f;
 	[SerializeField] protected float camDistance = 14;
 
+	// stamina and attack costs
+	private float st = 100;
+	protected float stamina {
+		get {
+			return st;
+		}
+		set {
+			st = Mathf.Clamp(value, 0, 100);
+		}
+	}
+	protected float atk1Cost = 5;
+	protected float atk2Cost = 20;
+
+	// attack cooldowns (in seconds) - attacks fail while this > 0
+	private float ct = 0;
+	protected float cooldownTimer {
+		get {
+			return ct;
+		}
+		set {
+			ct = Mathf.Max(0, value);
+			if(ct == 0) attacking = false;
+		}
+	}
+
 	private bool og = false;    // whether Percy can jump
 	[HideInInspector] public bool onGround {
 		get {
@@ -39,6 +64,8 @@ public class Controllable : MonoBehaviour {
 	protected float upMov = 0f;
 	protected bool sprintKey = false;
 	protected bool sprinting = false;
+	protected bool atk1Key = false;
+	protected bool atk2Key = false;
 	protected Quaternion playerRot = Quaternion.identity;
 	protected Vector3 hitNormal = Vector3.zero;
 	protected bool notOnSlope = false;
@@ -47,6 +74,10 @@ public class Controllable : MonoBehaviour {
 	protected Animator anim;
 	protected Rigidbody rb;
 	protected new Renderer renderer;
+	protected int stunCount = 0;
+	protected float prevAnimSpeed = 1;  // for stopping animation when stunned, then resuming
+	protected bool attacking = false;
+
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
 	 * The target only affects where you face when you're attacking.
@@ -59,7 +90,7 @@ public class Controllable : MonoBehaviour {
 	[HideInInspector] public Controllable target;
 
 	public enum state {
-		AI, PLAYER
+		AI, PLAYER, STUNNED
 	};
 	#endregion
 
@@ -69,10 +100,20 @@ public class Controllable : MonoBehaviour {
 		cam = FindObjectOfType<CameraControl>();
 		cc = GetComponent<CharacterController>();
 		anim = GetComponentInChildren<Animator>();
+
 		rb = GetComponent<Rigidbody>();
 		rb.useGravity = false;
 		rb.isKinematic = true;
-		camLook = GetComponentInChildren<CamLookat>().transform;
+
+		CamLookat camLookOb = GetComponentInChildren<CamLookat>();
+		if(camLookOb == null) {
+			GameObject newLookat = new GameObject("CamLookat");
+			camLookOb = newLookat.AddComponent<CamLookat>();
+			newLookat.transform.SetParent(transform);
+			newLookat.transform.position = Vector3.zero;
+		}
+		camLook = camLookOb.transform;
+
 		renderer = GetComponentInChildren<SkinnedMeshRenderer>();
 		if(renderer == null) renderer = GetComponentInChildren<MeshRenderer>();
 		if(renderer != null) {
@@ -99,6 +140,20 @@ public class Controllable : MonoBehaviour {
 		} else {
 			AIUpdate();
 		}
+		if(attacking) {
+			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
+			if(target != null) {
+				((Enemy)target).SetScreenCoords();	// make the reticle keep moving
+				Vector3 toTarget = target.transform.position - transform.position;
+				toTarget.y = 0;
+				toTarget = toTarget.normalized;
+				transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
+			} else {
+				transform.forward = Vector3.Slerp(transform.forward, camTransform.forward, 0.2f);
+			}
+		}
+		cooldownTimer -= Time.deltaTime;
+		anim.SetBool("attacking", attacking);
 	}
 
 	protected virtual void FixedUpdate() {
@@ -114,54 +169,61 @@ public class Controllable : MonoBehaviour {
 	protected virtual void PlayerUpdate() {
 		SetControls();
 		sprinting = sprintKey;  // later change this to account for stamina
-		#region Calculate movement with boring math
-		onGround = false;
-
-		// calculate movement
-		velocity.y = upMov;
-		#region Sliding
-		float slideFriction = 0.5f;
-		if(!notOnSlope) {
-			velocity.x += -upMov * hitNormal.x * (1f - slideFriction);
-			velocity.z += -upMov * hitNormal.z * (1f - slideFriction);
-			hitNormal = Vector3.zero;
+		if(!attacking) {
+			#region Calculate movement with boring math
 			onGround = false;
-			//Debug.Log("Sliding");
-		}
-		#endregion
-		cc.Move(velocity);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
 
-		// speed is the distance from where we were last frame to where we are now
-		float movDist = Vector3.Distance(prevPosition, transform.position);
-		anim.SetFloat("speed", movDist);
-		velocity = (transform.position - prevPosition).normalized;
-		velocity.y = 0;
-		prevPosition = transform.position;
-		//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
-		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.2f);
-		playerRot.y = transform.rotation.y;
-		playerRot.w = transform.rotation.w;
-		transform.rotation = playerRot;
+			// calculate movement
+			velocity.y = upMov;
+			#region Sliding
+			float slideFriction = 0.5f;
+			if(!notOnSlope) {
+				velocity.x += -upMov * hitNormal.x * (1f - slideFriction);
+				velocity.z += -upMov * hitNormal.z * (1f - slideFriction);
+				hitNormal = Vector3.zero;
+				onGround = false;
+				//Debug.Log("Sliding");
+			}
+			#endregion
+			cc.Move(velocity * 60 * Time.smoothDeltaTime);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
 
-		// jumping & falling
-		if(!onGround || !notOnSlope) {
-			upMov -= grav;
-			//Debug.Log("onGround: " + onGround + "\nnotOnSlope: " + notOnSlope);
-			//Debug.Log("Increasing gravity: " + upMov);
-		} else {
-			upMov = -grav;
-			//if(jKey) Debug.LogWarning("Apex\njKey = " + jKey + "\nonGround = " + onGround + "\ncanStillJump = " + canStillJump);
+			// speed is the distance from where we were last frame to where we are now
+			float movDist = Vector3.Distance(prevPosition, transform.position);
+			anim.SetFloat("speed", movDist);
+			velocity = (transform.position - prevPosition).normalized;
+			velocity.y = 0;
+			prevPosition = transform.position;
+			//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
+			transform.forward = Vector3.Slerp(transform.forward, velocity, 0.2f);
+			playerRot.y = transform.rotation.y;
+			playerRot.w = transform.rotation.w;
+			transform.rotation = playerRot;
+
+			// jumping & falling
+			if(!onGround || !notOnSlope) {
+				upMov -= grav;
+				//Debug.Log("onGround: " + onGround + "\nnotOnSlope: " + notOnSlope);
+				//Debug.Log("Increasing gravity: " + upMov);
+			} else {
+				upMov = -grav;
+				//if(jKey) Debug.LogWarning("Apex\njKey = " + jKey + "\nonGround = " + onGround + "\ncanStillJump = " + canStillJump);
+			}
+			//sprintKey = false;
+			if(sprinting) {
+				// sprinting is like a boost rather than an increase in movement speed.
+				// i.e., instead of moving your legs faster, it's like attaching a rocket to your behind.
+				// so if we're sprinting then we don't reset the movement direction.
+			} else {
+				velocity.x = 0f;
+				velocity.z = 0f;
+			}
+			#endregion
+
+			// attacking
+			// already know !attacking
+			if(atk1Key && stamina >= atk1Cost)		Attack1();
+			else if(atk2Key && stamina >= atk2Cost) Attack2();
 		}
-		//sprintKey = false;
-		if(sprinting) {
-			// sprinting is like a boost rather than an increase in movement speed.
-			// i.e., instead of moving your legs faster, it's like attaching a rocket to your behind.
-			// so if we're sprinting then we don't reset the movement direction.
-		} else {
-			velocity.x = 0f;
-			velocity.z = 0f;
-		}
-		#endregion
 	}
 
 	protected virtual void AIUpdate() {
@@ -188,6 +250,7 @@ public class Controllable : MonoBehaviour {
 		if(readInput) {
 			SetMovementKeys();
 			SetSprintKey();
+			SetAttackControls();
 		}
 	}
 
@@ -202,6 +265,11 @@ public class Controllable : MonoBehaviour {
 
 	protected virtual void SetSprintKey() {
 		sprintKey = Input.GetButton("Run");
+	}
+
+	protected virtual void SetAttackControls() {
+		atk1Key = Input.GetButtonDown("Attack1");
+		atk2Key = Input.GetButtonDown("Attack2");
 	}
 
 	#endregion
@@ -249,10 +317,43 @@ public class Controllable : MonoBehaviour {
 		}
 
 		// give control to this object
+		StopCoroutine("Unstun");
 		control = state.PLAYER;
 		cam.idistance = camDistance;
 		cam.lookAt = camLook;
 		currentPlayer = this;
+	}
+
+	public virtual void Stun() {
+		control = state.STUNNED;
+		stunCount++;
+		if(stunCount >= 2) {
+			// make flying enemies fall
+			gameObject.layer = LayerMask.NameToLayer("Characters"); 
+		}
+		prevAnimSpeed = anim.speed;
+		anim.speed = 0;
+		StopCoroutine("Unstun");
+		StartCoroutine("Unstun");
+	}
+
+	protected virtual IEnumerator Unstun() {
+		yield return new WaitForSeconds(4);
+		control = state.AI;
+		anim.speed = prevAnimSpeed;
+	}
+
+	protected virtual void Attack1() {
+		attacking = true;
+		stamina -= atk1Cost;
+		// set cooldownTimer in child methods
+	}
+
+	protected virtual void Attack2() {
+		Debug.Log("Attempting to attempt to attack");
+		attacking = true;
+		stamina -= atk2Cost;
+		// set cooldownTimer in child methods
 	}
 
 	protected virtual void Die() {

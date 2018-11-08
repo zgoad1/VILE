@@ -10,7 +10,8 @@ using UnityEngine;
  * Bigger rooms can be made by combining room "parts" and setting the "List"
  * variables to ONLY include the room part that attaches to it at the corresponding
  * position. This will prevent the Map Generator from putting these rooms at
- * the edges of the map and thus cutting parts of them off.
+ * the edges of the map and thus cutting parts of them off. Dependent big room
+ * parts must have a frequency of 0.
  * 
  */
 public class Room : MonoBehaviour {
@@ -49,10 +50,13 @@ public class Room : MonoBehaviour {
 
 
 	/**Whether this room needs another room connected to it after it's placed by
-	 * the map generator. Doesn't take other rooms on the map into account.
+	 * the map generator. Doesn't take other rooms currently on the map into account yet.
+	 * 
+	 * BUG FIX: Fix open big-room parts not getting added to open list by appending
+	 * "|| doors.Count == 1 && IsBig()"
 	 */
 	public bool IsOpen() {
-		return doors.Count > 1;
+		return doors.Count > 1 || doors.Count == 1 && IsBig();
 	}
 
 	/**Whether this room can have a specified room in the given direction.
@@ -79,7 +83,7 @@ public class Room : MonoBehaviour {
 	/**Whether this room is the head (starting point for generator) of a big room
 	 */
 	public bool IsBig() {
-		return indep && (leftList.Count == 1 || rightList.Count == 1 || upList.Count == 1 || downList.Count == 1);
+		return !indep || (leftList.Count == 1 || rightList.Count == 1 || upList.Count == 1 || downList.Count == 1);
 	}
 
 	/**Get all other parts of a big room given the head, as well as the position of
