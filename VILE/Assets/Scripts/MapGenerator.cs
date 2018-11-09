@@ -346,8 +346,9 @@ public class MapGenerator : MonoBehaviour {
 			}
 		}
 		// if possible, remove this room from the necessary list
-		if(thisRoom.necessary && necessary.Contains(thisRoom)) {
-			necessary.Remove(thisRoom);
+		Room prefabRoom = r.GetComponent<Room>();
+		if(prefabRoom.necessary && necessary.Contains(prefabRoom)) {
+			necessary.Remove(prefabRoom);
 		}
 		// log in roomInstances
 		roomInstances.Add(thisRoom);

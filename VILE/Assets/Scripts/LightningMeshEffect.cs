@@ -10,7 +10,6 @@ public class LightningMeshEffect : MonoBehaviour {
 	private int rand;
 	private Vector3 scale;
 	private float length = 32;
-	int rand;
 
 	// Use this for initialization
 	void Start () {
@@ -38,12 +37,6 @@ public class LightningMeshEffect : MonoBehaviour {
 		} else {
 			Deactivate();
 		}
-		renderers[rand].enabled = false;
-		rand = Mathf.FloorToInt(Random.Range(0, renderers.Length));
-		renderers[rand].enabled = true;
-		transform.Rotate(Vector3.forward, (float) rand / renderers.Length * 360);
-		if(rand < renderers.Length / 4) lightningLight.enabled = true;
-		else lightningLight.enabled = false;
 	}
 
 	public void Deactivate() {

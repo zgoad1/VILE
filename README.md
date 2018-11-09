@@ -38,3 +38,5 @@ vide gmae
 - there's also no distance limit for the target raycast
 
 **- C -**
+- flash eye laser particle effect can stop working when possessed
+- flash eye blades don't resume motion if possessed while stopped
