@@ -33,6 +33,8 @@ vide gmae
 **- B -**
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 - stunning flash eyes twice does not drop them
-- still need to extend attack2 effect so that the endpoint meets the target
+- stunning flash eyes does not stop them
+- they raycast for setting the player's target also casts behind the player
+- there's also no distance limit for the target raycast
 
 **- C -**

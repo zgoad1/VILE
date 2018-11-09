@@ -13,6 +13,7 @@ public class Player : Controllable {
 	private bool possessing = false;
 	private Enemy possessed = null;
 	private LightningMeshEffect a2fx;
+	private bool canSprint = true;
 
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
@@ -27,7 +28,7 @@ public class Player : Controllable {
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 		a2fx = GetComponentInChildren<LightningMeshEffect>();
-		a2fx.Deactivate();
+		a2fx.gameObject.SetActive(false);
 	}
 
 	protected override void Start() {
@@ -66,9 +67,9 @@ public class Player : Controllable {
 		SetMotion();
 		// Set the target dynamically if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
-		if(!attacking)
+		if(!attacking) {
 			SetTarget();
-		else if(attacking && fwdKey > 0) {
+		} else if(attacking && fwdKey > 0) {
 			Controllable prevTarget = target;
 			SetTarget();
 			if(target == null) target = prevTarget;
@@ -88,7 +89,7 @@ public class Player : Controllable {
 		#endregion
 
 		// home in on an enemy to possess it
-		if(Input.GetButtonDown("Run") && target != null) {
+		if(Input.GetButtonDown("Run") && CanPossessTarget()) {
 			control = state.AI;
 		}
 	}
@@ -99,7 +100,6 @@ public class Player : Controllable {
 			// switch state
 			control = state.PLAYER;
 		}
-		Debug.Log("Attempting to possess");
 		cc.Move((target.transform.position - transform.position).normalized * runSpeed / 2f * 60 * Time.smoothDeltaTime);
 	}
 
@@ -188,7 +188,7 @@ public class Player : Controllable {
 		tempForward.y = 0f;
 
 		// get movement direction vector
-		if(sprinting) {
+		if(sprinting && !attacking) {
 			TurnIntoLightning(true);
 			velocity = Vector3.Lerp(velocity, tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10, 0.1f);
 		} else {
@@ -271,7 +271,7 @@ public class Player : Controllable {
 			possessed = null;
 			SetPlayer();
 			TurnIntoLightning(true);
-			if(target != null) {
+			if(target != null) {	// don't use CanPossessTarget() here because you can freely jump to other enemies once you've possessed one
 				control = state.AI;
 			} else {
 				control = state.PLAYER;
@@ -284,7 +284,7 @@ public class Player : Controllable {
 
 	protected override void Attack2() {
 		base.Attack2();
-		cooldownTimer = 2;
+		cooldownTimer = 1.8f;
 		// vfx
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
@@ -294,13 +294,19 @@ public class Player : Controllable {
 	}
 
 	private IEnumerator Attack2CR() {
+		canSprint = false;
 		yield return new WaitForSeconds(0.8f);
 		a2fx.gameObject.SetActive(true);
 		yield return new WaitForSeconds(1f);
+		canSprint = true;
 		a2fx.Deactivate();
 	}
 
 	#endregion
+
+	protected bool CanPossessTarget() {
+		return target != null && target.control == state.STUNNED && canSprint;
+	}
 
 	//private IEnumerator EnableCollision() {
 	//	yield return null;

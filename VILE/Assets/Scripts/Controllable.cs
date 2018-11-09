@@ -52,6 +52,7 @@ public class Controllable : MonoBehaviour {
 		}
 	}
 	[HideInInspector] public Vector3 velocity = Vector3.zero;    // direction of movement
+	[HideInInspector] public bool isOnScreen = false;
 	public static Camera mainCam;
 
 	protected Transform camTransform;
