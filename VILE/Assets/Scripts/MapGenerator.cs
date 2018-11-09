@@ -45,10 +45,6 @@ public class MapGenerator : MonoBehaviour {
 		rooms = Resources.LoadAll<GameObject>("Rooms");
 		roomsList = new List<GameObject>(rooms);
 		amounts = new int[rooms.Length];
-		foreach(GameObject o in rooms) {
-			Room thisRoom = o.GetComponent<Room>();
-			if(thisRoom.necessary) necessary.Add(thisRoom);
-		}
 		roomInstances = new List<Room>();
 		map = new GameObject[(int)gridSize.y, (int)gridSize.x];
 		open = new List<Room>();
@@ -65,11 +61,6 @@ public class MapGenerator : MonoBehaviour {
 	void Start () {
 		GenerateMap(seed);
 	}
-
-	[ContextMenu("Generate")]
-	public void GenerateMap(string seed) {
-		Reset();
-
 		// destroy old map
 		Room[] toDestroy = GetComponentsInChildren<Room>();
 		foreach(Room r in toDestroy) {
@@ -80,7 +71,6 @@ public class MapGenerator : MonoBehaviour {
 				Debug.LogWarning("THAT MAKES ME SAD\na child of a room object might have an extra room component");
 			}
 		}
-
 		SetMapSeed(seed);
 
 		// place start room and player
@@ -141,8 +131,6 @@ public class MapGenerator : MonoBehaviour {
 					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
 					continue;
 				}
-				int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, similar.Count));
-				ReplaceRoom(similar[randIndex], r);
 			}
 		}
 	}
@@ -172,13 +160,7 @@ public class MapGenerator : MonoBehaviour {
 		GameObject choice = null;
 		do {
 			int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, list.Count));
-			float rand = UnityEngine.Random.Range(0, 1);
 			Room thisRoom = null;
-			try {
-				thisRoom = list[randIndex].GetComponent<Room>();
-			} catch {
-				Debug.Log("uh oh");
-			}
 			// choose this room if: 
 			// 1. probability says so (probabilities of start and end rooms are 0)
 			// 2. and it's independent
@@ -242,7 +224,6 @@ public class MapGenerator : MonoBehaviour {
 
 		// choose a random room from the list to replace
 		int randIndex = Mathf.RoundToInt(UnityEngine.Random.Range(0, canReplace.Count));
-		ReplaceRoom(RoomAt(canReplace[randIndex].coords), r.GetComponent<Room>());
 		return true;
 	}
 
@@ -253,9 +234,6 @@ public class MapGenerator : MonoBehaviour {
 	 * - surrounding rooms' constraints allow this room here, and they all connect to it properly
 	 * - if it's a big room, all its parts fit as well
 	 */
-	bool CanFitAt(int x, int y, Room r) {
-		if(!IsInBounds(x, y)) return false;     // this position is out of map bounds
-		if(map[y, x] != null) return false;     // there's already a room here
 		foreach(Room.direction d in r.doors) {
 			Vector2 newCoords = new Vector2(x, y);
 			if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
@@ -312,7 +290,6 @@ public class MapGenerator : MonoBehaviour {
 
 			// recursively check all the room parts, and all their parts, etc.
 			for(int i = 0; i < parts.Count; i++) {
-				if(!CanFitAt((int)locs[i].x, (int)locs[i].y, parts[i])) return false;
 			}
 		}
 		return true;
@@ -338,7 +315,6 @@ public class MapGenerator : MonoBehaviour {
 			}
 		}
 		// if possible, remove this room from the necessary list
-		if(thisRoom.necessary && necessary.Contains(thisRoom)) necessary.Remove(thisRoom);
 		// log in roomInstances
 		roomInstances.Add(thisRoom);
 		roomsMade++;
@@ -414,15 +390,9 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	// replace a room instance on the map with another
-	void ReplaceRoom(Room replacee, Room replacer) {
-		GameObject toDestroy = replacee.gameObject;
-		Vector2 pos = toDestroy.GetComponent<Room>().coords;
-		PlaceRoom((int)pos.x, (int)pos.y, replacer.gameObject);
-		DestroyImmediate(toDestroy);
 	}
 
 	// get a list of all rooms that can fit at a specified location
-	// exclude rooms with a frequency of 0 (start and end)
 	List<GameObject> GetFittingRooms(int x, int y, List<GameObject> list) {
 		List<GameObject> fits = new List<GameObject>();
 		foreach(GameObject o in list) {
