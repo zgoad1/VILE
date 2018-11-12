@@ -2,11 +2,10 @@
 vide gmae
 
 ## To Do
-- figure out how to make stuff static without messing up lighting
-- room designs
-- circular target-bounds-limit reticle
 - reticle mechanics (color change; fade out)
-- delta time
+- average, everyday room designs
+- advanced room designs
+- circular target-bounds-limit reticle
 - enemies
 - combat
 - win & lose conditions
@@ -34,9 +33,8 @@ vide gmae
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 - stunning flash eyes twice does not drop them
 - stunning flash eyes does not stop them
-- they raycast for setting the player's target also casts behind the player
-- there's also no distance limit for the target raycast
 
 **- C -**
+- switchcing player to AI state to possess an enemy doesn't always turn to lightning
 - flash eye laser particle effect can stop working when possessed
 - flash eye blades don't resume motion if possessed while stopped

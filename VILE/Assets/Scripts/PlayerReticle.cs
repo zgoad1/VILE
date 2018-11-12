@@ -31,6 +31,6 @@ public class PlayerReticle : MonoBehaviour {
 		} else {
 			newPos = Vector3.zero;
 		}
-		transform.anchoredPosition = Vector2.Lerp(transform.anchoredPosition3D, newPos, 0.5f);
+		transform.anchoredPosition = Vector2.Lerp(transform.anchoredPosition3D, newPos, 0.5f * 60 * Time.deltaTime);
 	}
 }

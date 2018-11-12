@@ -46,7 +46,7 @@ public class Player : Controllable {
 	}
 
 	protected override void Update() {
-		/* debug */ if(transform.position.y < -1) transform.position = iPos;
+		if(transform.position.y < -1) transform.position = iPos;
 		if(!possessing) base.Update();
 		else {
 			transform.position = possessed.transform.position;
@@ -89,7 +89,7 @@ public class Player : Controllable {
 		#endregion
 
 		// home in on an enemy to possess it
-		if(Input.GetButtonDown("Run") && CanPossessTarget()) {
+		if(sprinting && CanPossessTarget()) {
 			control = state.AI;
 		}
 	}
@@ -100,7 +100,7 @@ public class Player : Controllable {
 			// switch state
 			control = state.PLAYER;
 		}
-		cc.Move((target.transform.position - transform.position).normalized * runSpeed / 2f * 60 * Time.smoothDeltaTime);
+		cc.Move((target.transform.position - transform.position).normalized * (runSpeed / 2f) * 60 * Time.smoothDeltaTime);
 	}
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
@@ -108,7 +108,8 @@ public class Player : Controllable {
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Possess((Enemy)target);
 		}
-		/* debug */if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
+		// make a "checkpoint" to keep from falling off map
+		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
 
 	/**Set the target to the closest enemy in the targets array
@@ -159,9 +160,6 @@ public class Player : Controllable {
 	}
 
 	protected override void SetMotion() {
-		/*
-		base.SetMotion();
-		*/
 		bool inH = true, inV = true;    // used in conjunction to determine whether the player is doing any input
 		if(rightKey != 0) {
 			rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
@@ -180,31 +178,19 @@ public class Player : Controllable {
 	}
 
 	protected override void SetVelocity() {
-		/*
-		base.SetVelocity();
-		*/
 		// change forward's y to 0 then normalize, in case the camera is pointed down or up
 		Vector3 tempForward = camTransform.forward;
 		tempForward.y = 0f;
 
 		// get movement direction vector
-		if(sprinting && !attacking) {
+		if(sprinting && !attacking && velocity != Vector3.zero) {
 			TurnIntoLightning(true);
-			velocity = Vector3.Lerp(velocity, tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10, 0.1f);
+			velocity = Vector3.Lerp(velocity, (tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10), 0.1f);
 		} else {
 			TurnIntoLightning(false);
-			velocity = tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov;
+			velocity = (tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov);
 		}
 	}
-
-	#region Setting control input variables 
-	/*
-	protected override void SetSprintKey() {
-		sprintKey = Input.GetButtonUp("Run") ? false : Input.GetButtonDown("Run");
-	}
-	*/
-
-	#endregion
 
 	public void Pause() {
 		readInput = false;
@@ -241,7 +227,7 @@ public class Player : Controllable {
 			burst.Play();
 			//flasher.FlashStop();
 			if(rightKey <= 0.1f && fwdKey <= 0.1f) {
-				anim.SetTrigger("recover");
+				anim.SetTrigger("land");
 			}
 			isLightning = false;    // protect this part from repeated calls
 		}

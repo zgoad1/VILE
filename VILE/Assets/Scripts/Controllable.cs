@@ -11,10 +11,25 @@ public class Controllable : MonoBehaviour {
 	// NOTE: COLLISION DETECTION MUST BE CONTINUOUS or animations will be wacky
 	#region Variables
 	[SerializeField] protected float speed = 0.225f;
-	[SerializeField] protected float runSpeed = 2f;
-	[SerializeField] protected float accel = 0.175f;
-	[SerializeField] protected float decel = 0.2f;
-	[SerializeField] protected float grav = 0.03f;
+	[SerializeField] protected float runSpeed = 0.2f;
+	[SerializeField] protected float acceleration = 0.175f;
+	protected float accel {
+		get {
+			return acceleration * 60 * Time.deltaTime;
+		}
+	}
+	[SerializeField] protected float deceleration = 0.2f;
+	protected float decel {
+		get {
+			return deceleration * 60 * Time.deltaTime;
+		}
+	}
+	[SerializeField] protected float gravity = 0.03f;
+	protected float grav {
+		get {
+			return gravity * 60 * Time.deltaTime;
+		}
+	}
 	[SerializeField] protected float camDistance = 14;
 
 	// stamina and attack costs
@@ -51,7 +66,8 @@ public class Controllable : MonoBehaviour {
 			og = value;
 		}
 	}
-	[HideInInspector] public Vector3 velocity = Vector3.zero;    // direction of movement
+	// direction of movement
+	[HideInInspector] public Vector3 velocity = Vector3.zero;
 	[HideInInspector] public bool isOnScreen = false;
 	public static Camera mainCam;
 
@@ -72,7 +88,7 @@ public class Controllable : MonoBehaviour {
 	protected bool notOnSlope = false;
 	[HideInInspector] public bool readInput = true;
 	protected Vector3 prevPosition;
-	protected Animator anim;
+	[HideInInspector] public Animator anim;
 	protected Rigidbody rb;
 	protected new Renderer renderer;
 	protected int stunCount = 0;
@@ -144,7 +160,11 @@ public class Controllable : MonoBehaviour {
 		if(attacking) {
 			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
 			if(target != null) {
-				((Enemy)target).SetScreenCoords();	// make the reticle keep moving
+				try {
+					((Enemy)target).SetScreenCoords();  // make the reticle keep moving
+				} catch {
+					Debug.Log("what");
+				}
 				Vector3 toTarget = target.transform.position - transform.position;
 				toTarget.y = 0;
 				toTarget = toTarget.normalized;
@@ -351,7 +371,6 @@ public class Controllable : MonoBehaviour {
 	}
 
 	protected virtual void Attack2() {
-		Debug.Log("Attempting to attempt to attack");
 		attacking = true;
 		stamina -= atk2Cost;
 		// set cooldownTimer in child methods

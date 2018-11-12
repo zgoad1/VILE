@@ -54,8 +54,8 @@ public class CameraControl : MonoBehaviour {
 	void LateUpdate() {
 		// keep the camera from going through solid colliders
 		if(zoomTransform != null) {
-			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac);	// smoothly move and rotate the
-			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac);		// main camera
+			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);	// smoothly move and rotate the
+			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);		// main camera
 			currentX = lookAt.rotation.eulerAngles.y;	// keep the camera behind the player when it goes back to normal tracking mode
 														// (mouse movements shouldn't affect where the camera is when we come out of
 														// lightning bolt mode)

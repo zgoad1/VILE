@@ -17,6 +17,11 @@ public class Enemy : Controllable {
 		player = FindObjectOfType<Player>();
 	}
 
+	protected override void PlayerUpdate() {
+		base.PlayerUpdate();
+		target = GameController.player.target;
+	}
+
 	protected override void AIUpdate() {
 		base.AIUpdate();
 		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);

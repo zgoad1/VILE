@@ -33,7 +33,7 @@ public class FlashEye : Enemy {
 		SetControls();
 		SetMotion();	// velocity is set here
 		velocityPerSec = velocity * 60;
-		cc.Move(velocityPerSec * Time.smoothDeltaTime);
+		cc.Move(velocity);
 
 		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.05f);
 		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
