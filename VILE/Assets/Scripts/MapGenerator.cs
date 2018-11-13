@@ -15,7 +15,6 @@ public class MapGenerator : MonoBehaviour {
 	public int minRooms = 400;							// minimum amount of rooms to generate
 	public string seed = "random";						// seed to use for RNG
 	public float roomSize = 100;                        // size of standard room in units
-	public Font font;
 
 	public GameObject[] rooms;							// list of all room prefabs
 	[HideInInspector] public int[] amounts;             // how many of each room we've placed
@@ -28,7 +27,6 @@ public class MapGenerator : MonoBehaviour {
 	private Dictionary<int, List<Room>> distLists;      // lists of rooms at a certain distance from the start
 	private int roomsMade = 0;                          // number of rooms generated so far
 	private Vector3 tileOffset;                         // how to offset the grid to put the start room at the origin
-	private Player player;
 
 	// stuff to move to a subclass that's specific to this game
 	private GameObject flyingPlane;
@@ -62,7 +60,6 @@ public class MapGenerator : MonoBehaviour {
 		flyingPlane = GameObject.Find("Flying Plane");
 		flyingPlane.transform.position = new Vector3(-roomSize / 2, flyingHeight, -roomSize / 2);
 		flyingPlane.transform.localScale = new Vector3(gridSize.x * roomSize / 10, 1, gridSize.y * roomSize / 10);
-		player = FindObjectOfType<Player>();
 	}
 
 	void Start () {
@@ -87,10 +84,10 @@ public class MapGenerator : MonoBehaviour {
 		DestroyMap();
 		SetMapSeed(seed);
 
-		// place start room and player
+		// place start room and GameController.player
 		Vector2 startCoords = new Vector2(Mathf.Floor(gridSize.x / 2), Mathf.Floor(9 * gridSize.y / 10));
 		PlaceRoom(startCoords, Array.Find(rooms, r => r.tag == "StartRoom"));
-		player.transform.position = new Vector3(startCoords.x, 0, -startCoords.y) * roomSize + tileOffset;
+		GameController.player.transform.position = new Vector3(startCoords.x, 0, -startCoords.y) * roomSize + tileOffset;
 
 		// while open list is not empty, connect rooms to the first open room
 		// NOTE: For this not to be an infinite loop, we need to have every possible intersection in our room list.
