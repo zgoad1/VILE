@@ -1,8 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
-using System;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Rigidbody))]
@@ -30,9 +28,25 @@ public class Controllable : MonoBehaviour {
 			return gravity * 60 * Time.deltaTime;
 		}
 	}
+	protected Vector3 gravVec = Vector3.zero;
 	[SerializeField] protected float camDistance = 14;
 
-	// stamina and attack costs
+	// hp-related
+	[SerializeField] protected float maxHP = 100;
+	protected float h = 100;
+	protected float hp {
+		get {
+			return h;
+		}
+		set {
+			h = Mathf.Clamp(value, 0, maxHP);
+			if(h == 0) Die();
+		}
+	}
+	protected bool dead = false;
+
+	// stamina and attacking
+	protected bool attacking = false;
 	private float st = 100;
 	protected float stamina {
 		get {
@@ -44,9 +58,11 @@ public class Controllable : MonoBehaviour {
 	}
 	protected float atk1Cost = 5;
 	protected float atk2Cost = 20;
-
-	// attack cooldowns (in seconds) - attacks fail while this > 0
-	private float ct = 0;
+	[SerializeField] protected float attack1Cooldown = 0.5f;
+	[SerializeField] protected float attack2Cooldown = 3f;
+	[SerializeField] protected float attack1Power = 10f;
+	[SerializeField] protected float attack2Power = 20f;
+	private float ct = 0;	// attack cooldowns (in seconds) - attacks fail while this > 0
 	protected float cooldownTimer {
 		get {
 			return ct;
@@ -57,7 +73,8 @@ public class Controllable : MonoBehaviour {
 		}
 	}
 
-	private bool og = false;    // whether Percy can jump
+	// velocity and transform-related
+	private bool og = false;
 	[HideInInspector] public bool onGround {
 		get {
 			return og;
@@ -66,34 +83,36 @@ public class Controllable : MonoBehaviour {
 			og = value;
 		}
 	}
-	// direction of movement
 	[HideInInspector] public Vector3 velocity = Vector3.zero;
-	[HideInInspector] public bool isOnScreen = false;
-	public static Camera mainCam;
-
-	protected Transform camTransform;
-	protected CameraControl cam;
-	protected CharacterController cc;
-	protected float rightKey;
-	protected float fwdKey;
 	protected float rightMov = 0f;
 	protected float fwdMov = 0f;
 	protected float upMov = 0f;
-	protected bool sprintKey = false;
 	protected bool sprinting = false;
+	protected bool notOnSlope = false;
+	protected Vector3 prevPosition;
+	protected Vector3 hitNormal = Vector3.zero;
+	protected Quaternion playerRot = Quaternion.identity;
+
+	// input
+	[HideInInspector] public bool readInput = true;
+	protected float rightKey;
+	protected float fwdKey;
+	protected bool sprintKey = false;
 	protected bool atk1Key = false;
 	protected bool atk2Key = false;
-	protected Quaternion playerRot = Quaternion.identity;
-	protected Vector3 hitNormal = Vector3.zero;
-	protected bool notOnSlope = false;
-	[HideInInspector] public bool readInput = true;
-	protected Vector3 prevPosition;
-	[HideInInspector] public Animator anim;
+
+	// miscellaneous
+	public static Camera mainCam;
+	protected Transform camTransform;
+	protected CameraControl cam;
+	protected CharacterController cc;
 	protected Rigidbody rb;
 	protected new Renderer renderer;
+	[HideInInspector] public Animator anim;
+	protected Transform camLook;
 	protected int stunCount = 0;
 	protected float prevAnimSpeed = 1;  // for stopping animation when stunned, then resuming
-	protected bool attacking = false;
+	[HideInInspector] public bool isOnScreen = false;
 
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
@@ -101,7 +120,6 @@ public class Controllable : MonoBehaviour {
 	 * target can only change when you're not attacking.
 	 * target updates every non-attacking frame to the enemy nearest to the center of the screen.
 	 */
-	protected Transform camLook;
 
 	protected static Controllable currentPlayer;
 	[HideInInspector] public Controllable target;
@@ -145,6 +163,10 @@ public class Controllable : MonoBehaviour {
 		} else {
 			Debug.LogWarning("You have a Controllable with a weird renderer (not mesh)");
 		}
+
+		gravVec = new Vector3(0, -grav, 0);
+
+		h = maxHP;
 	}
 	
 	protected virtual void Start() {
@@ -154,8 +176,12 @@ public class Controllable : MonoBehaviour {
 	protected virtual void Update() {
 		if(control == state.PLAYER) {
 			PlayerUpdate();
-		} else {
+		} else if(control == state.AI) {
 			AIUpdate();
+		} else if(control == state.STUNNED) {
+			// stun effects
+			velocity += gravVec;
+			cc.Move(velocity);
 		}
 		if(attacking) {
 			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
@@ -242,8 +268,8 @@ public class Controllable : MonoBehaviour {
 
 			// attacking
 			// already know !attacking
-			if(atk1Key && stamina >= atk1Cost)		Attack1();
-			else if(atk2Key && stamina >= atk2Cost) Attack2();
+			if(atk1Key && CanAttack(atk1Cost))		Attack1();
+			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
 		}
 	}
 
@@ -338,7 +364,7 @@ public class Controllable : MonoBehaviour {
 		}
 
 		// give control to this object
-		StopCoroutine("Unstun");
+		Unstun();
 		control = state.PLAYER;
 		cam.idistance = camDistance;
 		cam.lookAt = camLook;
@@ -347,19 +373,20 @@ public class Controllable : MonoBehaviour {
 
 	public virtual void Stun() {
 		control = state.STUNNED;
+		velocity = Vector3.zero;
 		stunCount++;
-		if(stunCount >= 2) {
-			// make flying enemies fall
-			gameObject.layer = LayerMask.NameToLayer("Characters"); 
-		}
-		prevAnimSpeed = anim.speed;
 		anim.speed = 0;
-		StopCoroutine("Unstun");
-		StartCoroutine("Unstun");
+		StopCoroutine("UnstunCR");
+		StartCoroutine("UnstunCR");
 	}
 
-	protected virtual IEnumerator Unstun() {
+	protected virtual IEnumerator UnstunCR() {
 		yield return new WaitForSeconds(4);
+		Unstun();
+	}
+
+	public virtual void Unstun() {
+		StopCoroutine("UnstunCR");
 		control = state.AI;
 		anim.speed = prevAnimSpeed;
 	}
@@ -367,17 +394,23 @@ public class Controllable : MonoBehaviour {
 	protected virtual void Attack1() {
 		attacking = true;
 		stamina -= atk1Cost;
-		// set cooldownTimer in child methods
+		cooldownTimer = attack1Cooldown;
 	}
 
 	protected virtual void Attack2() {
 		attacking = true;
 		stamina -= atk2Cost;
-		// set cooldownTimer in child methods
+		cooldownTimer = attack2Cooldown;
+	}
+
+	// Check if we can attack using a given amount of stamina
+	protected virtual bool CanAttack(float atkCost) {
+		return stamina >= atkCost && cooldownTimer <= 0;
 	}
 
 	protected virtual void Die() {
-		Destroy(gameObject);
+		dead = true;
+		Destroy(gameObject);	// replace this when we have overrides
 	}
 
 	protected virtual void OnControllerColliderHit(ControllerColliderHit hit) {

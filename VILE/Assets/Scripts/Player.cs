@@ -14,6 +14,8 @@ public class Player : Controllable {
 	private Enemy possessed = null;
 	private LightningMeshEffect a2fx;
 	private bool canSprint = true;
+	private LayerMask rayMask;
+	private LayerMask solidLayer;
 
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
@@ -28,6 +30,8 @@ public class Player : Controllable {
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 		a2fx = GetComponentInChildren<LightningMeshEffect>();
+		solidLayer = LayerMask.NameToLayer("Solid");
+		rayMask = 1 << LayerMask.NameToLayer("Solid");
 		a2fx.gameObject.SetActive(false);
 	}
 
@@ -130,14 +134,16 @@ public class Player : Controllable {
 				}
 			}
 		}
-		// find the closest enemy in the targets array
+		// find the closest enemy in the targets array that isn't blocked by a wall
 		float minDist = Mathf.Infinity;
 		if(targets.Count > 0) {
-			Enemy newTarget = targets[0];
+			Enemy newTarget = null;
 			foreach(Enemy e in targets) {
 				if(e.distanceFromPlayer < minDist) {
-					minDist = e.distanceFromPlayer;
-					newTarget = e;
+					if(!Physics.Raycast(transform.position, e.transform.position - transform.position, e.distanceFromPlayer, rayMask)) {
+						minDist = e.distanceFromPlayer;
+						newTarget = e;
+					}
 				}
 			}
 			// if we're not in the middle of an attack or combo, update target
@@ -183,7 +189,7 @@ public class Player : Controllable {
 		tempForward.y = 0f;
 
 		// get movement direction vector
-		if(sprinting && !attacking && velocity != Vector3.zero) {
+		if(sprinting && !attacking && (velocity != Vector3.zero || !isLightning)) {
 			TurnIntoLightning(true);
 			velocity = Vector3.Lerp(velocity, (tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10), 0.1f);
 		} else {
@@ -275,14 +281,14 @@ public class Player : Controllable {
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
 		StartCoroutine("Attack2CR");
-		// exert hitbox if we decide to make it multi-hit
-		if(target != null) target.Stun();
 	}
 
 	private IEnumerator Attack2CR() {
 		canSprint = false;
 		yield return new WaitForSeconds(0.8f);
 		a2fx.gameObject.SetActive(true);
+		// exert hitbox if we decide to make it multi-hit
+		if(target != null) target.Stun();
 		yield return new WaitForSeconds(1f);
 		canSprint = true;
 		a2fx.Deactivate();
