@@ -80,6 +80,7 @@ public class MapGenerator : MonoBehaviour {
 	}
 	
 	public void GenerateMap(string seed) {
+		FindObjectOfType<GameController>().FindPlayer();
 		Reset();
 		DestroyMap();
 		SetMapSeed(seed);

@@ -39,7 +39,6 @@ GameObject:
   - component: {fileID: 4935149887239954}
   - component: {fileID: 33013035983889078}
   - component: {fileID: 23027513311716438}
-  - component: {fileID: 95946923535081328}
   - component: {fileID: 65302259343688762}
   m_Layer: 9
   m_Name: wall_normal
@@ -327,7 +326,6 @@ GameObject:
   - component: {fileID: 4290268196859296}
   - component: {fileID: 33820644568112886}
   - component: {fileID: 23794078808273068}
-  - component: {fileID: 95212404180683940}
   - component: {fileID: 65724065938824644}
   m_Layer: 9
   m_Name: wall_normal (1)
@@ -346,7 +344,6 @@ GameObject:
   - component: {fileID: 4973523213053382}
   - component: {fileID: 33066788958488508}
   - component: {fileID: 23971096494191386}
-  - component: {fileID: 95906735449471956}
   - component: {fileID: 65404848621866682}
   m_Layer: 9
   m_Name: wall_normal
@@ -637,7 +634,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1096,7 +1093,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1168,7 +1165,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1576,60 +1573,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 29.23, y: 0.730692, z: 9.80765}
   m_Center: {x: 0, y: -0.365346, z: 0}
---- !u!95 &95212404180683940
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1975909243594550}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &95906735449471956
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1986094160465948}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &95946923535081328
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1121830109354884}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &114011044557274398
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1641,9 +1584,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 0}
-  - {fileID: 0}
 --- !u!114 &114085067383780710
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1655,9 +1595,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23564712310603000}
-  - {fileID: 23998265055453162}
 --- !u!114 &114780434180942630
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -1695,6 +1632,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23424767746577598}
-  - {fileID: 23714114492105580}

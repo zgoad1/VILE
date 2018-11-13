@@ -22,7 +22,6 @@ GameObject:
   - component: {fileID: 33244877380320964}
   - component: {fileID: 23146425203788074}
   - component: {fileID: 65469551227106406}
-  - component: {fileID: 95242627747691616}
   m_Layer: 9
   m_Name: wall_normal
   m_TagString: Untagged
@@ -448,7 +447,6 @@ GameObject:
   - component: {fileID: 33168948489541804}
   - component: {fileID: 23079071173740736}
   - component: {fileID: 65336514236354042}
-  - component: {fileID: 95843716792803544}
   m_Layer: 9
   m_Name: wall_normal
   m_TagString: Untagged
@@ -591,7 +589,6 @@ GameObject:
   - component: {fileID: 33472312711363828}
   - component: {fileID: 23390462501810508}
   - component: {fileID: 65080081449613476}
-  - component: {fileID: 95473584232529566}
   m_Layer: 9
   m_Name: wall_normal (1)
   m_TagString: Untagged
@@ -1112,7 +1109,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1219,7 +1216,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1607,7 +1604,7 @@ MeshRenderer:
   m_Materials:
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
   - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
-  - {fileID: 2100000, guid: f33fd4e9d6f17fb4e9798542d014e758, type: 2}
+  - {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -2577,60 +2574,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 29.23, y: 0.730692, z: 9.80765}
   m_Center: {x: 0, y: -0.365346, z: 0}
---- !u!95 &95242627747691616
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1011631458075888}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &95473584232529566
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1872099581324458}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!95 &95843716792803544
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1593618410889580}
-  m_Enabled: 1
-  m_Avatar: {fileID: 9000000, guid: d8f60ba0906eac74b8195e71ad0ed36d, type: 3}
-  m_Controller: {fileID: 9100000, guid: 1eb1dd9bfd27643448c13865ce0f8d99, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!95 &95947940230147338
 Animator:
   serializedVersion: 3
@@ -2641,7 +2584,7 @@ Animator:
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: bff6b866c78826140b198ecfff459009, type: 3}
   m_Controller: {fileID: 9100000, guid: 787913665476aa349a3ea05a754aca13, type: 2}
-  m_CullingMode: 0
+  m_CullingMode: 2
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
@@ -2760,9 +2703,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23419216946141560}
-  - {fileID: 23945944897585248}
 --- !u!114 &114449406883037922
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2774,9 +2714,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23364006251574520}
-  - {fileID: 23752629623510878}
 --- !u!114 &114701533934360080
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2788,9 +2725,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23729959136577116}
-  - {fileID: 23095980031206210}
 --- !u!114 &114863801414722606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2802,6 +2736,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca5171f998158b34583290d406ffc8ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  children:
-  - {fileID: 23741592299776388}
-  - {fileID: 23414253995040504}
