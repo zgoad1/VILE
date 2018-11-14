@@ -33,4 +33,5 @@ vide gmae
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- enemies can get stuck on laser posts (make box collider smaller)
 - flash eye laser particle effect can stop working when possessed?
