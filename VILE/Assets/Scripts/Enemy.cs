@@ -22,8 +22,8 @@ public class Enemy : Controllable {
 		target = GameController.player.target;
 	}
 
-	protected override void AIUpdate() {
-		base.AIUpdate();
+	protected override void Update() {
+		base.Update();
 		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);
 	}
 

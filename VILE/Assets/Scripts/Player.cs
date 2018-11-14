@@ -16,6 +16,8 @@ public class Player : Controllable {
 	private bool canSprint = true;
 	private LayerMask rayMask;
 	private LayerMask solidLayer;
+	private AttackHitbox ahbL, ahbR;
+	private int comboNumber = 0;
 
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
@@ -33,6 +35,8 @@ public class Player : Controllable {
 		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid");
 		a2fx.gameObject.SetActive(false);
+		//ahbL = GetComponentsInChildren<AttackHitbox>()[0];
+		//ahbR = GetComponentsInChildren<AttackHitbox>()[1];
 	}
 
 	protected override void Start() {
@@ -108,10 +112,12 @@ public class Player : Controllable {
 	}
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
-		base.OnControllerColliderHit(hit);
+		base.OnControllerColliderHit(hit);  // sets onGround
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Possess((Enemy)target);
-		}
+		} /*else if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.1f) {
+			cam.ScreenShake(Mathf.Abs(velocity.y));
+		}*/	// decided I like how she feels lighter when she lands
 		// make a "checkpoint" to keep from falling off map
 		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
@@ -223,6 +229,7 @@ public class Player : Controllable {
 			transform.rotation = camTransform.rotation;
 			cam.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
+			cam.ScreenShake(1.5f);
 			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;     // protect this part from repeated calls
 		} else if(!enable && isLightning) {
@@ -274,9 +281,39 @@ public class Player : Controllable {
 		}
 	}
 
+	protected override void Attack1() {
+		base.Attack1();
+		switch(comboNumber) {
+			case 0:
+				StartCoroutine("Attack1aCR");
+				break;
+			case 1:
+				StartCoroutine("Attack1bCR");
+				break;
+			default:
+				StartCoroutine("Attack1cCR");
+				break;
+		}
+		comboNumber = (comboNumber + 1) % 3;
+	}
+
+	protected IEnumerator Attack1aCR() {
+		// start animation, handle code in animation events
+		// can just replace these coroutines
+		yield return null;
+	}
+
+	protected IEnumerator Attack1bCR() {
+		yield return null;
+	}
+
+	protected IEnumerator Attack1cCR() {
+		yield return null;
+	}
+
 	protected override void Attack2() {
 		base.Attack2();
-		cooldownTimer = 1.8f;
+		cooldownTimer = 1.6f;
 		// vfx
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
@@ -289,7 +326,7 @@ public class Player : Controllable {
 		a2fx.gameObject.SetActive(true);
 		// exert hitbox if we decide to make it multi-hit
 		if(target != null) target.Stun();
-		yield return new WaitForSeconds(1f);
+		yield return new WaitForSeconds(0.8f);
 		canSprint = true;
 		a2fx.Deactivate();
 	}

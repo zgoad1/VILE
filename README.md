@@ -27,6 +27,7 @@ vide gmae
 ## Bugs
 
 **- A -**
+- seed 7263 is broken
 
 **- B -**
 - sprinting out of an enemy still doesn't always align you with the direction you're facing

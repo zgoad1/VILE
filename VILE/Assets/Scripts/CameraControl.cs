@@ -56,9 +56,10 @@ public class CameraControl : MonoBehaviour {
 		if(zoomTransform != null) {
 			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);	// smoothly move and rotate the
 			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);		// main camera
-			currentX = lookAt.rotation.eulerAngles.y;	// keep the camera behind the player when it goes back to normal tracking mode
+			currentX = lookAt.rotation.eulerAngles.y;   // keep the camera behind the player when it goes back to normal tracking mode
 														// (mouse movements shouldn't affect where the camera is when we come out of
 														// lightning bolt mode)
+			ScreenShakeUpdate();
 		} else {
 			RaycastHit hit;
 			Vector3 rayDir = Vector3.zero;
@@ -74,13 +75,7 @@ public class CameraControl : MonoBehaviour {
 				SetCam(distance);
 			}
 			camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac * 60 * Time.smoothDeltaTime);
-			if(screenShake > 0.01f) {
-				float timeDiff = Time.time - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
-				shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (0.4f * timeDiff));
-				camTransform.position += shakeVec;
-				//Debug.Log("ShakeVec.y: " + shakeVec.y);
-				screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
-			}
+			ScreenShakeUpdate();
 			camTransform.LookAt(lookAt);
 		}
 	}
@@ -106,8 +101,22 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	public void ScreenShake(float intensity) {
-		screenShake = intensity;
-		shakeStart = Time.time;
+		// prevent weak shapes interrupting strong shakes, also eliminate negative input
+		if(intensity > screenShake) {
+			screenShake = intensity;
+			shakeStart = Time.time;
+		}
+	}
+
+	private void ScreenShakeUpdate() {
+		if(screenShake > 0.01f) {
+			float timeDiff = Time.time - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
+			shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (timeDiff));
+			shakeVec.x = -screenShake * (0.2f / timeDiff) * Mathf.Cos(2 * Mathf.PI / (0.2f * timeDiff));
+			camTransform.position += shakeVec;
+			//Debug.Log("ShakeVec.y: " + shakeVec.y);
+			screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
+		}
 	}
 
 	public void SetZoomTransform(Transform t, float zoomSpeed) {
