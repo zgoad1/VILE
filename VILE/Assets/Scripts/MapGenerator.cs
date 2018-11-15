@@ -137,18 +137,25 @@ public class MapGenerator : MonoBehaviour {
 			}
 
 			// make sure at least one of each necessary room is placed
-			foreach(Room r in necessary) {
-				List<Room> similar = GetSimilarRooms(roomInstances, r);
-				if(similar.Count == 0) {
-					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
-					continue;
+			try {
+				while(necessary.Count > 0) {
+					Room r = necessary[0];
+					List<Room> similar = GetSimilarRooms(roomInstances, r);
+					if(similar.Count == 0) {
+						Debug.LogError("Could not place necessary room: " + r.gameObject.name);
+						necessary.Remove(r);
+						continue;
+					}
+					int randIndex = 0;
+					while(!TryReplaceRoom(similar[randIndex], r) && ++randIndex < similar.Count) ;
+					if(randIndex == similar.Count) {
+						Debug.LogError("Could not place necessary room: " + r.gameObject.name);
+						necessary.Remove(r);
+						continue;
+					}
 				}
-				int randIndex = 0;
-				while(!TryReplaceRoom(similar[randIndex], r) && ++randIndex < similar.Count);
-				if(randIndex == similar.Count) {
-					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
-					continue;
-				}
+			} catch {
+				Debug.LogError("A booboo was made when trying to place necessary rooms.");
 			}
 		}
 	}
@@ -212,13 +219,6 @@ public class MapGenerator : MonoBehaviour {
 		if(CanFitAt(x, y, thisRoom)) {
 			// place this room on the map
 			PlaceRoom(x, y, r);
-			// place the rest of this room if applicable
-			if(thisRoom.IsBig() && thisRoom.indep) {
-				List<RoomPart> parts = thisRoom.GetParts(new Vector2(x, y));
-				foreach(RoomPart p in parts) {
-					PlaceRoom((int)p.loc.x, (int)p.loc.y, p.part);
-				}
-			}
 			return true;
 		} else {
 			return false;
@@ -336,6 +336,7 @@ public class MapGenerator : MonoBehaviour {
 		if(IsOpen(thisRoom)) {
 			open.Add(thisRoom);
 		}
+
 		// remove any adjacent rooms from open list if they've been closed by placing this room
 		foreach(Room.direction d in thisRoom.doors) {
 			Room adj = RoomAt(thisRoom.coords + directions[(int)d]);
@@ -343,11 +344,22 @@ public class MapGenerator : MonoBehaviour {
 				open.Remove(adj);
 			}
 		}
+
 		// if possible, remove this room from the necessary list
 		Room prefabRoom = r.GetComponent<Room>();
 		if(prefabRoom.necessary && necessary.Contains(prefabRoom)) {
 			necessary.Remove(prefabRoom);
 		}
+
+		// place the rest of this room if applicable
+		if(thisRoom.IsBig() && thisRoom.indep) {
+			List<RoomPart> parts = thisRoom.GetParts(new Vector2(x, y));
+			foreach(RoomPart p in parts) {
+				/* ??? */
+				PlaceRoom((int)p.loc.x, (int)p.loc.y, p.part);
+			}
+		}
+
 		// log in roomInstances
 		roomInstances.Add(thisRoom);
 		roomsMade++;
@@ -409,7 +421,7 @@ public class MapGenerator : MonoBehaviour {
 	List<Room> GetSimilarRooms(List<Room> list, Room room) {
 		List<Room> ret = new List<Room>();
 		foreach(Room r in list) {
-			if(r.SameDoors(room) && !r.IsBig()) ret.Add(r);
+			if(r.SameDoors(room) && !r.IsBig() && !r.necessary) ret.Add(r);
 		}
 		return ret;
 	}
@@ -417,7 +429,7 @@ public class MapGenerator : MonoBehaviour {
 		List<GameObject> ret = new List<GameObject>();
 		foreach(GameObject r in list) {
 			Room rm = r.GetComponent<Room>();
-			if(rm.SameDoors(room) && !rm.IsBig()) ret.Add(r);
+			if(rm.SameDoors(room) && !rm.IsBig() && !rm.necessary) ret.Add(r);
 		}
 		return ret;
 	}
@@ -427,6 +439,7 @@ public class MapGenerator : MonoBehaviour {
 		if(CanFitAt(replacee.coords, replacer, true)) {
 			GameObject toDestroy = replacee.gameObject;
 			Vector2 pos = toDestroy.GetComponent<Room>().coords;
+			roomInstances.Remove(replacee);
 			PlaceRoom((int)pos.x, (int)pos.y, replacer.gameObject);
 			DestroyImmediate(toDestroy);
 			return true;

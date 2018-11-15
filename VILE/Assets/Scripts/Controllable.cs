@@ -375,6 +375,11 @@ public class Controllable : MonoBehaviour {
 		if(currentPlayer != null) {
 			currentPlayer.control = state.AI;
 			currentPlayer.SetTarget();
+			if(currentPlayer is Player) {
+				// disable player's CharacterController to prevent multiple Possess calls because
+				// that breaks things
+				currentPlayer.cc.enabled = false;
+			}
 		}
 
 		// give control to this object
@@ -382,6 +387,7 @@ public class Controllable : MonoBehaviour {
 		control = state.PLAYER;
 		cam.idistance = camDistance;
 		cam.lookAt = camLook;
+		if(cc != null) cc.enabled = true;
 		currentPlayer = this;
 	}
 

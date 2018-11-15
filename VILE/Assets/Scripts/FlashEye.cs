@@ -5,7 +5,7 @@ using UnityEngine;
 public class FlashEye : Enemy {
 
 	private FlashEyeBall ball;
-	private float maxVel = 50;
+	private float maxVel = 64;
 	private Vector3 newEuler = Vector3.zero;
 	private Vector3 targetPos = Vector3.zero;
 	private Vector3 velocityPerSec = Vector3.zero;
@@ -65,11 +65,16 @@ public class FlashEye : Enemy {
 		SetTarget();
 	}
 
+	protected override void SetMotion() {
+		base.SetMotion();
+		velocity = Vector3.ClampMagnitude(velocity, maxVel / 60) * 1.5f;	// let player go a bit faster
+	}
+
 	public override void Stun() {
 		prevAnimSpeed = anim.speed;
 		base.Stun();
-		if(stunCount >= 2) {
-			maxVel = 10;
+		if(stunCount == 2) {
+			maxVel /= 4;
 			// make flying enemies fall
 			gameObject.layer = LayerMask.NameToLayer("Characters");
 			onGround = false;

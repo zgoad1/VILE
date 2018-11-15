@@ -5,7 +5,9 @@ using UnityEngine;
 public class LaserBarrier : MonoBehaviour {
 
 	private void Reset() {
-		if(GetComponent<BoxCollider>() == null) gameObject.AddComponent<BoxCollider>();
+		BoxCollider bc = GetComponent<BoxCollider>();
+		if(bc == null) bc = gameObject.AddComponent<BoxCollider>();
+		bc.size = new Vector3(bc.size.x * 0.4f, bc.size.y, bc.size.z * 0.4f);
 	}
 
 	private void Start() {

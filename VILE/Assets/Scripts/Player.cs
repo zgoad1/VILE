@@ -6,7 +6,7 @@ public class Player : Controllable {
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
 	private ParticleSystem head;
-	private bool isLightning = false;
+	[HideInInspector] public bool isLightning = false;
 	private Transform sprintCam;
 	private EpilepsyController flasher;
 	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
@@ -114,6 +114,7 @@ public class Player : Controllable {
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);  // sets onGround
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
+			Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
 		} /*else if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.1f) {
 			cam.ScreenShake(Mathf.Abs(velocity.y));
