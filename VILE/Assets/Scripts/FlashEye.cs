@@ -10,13 +10,24 @@ public class FlashEye : Enemy {
 	private Vector3 targetPos = Vector3.zero;
 	private Vector3 velocityPerSec = Vector3.zero;
 	private LaserFX laser;
+	private LayerMask solidLayer;
 
 	protected override void Reset() {
 		base.Reset();
 		ball = GetComponentInChildren<FlashEyeBall>();
 		laser = GetComponentInChildren<LaserFX>();
+		solidLayer = LayerMask.NameToLayer("Solid");
 		rb.isKinematic = false;
 		camDistance = 25;
+	}
+
+	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
+		// if we hit the ground relatively quickly
+		if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.5f) {
+			// shake strength inversely proportional to distance from player
+			GameController.camControl.ScreenShake(1f - distanceFromPlayer / 150f);
+		}
+		base.OnControllerColliderHit(hit);	// sets onGround
 	}
 
 	protected override void AIUpdate() {
@@ -61,6 +72,7 @@ public class FlashEye : Enemy {
 			maxVel = 10;
 			// make flying enemies fall
 			gameObject.layer = LayerMask.NameToLayer("Characters");
+			onGround = false;
 		} else {
 			// keep rotating blades if we're still in the air
 			anim.speed = prevAnimSpeed;

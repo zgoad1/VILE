@@ -186,11 +186,7 @@ public class Controllable : MonoBehaviour {
 		if(attacking) {
 			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
 			if(target != null) {
-				try {
-					((Enemy)target).SetScreenCoords();  // make the reticle keep moving
-				} catch {
-					Debug.Log("what");
-				}
+				((Enemy)target).SetScreenCoords();  // make the reticle keep moving
 				Vector3 toTarget = target.transform.position - transform.position;
 				toTarget.y = 0;
 				toTarget = toTarget.normalized;
@@ -208,6 +204,24 @@ public class Controllable : MonoBehaviour {
 			PlayerFixedUpdate();
 		} else {
 			AIFixedUpdate();
+		}
+	}
+
+	protected virtual void OnControllerColliderHit(ControllerColliderHit hit) {
+		if(hit.gameObject.tag != "Transparent") {
+			hitNormal = hit.normal;
+			// notOnSlope = we're on ground level enough to walk on OR we're hitting a straight-up wall
+			notOnSlope = Vector3.Angle(Vector3.up, hitNormal) <= cc.slopeLimit || Vector3.Angle(Vector3.up, hitNormal) >= 89;
+			if(velocity.y <= 0 && hit.point.y < transform.position.y + .9f) {
+				// hit ground
+				if(notOnSlope) onGround = true;
+				//Debug.Log("Hit ground");
+				// else if the hit point is from above and inside our radius (on top of head rather than on outer edge)
+			} else if(hit.point.y > transform.position.y + 4f && Mathf.Sqrt(Mathf.Pow(transform.position.x - hit.point.x, 2f) + Mathf.Pow(transform.position.z - hit.point.z, 2f)) < 2f * transform.localScale.x) {
+				// hit something going up
+				upMov = Mathf.Min(0f, upMov);
+				//Debug.Log("I hit my head!");
+			}
 		}
 	}
 
@@ -408,26 +422,13 @@ public class Controllable : MonoBehaviour {
 		return stamina >= atkCost && cooldownTimer <= 0;
 	}
 
+	public void Damage(float damage) {
+		hp -= damage;
+		// knockback, effects, grace period, etc.
+	}
+
 	protected virtual void Die() {
 		dead = true;
 		Destroy(gameObject);	// replace this when we have overrides
-	}
-
-	protected virtual void OnControllerColliderHit(ControllerColliderHit hit) {
-		if(hit.gameObject.tag != "Transparent") {
-			hitNormal = hit.normal;
-			// notOnSlope = we're on ground level enough to walk on OR we're hitting a straight-up wall
-			notOnSlope = Vector3.Angle(Vector3.up, hitNormal) <= cc.slopeLimit || Vector3.Angle(Vector3.up, hitNormal) >= 89;
-			if(velocity.y <= 0 && hit.point.y < transform.position.y + .9f) {
-				// hit ground
-				if(notOnSlope) onGround = true;
-				//Debug.Log("Hit ground");
-				// else if the hit point is from above and inside our radius (on top of head rather than on outer edge)
-			} else if(hit.point.y > transform.position.y + 4f && Mathf.Sqrt(Mathf.Pow(transform.position.x - hit.point.x, 2f) + Mathf.Pow(transform.position.z - hit.point.z, 2f)) < 2f * transform.localScale.x) {
-				// hit something going up
-				upMov = Mathf.Min(0f, upMov);
-				//Debug.Log("I hit my head!");
-			}
-		}
 	}
 }

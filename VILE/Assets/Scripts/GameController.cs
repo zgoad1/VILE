@@ -5,6 +5,8 @@ using UnityEngine;
 public class GameController : MonoBehaviour {
 
 	public static Player player;
+	public static MainCamera mainCam;
+	public static CameraControl camControl;
 	public static int frames = 0;
 
 	// laser barriers
@@ -18,6 +20,8 @@ public class GameController : MonoBehaviour {
 
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
+		mainCam = FindObjectOfType<MainCamera>();
+		camControl = FindObjectOfType<CameraControl>();
 	}
 
 	private void Reset() {
