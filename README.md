@@ -27,8 +27,10 @@ vide gmae
 ## Bugs
 
 **- A -**
+- Unpossessing enemies whilst attacking with them is problematic
 
 **- B -**
+- Flash eye's PlayerUpdate no longer applies delta time (slow movement with low framerate)
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
