@@ -17,12 +17,15 @@ public class PlayerReticle : MonoBehaviour {
 	private Quaternion newRotation = Quaternion.identity;
 	private Image image;
 	private Color newColor = Color.white;
+	private bool disappearing = false;
+	private bool aboutToDisappear = false;
 
 	private void Reset() {
 		player = FindObjectOfType<Player>();
 		transform = GetComponent<RectTransform>();
 		canvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
 		image = GetComponent<Image>();
+		newColor.a = 0;
 	}
 
 	// Use this for initialization
@@ -46,7 +49,8 @@ public class PlayerReticle : MonoBehaviour {
 		if(player.target != null) {
 			image.sprite = targetSprite;
 			if(player.target.control == Controllable.state.STUNNED) {
-				if(GameController.frames % 2 == 0) {
+				int newFrames = GameController.frames / 2;
+				if(newFrames % 2 == 0) {
 					image.enabled = false;
 					newRotation = possessableRotation;
 					// rotate periodically to be more attention-grabbing
@@ -62,9 +66,19 @@ public class PlayerReticle : MonoBehaviour {
 			newRotation = defaultRotation;
 		}
 
-		// disappear when we sprint
-		if(player.isLightning) {
+		// disappear when we haven't seen an enemy in a while or when we sprint
+		if(Enemy.onScreen.Count == 0) {
+			Debug.Log("Disappearing");
+			SlowDisappear();
+		} else {
+			Debug.Log("Reappearing");
+			Reappear();
+		}
+		if(disappearing) {
+			newColor.a = Mathf.Min(1, newColor.a - 0.05f);
+		} else if(player.isLightning) {
 			newColor.a = 0;
+			disappearing = true;
 		} else {
 			newColor.a = Mathf.Min(1, newColor.a + 0.05f);
 		}
@@ -72,5 +86,26 @@ public class PlayerReticle : MonoBehaviour {
 		image.color = newColor;
 		transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, 0.3f);
 		transform.anchoredPosition = Vector2.Lerp(transform.anchoredPosition3D, newPos, 0.5f * 60 * Time.deltaTime);
+	}
+
+	private void SlowDisappear() {
+		if(!aboutToDisappear) {
+			StartCoroutine("WaitToDisappear");
+			aboutToDisappear = true;
+		}
+	}
+
+	private void Reappear() {
+		if(disappearing) {
+			StopCoroutine("WaitToDisappear");
+			disappearing = false;
+			aboutToDisappear = false;
+			newColor.a = 0.3f;
+		}
+	}
+
+	private IEnumerator WaitToDisappear() {
+		yield return new WaitForSeconds(5);
+		disappearing = true;
 	}
 }
