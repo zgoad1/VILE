@@ -39,6 +39,10 @@ public class FlashEye : Enemy {
 		velocity = velocityPerSec / 60;
 		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 		RotateWithVelocity();
+
+		if(Input.GetKeyDown(KeyCode.Space)) {
+			laser.ShootLaser();
+		}
 	}
 
 	protected override void PlayerUpdate() {

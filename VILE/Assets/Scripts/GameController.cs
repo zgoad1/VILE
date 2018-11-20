@@ -1,13 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
 	public static Player player;
 	public static MainCamera mainCam;
 	public static CameraControl camControl;
+	private static Animator blackfade;
 	public static int frames = 0;
+	private static int number = 0;
+	private static string nextScene;
 
 	// laser barriers
 	[SerializeField] private Material laserBarrier;
@@ -29,11 +33,18 @@ public class GameController : MonoBehaviour {
 		frames = 0;
 		newColorLB = laserBarrier.color;
 		initialAlphaLB = newColorLB.a;
+		blackfade = GameObject.Find("Blackfade").GetComponent<Animator>();
 	}
 
 	// Use this for initialization
 	void Awake () {
 		Reset();
+		if(number == 0) {
+			DontDestroyOnLoad(gameObject);
+		} else {
+			Destroy(gameObject);
+		}
+		number++;
 	}
 	
 	// Update is called once per frame
@@ -53,5 +64,16 @@ public class GameController : MonoBehaviour {
 
 		newColorLB.a = initialAlphaLB;
 		laserBarrier.color = newColorLB;
+	}
+
+	// Fade screen out, which will automatically call LoadNextScene
+	public static void SceneChange(string newScene) {
+		nextScene = newScene;
+		blackfade.SetTrigger("fadeOut");
+	}
+
+	// Instantly change scene to nextScene
+	public static void LoadNextScene() {
+		SceneManager.LoadScene(nextScene);
 	}
 }

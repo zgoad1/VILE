@@ -183,18 +183,6 @@ public class Controllable : MonoBehaviour {
 			velocity += gravVec;
 			cc.Move(velocity);
 		}
-		if(attacking) {
-			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
-			if(target != null) {
-				((Enemy)target).SetScreenCoords();  // make the reticle keep moving
-				Vector3 toTarget = target.transform.position - transform.position;
-				toTarget.y = 0;
-				toTarget = toTarget.normalized;
-				transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
-			} else {
-				transform.forward = Vector3.Slerp(transform.forward, camTransform.forward, 0.2f);
-			}
-		}
 		cooldownTimer -= Time.deltaTime;
 		anim.SetBool("attacking", attacking);
 	}
@@ -284,6 +272,19 @@ public class Controllable : MonoBehaviour {
 			// already know !attacking
 			if(atk1Key && CanAttack(atk1Cost))		Attack1();
 			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
+		}
+
+		if(attacking) {
+			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
+			if(target != null) {
+				((Enemy)target).SetScreenCoords();  // make the reticle keep moving
+				Vector3 toTarget = target.transform.position - transform.position;
+				toTarget.y = 0;
+				toTarget = toTarget.normalized;
+				transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
+			} else {
+				transform.forward = Vector3.Slerp(transform.forward, camTransform.forward, 0.2f);
+			}
 		}
 	}
 

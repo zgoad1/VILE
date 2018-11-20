@@ -100,9 +100,6 @@ public class MapGenerator : MonoBehaviour {
 			// try to connect a random room to the first open room's first opening until it works
 			bool success = false;
 			Vector2 newCoords = open[0].coords + directions[(int)GetOpenDirection(open[0])];
-			if(newCoords == new Vector2(12, 72)) {
-				Debug.Log("uhhh");
-			}
 			do {
 				// choose a random room to place out of all the rooms that could fit there
 				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
@@ -137,25 +134,21 @@ public class MapGenerator : MonoBehaviour {
 			}
 
 			// make sure at least one of each necessary room is placed
-			try {
-				while(necessary.Count > 0) {
-					Room r = necessary[0];
-					List<Room> similar = GetSimilarRooms(roomInstances, r);
-					if(similar.Count == 0) {
-						Debug.LogError("Could not place necessary room: " + r.gameObject.name);
-						necessary.Remove(r);
-						continue;
-					}
-					int randIndex = 0;
-					while(!TryReplaceRoom(similar[randIndex], r) && ++randIndex < similar.Count) ;
-					if(randIndex == similar.Count) {
-						Debug.LogError("Could not place necessary room: " + r.gameObject.name);
-						necessary.Remove(r);
-						continue;
-					}
+			while(necessary.Count > 0) {
+				Room r = necessary[0];
+				List<Room> similar = GetSimilarRooms(roomInstances, r);
+				if(similar.Count == 0) {
+					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
+					necessary.Remove(r);
+					continue;
 				}
-			} catch {
-				Debug.LogError("A booboo was made when trying to place necessary rooms.");
+				int nextIndex = 0;
+				while(!TryReplaceRoom(similar[nextIndex], r) && ++nextIndex < similar.Count);
+				if(nextIndex == similar.Count) {
+					Debug.LogError("Could not place necessary room: " + r.gameObject.name);
+					necessary.Remove(r);
+					continue;
+				}
 			}
 		}
 	}

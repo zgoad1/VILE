@@ -68,10 +68,8 @@ public class PlayerReticle : MonoBehaviour {
 
 		// disappear when we haven't seen an enemy in a while or when we sprint
 		if(Enemy.onScreen.Count == 0) {
-			Debug.Log("Disappearing");
 			SlowDisappear();
 		} else {
-			Debug.Log("Reappearing");
 			Reappear();
 		}
 		if(disappearing) {
