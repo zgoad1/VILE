@@ -124,23 +124,23 @@ MonoBehaviour:
         temperature: 50
         tint: 15
         hueShift: 0
-        saturation: 0.8
+        saturation: 0.75
         contrast: 1.1
       channelMixer:
-        red: {x: 1.1, y: -0.5, z: 0.1}
+        red: {x: 1.1, y: 0.1, z: 0.1}
         green: {x: 0, y: 0.9, z: -0.1}
         blue: {x: 0, y: 0.1, z: 1.1}
         currentEditingChannel: 0
       colorWheels:
-        mode: 1
+        mode: 0
         log:
-          slope: {r: 1, g: 1, b: 1, a: 0.6269593}
+          slope: {r: 0.8568939, g: 1, b: 0.806704, a: 0.6269593}
           power: {r: 1, g: 1, b: 1, a: 0.1379314}
-          offset: {r: 1, g: 1, b: 1, a: -0.2160011}
+          offset: {r: 0.9973257, g: 1, b: 0.99465173, a: -0.2160011}
         linear:
-          lift: {r: 0.74306154, g: 0.9360592, b: 1, a: -0.043062095}
+          lift: {r: 0.99465114, g: 1, b: 0.9893026, a: -0.0604534}
           gamma: {r: 1, g: 1, b: 1, a: -0.0011977808}
-          gain: {r: 1, g: 0.62751555, b: 0.6354191, a: 0.13230212}
+          gain: {r: 1, g: 0.62751555, b: 0.6354191, a: 0.34099776}
       curves:
         master:
           curve:
@@ -302,18 +302,18 @@ MonoBehaviour:
   userLut:
     m_Enabled: 0
     m_Settings:
-      lut: {fileID: 2800000, guid: 3c2f1fb7e4b66e74191b7c328ada52d9, type: 3}
+      lut: {fileID: 2800000, guid: 26cd9b360398c414190c5b2f23d12edd, type: 3}
       contribution: 1
   chromaticAberration:
     m_Enabled: 1
     m_Settings:
-      spectralTexture: {fileID: 0}
+      spectralTexture: {fileID: 2800000, guid: 4a8f054acfbd08043a931cd22760758d, type: 3}
       intensity: 1
   grain:
     m_Enabled: 1
     m_Settings:
       colored: 0
-      intensity: 0.399
+      intensity: 0.2
       size: 0.3
       luminanceContribution: 1
   vignette:
@@ -322,7 +322,7 @@ MonoBehaviour:
       mode: 0
       color: {r: 0, g: 0, b: 0, a: 1}
       center: {x: 0.5, y: 0.5}
-      intensity: 0.15
+      intensity: 0.2
       smoothness: 1
       roundness: 1
       mask: {fileID: 0}
