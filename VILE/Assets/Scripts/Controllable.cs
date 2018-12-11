@@ -283,7 +283,9 @@ public class Controllable : MonoBehaviour {
 				toTarget = toTarget.normalized;
 				transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
 			} else {
-				transform.forward = Vector3.Slerp(transform.forward, camTransform.forward, 0.2f);
+				Vector3 newForward = camTransform.forward;
+				newForward.y = 0;
+				transform.forward = Vector3.Slerp(transform.forward, newForward, 0.2f);
 			}
 		}
 	}
@@ -360,7 +362,7 @@ public class Controllable : MonoBehaviour {
 	// Override to implement sprinting, etc.
 	protected virtual void SetVelocity() {
 		// change forward's y to 0 then normalize, in case the camera is pointed down or up
-		Vector3 tempForward = Vector3.zero;
+		Vector3 tempForward;
 		if(rightKey == 0 && fwdKey == 0) {
 			tempForward = transform.forward;	// if no keys are held, keep going the way we were (decelerate)
 		} else {

@@ -17,7 +17,7 @@ using UnityEngine;
 public class Room : MonoBehaviour {
 	
 	// READ ONLY (I'd use readonly but that makes stuff invisible in the inspector)
-	[Range(0, 1)] public float frequency = 1f;		// how common this room is (0 for start and end room)
+	[Range(0, 1)] public float frequency = 1f;			// how common this room is (0 for start and end room)
 	public int limit = -1;								// how many of this room there can be (negative for unlimited)
 	public bool indep = true;							// whether this room is the head of a big room, or a single small room
 	public bool necessary = false;						// whether the room absolutely has to spawn (end, etc.)

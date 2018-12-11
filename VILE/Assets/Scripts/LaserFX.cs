@@ -11,7 +11,7 @@ public class LaserFX : MonoBehaviour {
 	private int layerMask;
 	[SerializeField] private GameObject sparks;			// the hit point sparks' gameObject
 	[SerializeField] private ParticleSystem laserParts;	// laser particles
-	[SerializeField] private ParticleSystem sparkParts;	// the sparks at the hit point
+	[SerializeField] private ParticleSystem hitSparks;	// the sparks at the hit point (parent of hitParts)
 	[SerializeField] private ParticleSystem hitParts;	// creates a flashing light where the laser hits the ground
 	private bool hitting;
 	private AudioManager am;
@@ -20,8 +20,8 @@ public class LaserFX : MonoBehaviour {
 	private void Reset() {
 		layerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters");
 		laserParts = GetComponent<ParticleSystem>();
-		sparkParts = GetComponentsInChildren<ParticleSystem>()[1];
-		sparks = sparkParts.gameObject;
+		hitSparks = GetComponentsInChildren<ParticleSystem>()[1];
+		sparks = hitSparks.gameObject;
 		hitParts = GetComponentsInChildren<ParticleSystem>()[2];
 		am = FindObjectOfType<AudioManager>();
 		laserSound = GetComponent<AudioSource>();
@@ -39,9 +39,9 @@ public class LaserFX : MonoBehaviour {
 		// this has to be done with a raycast so we can get the normal and the exact hit point
 		// 400 is the approximate length of the laser particle effect
 		if(hitting && Physics.Raycast(transform.position, transform.forward, out hit, 400, layerMask)) {
-			Debug.Log("Ray collided with " + hit.collider.gameObject.name + "\nDistance: " + (hit.point - transform.position).magnitude);
+			//Debug.Log("Ray collided with " + hit.collider.gameObject.name + "\nDistance: " + (hit.point - transform.position).magnitude);
 			// play sparks
-			sparkParts.Play();
+			hitSparks.Play();
 			// position sparks at hit
 			sparks.transform.position = hit.point;
 			sparks.transform.forward = hit.normal;
@@ -49,7 +49,7 @@ public class LaserFX : MonoBehaviour {
 		#endregion
 	}
 
-	// set hitting to true until no particles have
+	// set hitting to true until no particles have hit anything for some time
 	private void OnParticleCollision(GameObject other) {
 		//Debug.Log("Particle collided with " + other.name);
 		hitting = true;
@@ -61,9 +61,10 @@ public class LaserFX : MonoBehaviour {
 	}
 
 	public void ShootLaser() {
+		hitting = false;
 		laserParts.Play();
-		sparkParts.Stop();  // hit sparks play automatically as long as they're a child of the laser
-							//am.Play("Laser");
+		hitSparks.Stop();  // hit sparks play automatically as long as they're a child of the laser
+						   //am.Play("Laser");
 		laserSound.Play();
 	}
 

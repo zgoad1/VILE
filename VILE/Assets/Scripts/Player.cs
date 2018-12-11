@@ -6,13 +6,15 @@ public class Player : Controllable {
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
 	private ParticleSystem head;
+	private TrailRenderer[] handTrails;
 	[HideInInspector] public bool isLightning = false;
 	private Transform sprintCam;
 	private EpilepsyController flasher;
 	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
 	private bool possessing = false;
 	private Enemy possessed = null;
-	private LightningMeshEffect a2fx;
+	//private LightningMeshEffect a2fx;
+	private ParticleSystem a2fx;
 	private bool canSprint = true;
 	private LayerMask rayMask;
 	private LayerMask solidLayer;
@@ -31,10 +33,11 @@ public class Player : Controllable {
 		head = GetComponentsInChildren<ParticleSystem>()[4];
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
-		a2fx = GetComponentInChildren<LightningMeshEffect>();
+		a2fx = GetComponentsInChildren<ParticleSystem>()[5];//GetComponentInChildren<LightningMeshEffect>();
 		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid");
-		a2fx.gameObject.SetActive(false);
+		//a2fx.gameObject.SetActive(false);
+		handTrails = GetComponentsInChildren<TrailRenderer>();
 		//ahbL = GetComponentsInChildren<AttackHitbox>()[0];
 		//ahbR = GetComponentsInChildren<AttackHitbox>()[1];
 	}
@@ -76,11 +79,16 @@ public class Player : Controllable {
 		// Set the target dynamically if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
+			SetHandTrails(false);
 			SetTarget();
-		} else if(attacking && fwdKey > 0) {
-			Controllable prevTarget = target;
-			SetTarget();
-			if(target == null) target = prevTarget;
+		} else {
+			if(target != null) a2fx.transform.LookAt(target.transform);
+			else a2fx.transform.forward = camTransform.forward;
+			if(fwdKey > 0) {
+				Controllable prevTarget = target;
+				SetTarget();
+				if(target == null) target = prevTarget;
+			}
 		}
 
 		#region Pause
@@ -219,6 +227,13 @@ public class Player : Controllable {
 		cam.readInput = true;
 	}
 
+	private void SetHandTrails(bool enabled) {
+		foreach(TrailRenderer t in handTrails) {
+			if(enabled) t.Clear();
+			t.enabled = enabled;
+		}
+	}
+
 	#region Abilities
 
 	private void TurnIntoLightning(bool enable) {
@@ -284,6 +299,7 @@ public class Player : Controllable {
 
 	protected override void Attack1() {
 		base.Attack1();
+		SetHandTrails(true);
 		switch(comboNumber) {
 			case 0:
 				StartCoroutine("Attack1aCR");
@@ -313,9 +329,9 @@ public class Player : Controllable {
 	}
 
 	protected override void Attack2() {
+		SetHandTrails(true);
 		base.Attack2();
 		cooldownTimer = 1.6f;
-		// vfx
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
 		StartCoroutine("Attack2CR");
@@ -324,12 +340,12 @@ public class Player : Controllable {
 	private IEnumerator Attack2CR() {
 		canSprint = false;
 		yield return new WaitForSeconds(0.8f);
-		a2fx.gameObject.SetActive(true);
+		a2fx.Play();//gameObject.SetActive(true);
 		// exert hitbox if we decide to make it multi-hit
 		if(target != null) target.Stun();
 		yield return new WaitForSeconds(0.8f);
 		canSprint = true;
-		a2fx.Deactivate();
+		//a2fx.Deactivate();
 	}
 
 	#endregion

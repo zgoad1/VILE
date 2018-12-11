@@ -5,7 +5,8 @@ using UnityEngine;
 public class FlashEye : Enemy {
 
 	private FlashEyeBall ball;
-	private float maxVel = 64;
+	private float maxVel = 2.3f;
+	private float maxAIVelPerSec = 64;
 	private Vector3 newEuler = Vector3.zero;
 	private Vector3 targetPos = Vector3.zero;
 	private Vector3 velocityPerSec = Vector3.zero;
@@ -30,12 +31,28 @@ public class FlashEye : Enemy {
 		base.OnControllerColliderHit(hit);	// sets onGround
 	}
 
+	protected override void Update() {
+		base.Update();
+
+		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.5f);
+
+		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
+		// controls for more realistic rotation
+		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
+		newEuler.y = transform.eulerAngles.y;
+		newEuler.z = transform.eulerAngles.z;
+		transform.eulerAngles = newEuler;
+	}
+
 	protected override void AIUpdate() {
 		base.AIUpdate();
 		// set velocity
 		Vector3 dist = target.transform.position - transform.position;
 		dist.y = 0;
-		velocityPerSec = Vector3.ClampMagnitude(velocityPerSec + dist.normalized, maxVel);  // from per second to per frame
+		velocityPerSec += dist.normalized * 0.5f;//= Vector3.ClampMagnitude(velocityPerSec + dist.normalized * 0.5f, maxVel);  // from per second to per frame
+		if(velocityPerSec.magnitude > maxAIVelPerSec) {
+			velocityPerSec /= (velocityPerSec.magnitude / maxAIVelPerSec);
+		}
 		velocity = velocityPerSec / 60;
 		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 		RotateWithVelocity();
@@ -49,29 +66,30 @@ public class FlashEye : Enemy {
 		SetControls();
 		if(!attacking) {
 			SetMotion();    // velocity is set here
+			//velocity = Vector3.Lerp(velocity, Vector3.zero, 0.1f * 60 * Time.smoothDeltaTime);
 			velocityPerSec = velocity * 60;
-
-			transform.forward = Vector3.Slerp(transform.forward, velocity, 0.05f);
-			// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
-			// controls for more realistic rotation
-			newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
-			newEuler.y = transform.eulerAngles.y;
-			newEuler.z = transform.eulerAngles.z;
-			transform.eulerAngles = newEuler;
 
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
 		} else {
-			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.02f * 60 * Time.smoothDeltaTime);
-			RotateWithVelocity();
+			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.05f * 60 * Time.smoothDeltaTime);
+			//RotateWithVelocity();
 		}
+
+		//Debug.Log("Velocity: " + velocity);
 		cc.Move(velocity);
 		SetTarget();
 	}
 
 	protected override void SetMotion() {
 		base.SetMotion();
-		velocity = Vector3.ClampMagnitude(velocity, maxVel / 60) * 1.5f;	// let player go a bit faster
+		//velocity = Vector3.ClampMagnitude(velocity, maxVel / 60);
+		// whoops that function didn't do what I thought it did
+
+		if(velocity.magnitude > maxVel) {
+			velocity /= (velocity.magnitude / maxVel);
+		}
+		Debug.Log("Velocity: " + velocity.magnitude + "\nmaxVel: " + maxVel);
 	}
 
 	public override void Stun() {
@@ -80,7 +98,7 @@ public class FlashEye : Enemy {
 		if(stunCount == 2) {
 			maxVel /= 4;
 			// make flying enemies fall
-			gameObject.layer = LayerMask.NameToLayer("Characters");
+			gameObject.layer = LayerMask.NameToLayer("Enemies");
 			onGround = false;
 		} else {
 			// keep rotating blades if we're still in the air
