@@ -4,16 +4,47 @@ ModelImporter:
   serializedVersion: 23
   fileIDToRecycleName:
     100000: //RootNode
+    100002: Armature_L
+    100004: Blade_L
+    100006: Blade_R
+    100008: Blades
+    100010: Body
     400000: //RootNode
+    400002: Armature_L
+    400004: Blade_L
+    400006: Blade_R
+    400008: Blades
+    400010: Body
     2100000: Material
     2100002: Material_002
     2100004: Material_001
     2300000: //RootNode
+    2300002: Body
     3300000: //RootNode
+    3300002: Body
     4300000: Cube
+    4300002: Blades
+    4300004: Body
     7400000: Default Take
+    7400002: Attack
     9500000: //RootNode
-  externalObjects: {}
+    13700000: Blades
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 2e59f95285d0f764a89bf3e7cc17688d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_001
+    second: {fileID: 2100000, guid: 36ec2834d015b3a4981810bf6a023ab5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_002
+    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
