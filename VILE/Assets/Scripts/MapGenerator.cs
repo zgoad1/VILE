@@ -108,6 +108,8 @@ public class MapGenerator : MonoBehaviour {
 
 			// set distFromStart to that of the previous room plus one
 			Room thisRoom = map[(int)newCoords.y, (int)newCoords.x].GetComponent<Room>();
+			// if we wanted to make this actually accurate we'd add 1 to the minimum distance
+			// of the existing rooms in each direction that we have a door
 			thisRoom.distFromStart = prevRoom.distFromStart + 1;
 
 			// add this room instance to the distance dictionary

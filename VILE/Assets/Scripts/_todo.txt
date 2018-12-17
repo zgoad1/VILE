@@ -1,0 +1,14 @@
+Map Generator:
+Have different area types, like "biomes." Separated by doors of type "TRANSITION." something like
+
+enum roomType {
+	HALLS, TRANSITION, TUNNELS, OFFICES
+}
+
+// used in determining if we can connect r2 to r1
+bool TypeMatch(Room r1, Room r2) {
+	if(r1.type == TRANSITION || r2.type == TRANSITION return true;
+	return r1.type == r2.type;
+}
+
+Might need different types of exit rooms for each environment.
