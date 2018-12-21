@@ -1,31 +1,130 @@
 fileFormatVersion: 2
 guid: ac052a08e5c5f85468a9ce0d6486b470
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: Cylinder
-    100004: Plane
-    400000: //RootNode
-    400002: Cylinder
-    400004: Plane
-    2100000: unnamed
-    2100002: Material
-    2100004: Material_003
-    2100006: black
-    2100008: red
-    2100010: Material_002
-    2300000: //RootNode
-    2300002: Cylinder
-    2300004: Plane
-    3300000: //RootNode
-    3300002: Cylinder
-    3300004: Plane
-    4300000: Cylinder
-    4300002: Plane
-    7400000: Default Take
-    9500000: //RootNode
-  externalObjects: {}
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: Cylinder
+  - first:
+      1: 100004
+    second: Plane
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: Cylinder
+  - first:
+      4: 400004
+    second: Plane
+  - first:
+      21: 2100000
+    second: unnamed
+  - first:
+      21: 2100002
+    second: Material
+  - first:
+      21: 2100004
+    second: Material_003
+  - first:
+      21: 2100006
+    second: black
+  - first:
+      21: 2100008
+    second: red
+  - first:
+      21: 2100010
+    second: Material_002
+  - first:
+      23: 2300000
+    second: //RootNode
+  - first:
+      23: 2300002
+    second: Cylinder
+  - first:
+      23: 2300004
+    second: Plane
+  - first:
+      33: 3300000
+    second: //RootNode
+  - first:
+      33: 3300002
+    second: Cylinder
+  - first:
+      33: 3300004
+    second: Plane
+  - first:
+      43: 4300000
+    second: Cylinder
+  - first:
+      43: 4300002
+    second: Plane
+  - first:
+      74: 7400000
+    second: Default Take
+  - first:
+      95: 9500000
+    second: //RootNode
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_002__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material_003__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Material__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: fadeout__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: glass__incubator_tex
+    second: {fileID: 2100000, guid: db5e9ec17af5b7848acec4a56b2fe9e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: red__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: unnamed
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: vents__incubator_tex
+    second: {fileID: 2100000, guid: 2062670d5a0f0be40ad52a536f2b9670, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -52,13 +151,43 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Default Take
+      takeName: Default Take
+      internalID: 7400000
+      firstFrame: 0
+      lastFrame: 249
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -66,10 +195,13 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -83,6 +215,10 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:

@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Rigidbody))]
-public class Controllable : MonoBehaviour {
+public class Controllable : Targetable {
 
 	// NOTE: COLLISION DETECTION MUST BE CONTINUOUS or animations will be wacky
 	#region Variables
@@ -109,10 +109,8 @@ public class Controllable : MonoBehaviour {
 	protected Rigidbody rb;
 	protected new Renderer renderer;
 	[HideInInspector] public Animator anim;
-	protected Transform camLook;
 	protected int stunCount = 0;
 	protected float prevAnimSpeed = 1;  // for stopping animation when stunned, then resuming
-	[HideInInspector] public bool isOnScreen = false;
 
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
@@ -122,14 +120,16 @@ public class Controllable : MonoBehaviour {
 	 */
 
 	protected static Controllable currentPlayer;
-	[HideInInspector] public Controllable target;
+	[HideInInspector] public Targetable target;
 
 	public enum state {
 		AI, PLAYER, STUNNED
 	};
 	#endregion
 
-	protected virtual void Reset() {
+	protected override void Reset() {
+		base.Reset();
+
 		mainCam = FindObjectOfType<MainCamera>().GetComponent<Camera>();
 		camTransform = FindObjectOfType<MainCamera>().transform;
 		cam = FindObjectOfType<CameraControl>();
@@ -140,29 +140,22 @@ public class Controllable : MonoBehaviour {
 		rb.useGravity = false;
 		rb.isKinematic = true;
 
-		CamLookat camLookOb = GetComponentInChildren<CamLookat>();
-		if(camLookOb == null) {
-			GameObject newLookat = new GameObject("CamLookat");
-			camLookOb = newLookat.AddComponent<CamLookat>();
-			newLookat.transform.SetParent(transform);
-			newLookat.transform.position = Vector3.zero;
-		}
-		camLook = camLookOb.transform;
-
 		renderer = GetComponentInChildren<SkinnedMeshRenderer>();
 		if(renderer == null) renderer = GetComponentInChildren<MeshRenderer>();
+		/*
 		if(renderer != null) {
-			ControllableRenderer cr;
+			TargetableRenderer cr;
 			if(this is Enemy) cr = renderer.GetComponent<EnemyRenderer>();
-			else cr = renderer.GetComponent<ControllableRenderer>();
+			else cr = renderer.GetComponent<TargetableRenderer>();
 			if(cr == null) {
 				if(this is Enemy) cr = renderer.gameObject.AddComponent<EnemyRenderer>();
-				else cr = renderer.gameObject.AddComponent<ControllableRenderer>();
+				else cr = renderer.gameObject.AddComponent<TargetableRenderer>();
 			}
 			cr.parent = this;
 		} else {
 			Debug.LogWarning("You have a Controllable with a weird renderer (not mesh)");
 		}
+		*/
 
 		gravVec = new Vector3(0, -grav, 0);
 
@@ -277,7 +270,7 @@ public class Controllable : MonoBehaviour {
 		if(attacking) {
 			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
 			if(target != null) {
-				((Enemy)target).SetScreenCoords();  // make the reticle keep moving
+				target.SetScreenCoords();  // make the reticle keep moving
 				Vector3 toTarget = target.transform.position - transform.position;
 				toTarget.y = 0;
 				toTarget = toTarget.normalized;

@@ -1,0 +1,2 @@
+- Add an infinite power supply to the start room and make the door start closed. This way the player will learn how to use the right-click attack and open doors without getting stuck, and will provide a little boost to make starting out a bit easier.
+	- Maybe an Arc stone powered generator that powers the incubator

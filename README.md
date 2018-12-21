@@ -1,5 +1,4 @@
 # VILE
-vide gmae
 
 ## To Do
 - reticle mechanics (color change; fade out)
@@ -29,10 +28,10 @@ vide gmae
 **- A -**
 
 **- B -**
+- Reticle sometimes disappears forever
 - Flash eye's PlayerUpdate is wacky (no deltatime, can't stop)
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- flash eye laser particle effect can stop working when possessed!

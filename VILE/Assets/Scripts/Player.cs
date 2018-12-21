@@ -24,7 +24,7 @@ public class Player : Controllable {
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
 
-	public static List<Enemy> targets = new List<Enemy>();
+	public static List<Targetable> targets = new List<Targetable>();
 
 	protected override void Reset() {
 		base.Reset();
@@ -82,10 +82,10 @@ public class Player : Controllable {
 			SetHandTrails(false);
 			SetTarget();
 		} else {
-			if(target != null) a2fx.transform.LookAt(target.transform);
+			if(target != null) a2fx.transform.LookAt(target.camLook);
 			else a2fx.transform.forward = camTransform.forward;
 			if(fwdKey > 0) {
-				Controllable prevTarget = target;
+				Targetable prevTarget = target;
 				SetTarget();
 				if(target == null) target = prevTarget;
 			}
@@ -94,13 +94,8 @@ public class Player : Controllable {
 		#region Pause
 
 		if(Input.GetButtonDown("Pause")) {
-			if(Cursor.lockState != CursorLockMode.Locked) {
-				Cursor.lockState = CursorLockMode.Locked;
-				Cursor.visible = false;
-			} else {
-				Cursor.lockState = CursorLockMode.None;
-				Cursor.visible = true;
-			}
+			if(readInput) Pause();
+			else Unpause();
 		}
 		#endregion
 
@@ -136,28 +131,29 @@ public class Player : Controllable {
 	protected override void SetTarget() {
 		// add any onscreen enemies that are close enough to the center of the screen
 		// to the targets array (and remove those who aren't)
-		foreach(Enemy e in Enemy.onScreen) {
-			bool inRange = IsInRange(e);
+		foreach(Targetable t in onScreen) {
+			bool inRange = IsInRange(t);
 			// don't consider the player (if possessing an enemy)
-			if(e != possessed) {
-				if(!e.isTarget && inRange) {
-					e.isTarget = true;
-					targets.Add(e);
-				} else if(e.isTarget && !inRange) {
-					e.isTarget = false;
-					targets.Remove(e);
+			// don't consider things behind the player when the camera is behind the player
+			if(t != possessed /*&& (t.IsInFrontOf(this) || !t.IsInFrontOf(this) && Helper.IsInFrontOf(GameController.mainCam.transform, t.transform))*/) {
+				if(!t.isTarget && inRange) {
+					t.isTarget = true;
+					targets.Add(t);
+				} else if(t.isTarget && !inRange) {
+					t.isTarget = false;
+					targets.Remove(t);
 				}
 			}
 		}
 		// find the closest enemy in the targets array that isn't blocked by a wall
 		float minDist = Mathf.Infinity;
 		if(targets.Count > 0) {
-			Enemy newTarget = null;
-			foreach(Enemy e in targets) {
-				if(e.distanceFromPlayer < minDist) {
-					if(!Physics.Raycast(transform.position, e.transform.position - transform.position, e.distanceFromPlayer, rayMask)) {
-						minDist = e.distanceFromPlayer;
-						newTarget = e;
+			Targetable newTarget = null;
+			foreach(Targetable t in targets) {
+				if(t.distanceFromPlayer < minDist) {
+					if(!Physics.Raycast(transform.position, t.transform.position - transform.position, t.distanceFromPlayer, rayMask)) {
+						minDist = t.distanceFromPlayer;
+						newTarget = t;
 					}
 				}
 			}
@@ -170,7 +166,15 @@ public class Player : Controllable {
 		}
 	}
 
-	public static bool IsInRange(Enemy e) {
+	public bool IsInRange(Targetable e) {
+		if(!e.canTarget) return false;
+
+		bool targetInFront = e.IsInFrontOf(this);
+		bool lookingAtTarget = Helper.IsInFrontOf(GameController.mainCam.transform, e.transform);
+		bool camInFrontOfPlayer = Helper.IsInFrontOf(transform, GameController.mainCam.transform);
+		bool validPosition = lookingAtTarget ? (targetInFront ? true : camInFrontOfPlayer) : false;
+		if(!validPosition) return false;
+
 		float maxDist = 0.175f;  // only check objects in a circle of a radius of this fraction of the screen size
 		e.SetScreenCoords();
 		float dist = Vector2.Distance(e.screenCoords, screenCenter);
@@ -214,17 +218,37 @@ public class Player : Controllable {
 	}
 
 	public void Pause() {
+		Controllable[] characters = FindObjectsOfType<Controllable>();
+		foreach(Controllable c in characters) {
+			if(c != this) {
+				c.enabled = false;
+			}
+			c.anim.speed = 0;
+		}
 		readInput = false;
 		velocity = Vector3.zero;
-		rightMov = 0;
-		fwdMov = 0;
+		//rightMov = 0;
+		//fwdMov = 0;
+		rightKey = 0;
+		fwdKey = 0;
 		anim.SetFloat("speed", 0);
 		cam.readInput = false;
+		Cursor.lockState = CursorLockMode.None;
+		Cursor.visible = true;
+		Time.timeScale = 0;
 	}
 
 	public void Unpause() {
+		Controllable[] characters = FindObjectsOfType<Controllable>();
+		foreach(Controllable c in characters) {
+			c.enabled = true;
+			c.anim.speed = 1;
+		}
 		readInput = true;
 		cam.readInput = true;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+		Time.timeScale = 1;
 	}
 
 	private void SetHandTrails(bool enabled) {
@@ -342,7 +366,11 @@ public class Player : Controllable {
 		yield return new WaitForSeconds(0.8f);
 		a2fx.Play();//gameObject.SetActive(true);
 		// exert hitbox if we decide to make it multi-hit
-		if(target != null) target.Stun();
+		if(target is Enemy) ((Enemy)target).Stun();
+		else if(target is Door) {
+			((Door)target).Open(true);
+			((Door)target).Spark();
+		}
 		yield return new WaitForSeconds(0.8f);
 		canSprint = true;
 		//a2fx.Deactivate();
@@ -351,7 +379,7 @@ public class Player : Controllable {
 	#endregion
 
 	protected bool CanPossessTarget() {
-		return target != null && target.control == state.STUNNED && canSprint;
+		return target is Enemy && ((Enemy)target).control == state.STUNNED && canSprint;
 	}
 
 	//private IEnumerator EnableCollision() {

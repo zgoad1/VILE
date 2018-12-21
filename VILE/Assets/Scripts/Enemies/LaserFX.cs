@@ -53,7 +53,7 @@ public class LaserFX : MonoBehaviour {
 	private void OnParticleCollision(GameObject other) {
 		//Debug.Log("Particle collided with " + other.name);
 		hitting = true;
-		Controllable target = other.GetComponent<Controllable>();
+		Targetable target = other.GetComponent<Targetable>();
 		if(target != null) {
 			// damage
 		}

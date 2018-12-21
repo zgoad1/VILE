@@ -37,7 +37,7 @@ public class PlayerReticle : MonoBehaviour {
 	void LateUpdate () {
 		// set position based on target
 		if(player.target != null) {
-			newPos = ((Enemy)player.target).screenCoords + originOffset;
+			newPos = player.target.screenCoords + originOffset;
 			newPos.x *= Screen.width * (canvas.rect.width / Screen.width);
 			newPos.y *= Screen.height * (canvas.rect.height / Screen.height);
 		} else {
@@ -48,7 +48,7 @@ public class PlayerReticle : MonoBehaviour {
 		image.enabled = true;
 		if(player.target != null) {
 			image.sprite = targetSprite;
-			if(player.target.control == Controllable.state.STUNNED) {
+			if(player.target is Enemy && ((Enemy)player.target).control == Controllable.state.STUNNED) {
 				int newFrames = GameController.frames / 2;
 				if(newFrames % 2 == 0) {
 					image.enabled = false;
@@ -67,7 +67,7 @@ public class PlayerReticle : MonoBehaviour {
 		}
 
 		// disappear when we haven't seen an enemy in a while or when we sprint
-		if(Enemy.onScreen.Count == 0) {
+		if(Targetable.onScreen.Count == 0) {
 			SlowDisappear();
 		} else {
 			Reappear();

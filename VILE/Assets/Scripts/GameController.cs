@@ -7,6 +7,7 @@ public class GameController : MonoBehaviour {
 
 	public static Player player;
 	public static MainCamera mainCam;
+	public static Camera mainCamCam;
 	public static CameraControl camControl;
 	private static Animator blackfade;
 	public static int frames = 0;
@@ -25,6 +26,7 @@ public class GameController : MonoBehaviour {
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
 		mainCam = FindObjectOfType<MainCamera>();
+		if(mainCam != null) mainCamCam = mainCam.GetComponent<Camera>();
 		camControl = FindObjectOfType<CameraControl>();
 	}
 
