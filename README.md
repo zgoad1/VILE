@@ -1,4 +1,7 @@
 # VILE
+![alt text](https://github.com/zgoad1/VILE/blob/master/Images/title_screen.gif)
+![alt text](https://github.com/zgoad1/VILE/blob/master/Images/room.png)
+![alt text](https://github.com/zgoad1/VILE/blob/master/Images/attack.png)
 
 ## To Do
 - reticle mechanics (color change; fade out)
