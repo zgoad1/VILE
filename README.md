@@ -4,14 +4,12 @@
 ![alt text](https://github.com/zgoad1/VILE/blob/master/Images/attack.png)
 
 ## To Do
-- reticle mechanics (color change; fade out)
 - average, everyday room designs
 - advanced room designs
-- circular target-bounds-limit reticle
-- enemies
+- reticle distance limit visualization
+- other enemies
 - combat
 - win & lose conditions
-- title & end screens
 - basic cutscenes
 - saving data
 
@@ -25,6 +23,9 @@
 - random map generation
 - graphical style
 - enemy possession
+- targeting reticle
+- title screen
+- doors
 
 ## Bugs
 
@@ -32,7 +33,7 @@
 
 **- B -**
 - Reticle sometimes disappears forever
-- Flash eye's PlayerUpdate is wacky (no deltatime, can't stop)
+- When starting from the title screen, the reticle has very low alpha
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
