@@ -32,8 +32,8 @@
 **- A -**
 
 **- B -**
-- Reticle sometimes disappears forever
-- When starting from the title screen, the reticle has very low alpha
+- Reticle sometimes disappears forever (fixed?)
+- When starting from the title screen, the reticle has very low alpha (fixed?)
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 - sprinting out of an enemy still doesn't always align you with the direction you're facing

@@ -1,0 +1,91 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1233361153054460599
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8546916339773309084}
+  - component: {fileID: 6517286906667311714}
+  m_Layer: 0
+  m_Name: IntroText1
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8546916339773309084
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233361153054460599}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.1919804, y: 4.3007593, z: -399.99683}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6517286906667311714
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1233361153054460599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 2c727588e8006a84caf790adc9274176, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  dialogue:
+  - items:
+    - face: {fileID: 0}
+      text: Dear Drs. Paxton,
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tGood morning to the both of you. I sincerely apologize for waiting
+        this long to\ncongratulate you on your marriage, but I'm afraid unforeseen
+        circumstances have kept me\nbusy. Anyway, congratulations. I wish only the
+        best to you going forward."
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tI was recently made aware of Olivia's unfortunate medical condition,
+        and the \nimplications this has for your future. I am most deeply sorry to
+        hear of this. However, \nthis is the reason I have contacted you.My assistant
+        - you are familiar with Ellie, \ncorrect? - has had a brilliant idea. I have
+        good news for the two of you. Parenthood \nhas not escaped you yet."
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tAs per my assistant's idea, I have formed a new division within CCI:
+        the \nArtificial Life Research and Experimentation Division. Its goal is to
+        cooperate with \nthe Human Attribute Modification Division and the Arc Magic
+        Research \nDivision to produce a new life form based on the human, wielding all
+        forms of magical \nabilities, known and unknown."
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tThe two of you are now the heads of this new division, and may cease
+        your \ncurrent work, as I have found others willing to take over your old
+        positions. Furthermore, \nI have given you clearance to adopt and raise your
+        first successful creation as your own \nchild. Once again, I say congratulations."
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tOnce your creation is given life, no further experimentation on it
+        is required. You \nmay choose to continue leading the ALRE Division, or contact
+        a coordinator to discuss \nother possibilities. When you have succeeded, be
+        sure to submit your documentation to the \ndatabase in the standard format."
+      useCutsceneDbox: 0
+    - face: {fileID: 0}
+      text: "\tIt brings me great joy to present you with this opportunity. Simply
+        reply to \nthis message or visit my office to confirm your new positions.\n\n-F. "
+      useCutsceneDbox: 0
+    _event: {fileID: 0}
+    turnBody: 0
+    turnHead: 0
+  useCutsceneDbox: 1

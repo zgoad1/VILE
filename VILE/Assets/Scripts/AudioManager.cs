@@ -12,7 +12,7 @@ public class AudioManager : MonoBehaviour {
 	[HideInInspector] public int number;	//why is this public again?
 
 	// Use this for initialization
-	void Start () {
+	void Awake () {
 		number = amount;
 		amount++;
 		

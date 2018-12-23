@@ -89,7 +89,6 @@ public class FlashEye : Enemy {
 		if(velocity.magnitude > maxVel) {
 			velocity /= (velocity.magnitude / maxVel);
 		}
-		Debug.Log("Velocity: " + velocity.magnitude + "\nmaxVel: " + maxVel);
 	}
 
 	public override void Stun() {
@@ -97,6 +96,7 @@ public class FlashEye : Enemy {
 		base.Stun();
 		if(stunCount == 2) {
 			maxVel /= 4;
+			maxAIVelPerSec /= 4;
 			// make flying enemies fall
 			gameObject.layer = LayerMask.NameToLayer("Enemies");
 			onGround = false;

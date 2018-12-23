@@ -6,7 +6,9 @@ public class TitleController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if(Input.GetKeyDown(KeyCode.Space)) {
-			GameController.SceneChange("TestScene");
+			// TODO: Have some way to disable the intro
+			// One easy way would be to only let it activate once per session
+			GameController.SceneChange("Intro");
 		}
 	}
 }
