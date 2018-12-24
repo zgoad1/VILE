@@ -4,6 +4,7 @@
 ![alt text](https://github.com/zgoad1/VILE/blob/master/Images/attack.png)
 
 ## To Do
+- put an infinite charging source in the start room
 - average, everyday room designs
 - advanced room designs
 - reticle distance limit visualization
@@ -39,4 +40,6 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- Landing is still wacky sometimes
+- Start room lighting is wacky in build
+- Killing the FlashEye causes Tess to spark
+- Animation messes up occasionally when coming out of lightning bolt

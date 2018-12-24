@@ -242,6 +242,7 @@ public class Player : Controllable {
 			cam.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
 			cam.ScreenShake(1.5f);
+			//anim.speed = 0;
 			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;     // protect this part from repeated calls
 		} else if(!enable && isLightning) {
@@ -250,8 +251,9 @@ public class Player : Controllable {
 			head.Stop();
 			cam.SetZoomTransform(null);
 			burst.Play();
+			//anim.speed = 1;
 			//flasher.FlashStop();
-			if(rightKey <= 0.1f && fwdKey <= 0.1f) {
+			if(rightKey <= 0.1f && fwdKey <= 0.1f && anim.GetBool("onGround")) {
 				anim.SetTrigger("land");
 			}
 			isLightning = false;    // protect this part from repeated calls
@@ -266,7 +268,8 @@ public class Player : Controllable {
 		gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");
 		targets.Remove(e);
 		possessed = e;
-		fwdMov = 0;		// instantly decelerate these so momentum doesn't carry
+		fwdMov = 0;     // instantly decelerate these so momentum doesn't carry
+		anim.speed = 0;
 		rightMov = 0;	// over when we Unpossess
 	}
 
@@ -276,6 +279,7 @@ public class Player : Controllable {
 	public void Unpossess(bool runKey) {
 		possessing = false;
 		gameObject.layer = LayerMask.NameToLayer("Characters");
+		anim.speed = 1;
 		if(runKey) {
 			//gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");	// ignore collisions for 2 frames
 			//StartCoroutine("EnableCollision");

@@ -24,9 +24,11 @@ public class GroundTest : MonoBehaviour {
 	private void OnTriggerEnter(Collider other) {
 		if(other.gameObject.layer == ground) {
 			grounds.Add(other);
-			if(grounds.Count == 1 && parent.velocity.y < -0.1f) {
-				Debug.Log("landing");
+			if(grounds.Count == 1 && !parent.anim.GetBool("onGround")) {
+				//Debug.Log("landing");
 				parent.anim.SetTrigger("land");
+			} else {
+				//Debug.Log("grounds: " + grounds.Count + "\ny-velocity: " + parent.velocity.y);
 			}
 		}
 	}
@@ -41,6 +43,10 @@ public class GroundTest : MonoBehaviour {
 		if(other.gameObject.layer == ground) {
 			grounds.Remove(other);
 			if(grounds.Count == 0) {
+				if(parent.anim.GetBool("onGround")) {
+					// set this trigger on the frame when we leave the ground
+					parent.anim.SetTrigger("offGround");
+				}
 				parent.anim.SetBool("onGround", false);
 			}
 		}

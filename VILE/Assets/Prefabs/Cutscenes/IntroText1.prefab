@@ -56,18 +56,18 @@ MonoBehaviour:
         best to you going forward."
       useCutsceneDbox: 0
     - face: {fileID: 0}
-      text: "\tI was recently made aware of Olivia's unfortunate medical condition,
-        and the \nimplications this has for your future. I am most deeply sorry to
-        hear of this. However, \nthis is the reason I have contacted you.My assistant
-        - you are familiar with Ellie, \ncorrect? - has had a brilliant idea. I have
-        good news for the two of you. Parenthood \nhas not escaped you yet."
+      text: "\tI was recently made aware of Dr. Paxton's unfortunate medical condition,
+        \nand the implications this has for your future. I am most deeply sorry to
+        hear of this. \nHowever, this is the reason I have contacted you. My assistant
+        - you are familiar \nwith Ellie, correct? - has had a brilliant idea. I have
+        good news for the two of you. \nParenthood has not escaped you yet."
       useCutsceneDbox: 0
     - face: {fileID: 0}
       text: "\tAs per my assistant's idea, I have formed a new division within CCI:
         the \nArtificial Life Research and Experimentation Division. Its goal is to
         cooperate with \nthe Human Attribute Modification Division and the Arc Magic
-        Research \nDivision to produce a new life form based on the human, wielding all
-        forms of magical \nabilities, known and unknown."
+        Research \nDivision to produce a new life form based on the human, wielding
+        all forms of magical \nabilities, known and unknown."
       useCutsceneDbox: 0
     - face: {fileID: 0}
       text: "\tThe two of you are now the heads of this new division, and may cease
