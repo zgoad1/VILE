@@ -14,6 +14,13 @@ public class Targetable : MonoBehaviour {
 	[HideInInspector] public bool isOnScreen = false;
 	[HideInInspector] public bool canTarget = true;
 
+	public float radius = 0.2f;	// A raycast is done to test if the object is behind a wall. The raycast is done
+								// from the player's position to the object's position minus this radius, so it
+								// keeps us from hitting the object and triggering a false positive in the raycast.
+
+	protected bool invincible = false;
+	protected float gracePeriod = 0.8f;
+
 	public static List<Targetable> onScreen = new List<Targetable>();
 
 	protected virtual void Reset() {
@@ -39,6 +46,17 @@ public class Targetable : MonoBehaviour {
 
 	public virtual void Damage(float damage) {
 		// Damageable non-Controllable Targetables can disregard the float
-		// e.g. Doors should be destroyed/melted when hit by a laser
+		// e.g. Doors should be destroyed/melted when hit by a laser, or
+		// opened when hit by lightning
+	}
+
+	public virtual void Knockback() {
+		StartCoroutine("GracePeriod");
+	}
+
+	protected IEnumerator GracePeriod() {
+		invincible = true;
+		yield return new WaitForSeconds(gracePeriod);
+		invincible = false;
 	}
 }

@@ -40,8 +40,10 @@ public class PlayerReticle : MonoBehaviour {
 			newPos = player.target.screenCoords + originOffset;
 			newPos.x *= Screen.width * (canvas.rect.width / Screen.width);
 			newPos.y *= Screen.height * (canvas.rect.height / Screen.height);
+			Reappear();
 		} else {
 			newPos = Vector3.zero;
+			SlowDisappear();
 		}
 
 		// set color and rotation based on target
@@ -67,11 +69,11 @@ public class PlayerReticle : MonoBehaviour {
 		}
 
 		// disappear when we haven't seen an enemy in a while or when we sprint
-		if(Targetable.onScreen.Count == 0) {
-			SlowDisappear();
-		} else {
-			Reappear();
-		}
+		//if(Targetable.onScreen.Count == 0) {
+		//	SlowDisappear();
+		//} else {
+		//	Reappear();
+		//}
 		if(disappearing) {
 			newColor.a = Mathf.Min(1, newColor.a - 0.05f);
 		} else if(player.isLightning) {

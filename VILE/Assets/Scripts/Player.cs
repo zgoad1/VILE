@@ -20,6 +20,8 @@ public class Player : Controllable {
 	private LayerMask solidLayer;
 	private AttackHitbox ahbL, ahbR;
 	private int comboNumber = 0;
+	public UIBar stBar;
+	private float rechargeFactor = 0.05f;
 
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
@@ -33,13 +35,18 @@ public class Player : Controllable {
 		head = GetComponentsInChildren<ParticleSystem>()[4];
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
-		a2fx = GetComponentsInChildren<ParticleSystem>()[5];//GetComponentInChildren<LightningMeshEffect>();
+		a2fx = GetComponentsInChildren<ParticleSystem>()[5];
 		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid");
-		//a2fx.gameObject.SetActive(false);
 		handTrails = GetComponentsInChildren<TrailRenderer>();
 		//ahbL = GetComponentsInChildren<AttackHitbox>()[0];
 		//ahbR = GetComponentsInChildren<AttackHitbox>()[1];
+		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();//FindObjectOfType<UIBar>();
+		hpBar.character = this;
+		hpBar.maxValue = maxHP;
+		stBar = GameObject.Find("Tess St").GetComponent<UIBar>();
+		stBar.character = this;
+		stBar.maxValue = 100;
 	}
 
 	protected override void Start() {
@@ -51,7 +58,7 @@ public class Player : Controllable {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 
-		atk2Cost = 20;
+		atk2Cost = 25;
 
 		SetPlayer();
 	}
@@ -91,13 +98,7 @@ public class Player : Controllable {
 			}
 		}
 
-		#region Pause
-
-		if(Input.GetButtonDown("Pause")) {
-			if(readInput) Pause();
-			else Unpause();
-		}
-		#endregion
+		if(stamina <= 20 - rechargeFactor) stamina += rechargeFactor;
 
 		// home in on an enemy to possess it
 		if(sprinting && CanPossessTarget()) {
@@ -129,6 +130,7 @@ public class Player : Controllable {
 	/**Set the target to the closest enemy in the targets array
 	 */
 	protected override void SetTarget() {
+		if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(false);
 		// add any onscreen enemies that are close enough to the center of the screen
 		// to the targets array (and remove those who aren't)
 		foreach(Targetable t in onScreen) {
@@ -151,15 +153,19 @@ public class Player : Controllable {
 			Targetable newTarget = null;
 			foreach(Targetable t in targets) {
 				if(t.distanceFromPlayer < minDist) {
-					if(!Physics.Raycast(transform.position, t.transform.position - transform.position, t.distanceFromPlayer, rayMask)) {
+					RaycastHit hit;
+					if(!Physics.Raycast(transform.position, t.transform.position - transform.position, out hit, t.distanceFromPlayer - t.radius, rayMask)) {
 						minDist = t.distanceFromPlayer;
 						newTarget = t;
+					} else {
+						//Debug.Log("Raycst hit: " + hit.transform.gameObject);
 					}
 				}
 			}
 			// if we're not in the middle of an attack or combo, update target
 			if(!attacking) {
 				target = newTarget;
+				if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(true);
 			}
 		} else {
 			target = null;
@@ -217,40 +223,6 @@ public class Player : Controllable {
 		}
 	}
 
-	public void Pause() {
-		Controllable[] characters = FindObjectsOfType<Controllable>();
-		foreach(Controllable c in characters) {
-			if(c != this) {
-				c.enabled = false;
-			}
-			c.anim.speed = 0;
-		}
-		readInput = false;
-		velocity = Vector3.zero;
-		//rightMov = 0;
-		//fwdMov = 0;
-		rightKey = 0;
-		fwdKey = 0;
-		anim.SetFloat("speed", 0);
-		cam.readInput = false;
-		Cursor.lockState = CursorLockMode.None;
-		Cursor.visible = true;
-		Time.timeScale = 0;
-	}
-
-	public void Unpause() {
-		Controllable[] characters = FindObjectsOfType<Controllable>();
-		foreach(Controllable c in characters) {
-			c.enabled = true;
-			c.anim.speed = 1;
-		}
-		readInput = true;
-		cam.readInput = true;
-		Cursor.lockState = CursorLockMode.Locked;
-		Cursor.visible = false;
-		Time.timeScale = 1;
-	}
-
 	private void SetHandTrails(bool enabled) {
 		foreach(TrailRenderer t in handTrails) {
 			if(enabled) t.Clear();
@@ -301,12 +273,13 @@ public class Player : Controllable {
 	/**If the run key is pressed, we're manually un-possessing an enemy;
 	 * otherwise, our control is being revoked, likely because it's dying.
 	 */
-	private void Unpossess(bool runKey) {
+	public void Unpossess(bool runKey) {
+		possessing = false;
+		gameObject.layer = LayerMask.NameToLayer("Characters");
 		if(runKey) {
-			possessing = false;
 			//gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");	// ignore collisions for 2 frames
 			//StartCoroutine("EnableCollision");
-			gameObject.layer = LayerMask.NameToLayer("Characters");
+			possessed.hpBar.gameObject.SetActive(false);
 			possessed = null;
 			SetPlayer();
 			TurnIntoLightning(true);
@@ -316,6 +289,7 @@ public class Player : Controllable {
 				control = state.PLAYER;
 			}
 		} else {
+			isLightning = true;	// cheat to make TurnIntoLightning(false) work
 			TurnIntoLightning(false);
 			SetPlayer();
 		}
@@ -366,6 +340,7 @@ public class Player : Controllable {
 		yield return new WaitForSeconds(0.8f);
 		a2fx.Play();//gameObject.SetActive(true);
 		// exert hitbox if we decide to make it multi-hit
+		if(target != null) target.Damage(25);
 		if(target is Enemy) ((Enemy)target).Stun();
 		else if(target is Door) {
 			((Door)target).Open(true);

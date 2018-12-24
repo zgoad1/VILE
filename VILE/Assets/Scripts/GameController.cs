@@ -9,10 +9,13 @@ public class GameController : MonoBehaviour {
 	public static MainCamera mainCam;
 	public static Camera mainCamCam;
 	public static CameraControl camControl;
+	public static GameObject enemyHpBarObject;
+	public static RectTransform UICanvas;
 	private static Animator blackfade;
 	public static int frames = 0;
 	private static int number = 0;
 	private static string nextScene;
+	public static bool paused = false;
 
 	// laser barriers
 	[SerializeField] private Material laserBarrier;
@@ -36,6 +39,8 @@ public class GameController : MonoBehaviour {
 		newColorLB = laserBarrier.color;
 		initialAlphaLB = newColorLB.a;
 		blackfade = GameObject.Find("Blackfade").GetComponent<Animator>();
+		enemyHpBarObject = Resources.Load<GameObject>("Enemy HP");
+		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
 	}
 
 	// Use this for initialization
@@ -57,6 +62,14 @@ public class GameController : MonoBehaviour {
 		newColorLB.a = 0.1f * Mathf.Sin(2 * Mathf.PI / 0.12f * Time.time) + .9f;
 		laserBarrier.color = newColorLB;
 
+		#region Pause
+
+		if(Input.GetButtonDown("Pause")) {
+			if(!paused) Pause();
+			else Unpause();
+		}
+		#endregion
+
 		frames++;
 	}
 
@@ -77,5 +90,33 @@ public class GameController : MonoBehaviour {
 	// Instantly change scene to nextScene
 	public static void LoadNextScene() {
 		SceneManager.LoadScene(nextScene);
+	}
+
+	public static void Pause() {
+		paused = true;
+		Controllable[] characters = FindObjectsOfType<Controllable>();
+		foreach(Controllable c in characters) {
+			c.enabled = false;
+			c.anim.speed = 0;
+		}
+		player.readInput = false;
+		player.velocity = Vector3.zero;
+		Cursor.lockState = CursorLockMode.None;
+		Cursor.visible = true;
+		Time.timeScale = 0;
+	}
+
+	public static void Unpause() {
+		paused = false;
+		Controllable[] characters = FindObjectsOfType<Controllable>();
+		foreach(Controllable c in characters) {
+			c.enabled = true;
+			c.anim.speed = 1;
+		}
+		player.readInput = true;
+		camControl.readInput = true;
+		Cursor.lockState = CursorLockMode.Locked;
+		Cursor.visible = false;
+		Time.timeScale = 1;
 	}
 }

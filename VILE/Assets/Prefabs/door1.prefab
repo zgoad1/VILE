@@ -447,6 +447,7 @@ MonoBehaviour:
   distanceFromPlayer: 0
   isOnScreen: 0
   canTarget: 1
+  radius: 5
   open: 0
 --- !u!1 &6975887133058936667
 GameObject:

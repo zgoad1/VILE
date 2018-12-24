@@ -7,7 +7,7 @@ public class CutscenePausePlayer : EventItem {
 	// Use this for initialization
 	protected override void Start () {
 		base.Start();
-		FindObjectOfType<Player>().Pause();
+		GameController.Pause();
 		eq.Dequeue();
 		Destroy(gameObject);
 	}

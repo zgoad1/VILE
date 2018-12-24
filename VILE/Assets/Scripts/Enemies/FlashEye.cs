@@ -79,6 +79,8 @@ public class FlashEye : Enemy {
 		//Debug.Log("Velocity: " + velocity);
 		cc.Move(velocity);
 		SetTarget();
+
+		EnemyPlayerUpdate();
 	}
 
 	protected override void SetMotion() {

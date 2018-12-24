@@ -33,7 +33,7 @@ public class FlashEyeBall : MonoBehaviour {
 			}
 		} else {
 			// raise accuracy for player
-			float accuracy = parent.control == Controllable.state.AI ? 0.08f : 0.15f;
+			float accuracy = parent.control == Controllable.state.AI ? 0.3f : 0.5f;
 			transform.forward = Vector3.Slerp(transform.forward, (parent.target.transform.position - transform.position).normalized, accuracy * 60 * Time.deltaTime);
 		}
 	}

@@ -5,6 +5,9 @@ using UnityEngine;
 public class Enemy : Controllable {
 	
 	protected static Player player;
+	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
+	protected float playerDamage = 0.2f;	// damage to apply every frame in which the player
+											// is possessing this enemy
 
 	protected override void Reset() {
 		base.Reset();
@@ -21,26 +24,67 @@ public class Enemy : Controllable {
 		}
 
 		player = FindObjectOfType<Player>();
+
+		gracePeriod = 0f;	// no invincibility period
 	}
 
 	protected override void PlayerUpdate() {
 		base.PlayerUpdate();
 		target = GameController.player.target;
+		EnemyPlayerUpdate();
+	}
+
+	protected virtual void EnemyPlayerUpdate() {
+		SetScreenCoords();
+		hpBar.gameObject.SetActive(true);
+		Damage(playerDamage);
+		GameController.player.stamina += playerDamage / 2f;
 	}
 
 	protected override void Update() {
 		base.Update();
 		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);
+
+		#region Set HPBar position
+		Vector3 newScreenCoords = screenCoords;
+		newScreenCoords.x -= 0.5f;
+		newScreenCoords.y -= 0.5f;
+		newScreenCoords.x *= Screen.width * (GameController.UICanvas.rect.width / Screen.width);
+		newScreenCoords.y *= Screen.height * (GameController.UICanvas.rect.height / Screen.height);
+		hpBar.transform.localPosition = newScreenCoords + HpBarOffset;
+		#endregion
 	}
 
 	protected override void Start() {
 		base.Start();
 		SetTarget();
+		hpBar = Instantiate(GameController.enemyHpBarObject).GetComponent<UIBar>();
+		hpBar.character = this;
+		hpBar.maxValue = maxHP;
+		hpBar.gameObject.SetActive(false);
+		hpBar.transform.SetParent(GameController.UICanvas.transform);
 	}
 
 	protected override void SetTarget() {
 		base.SetTarget();
 		if(control == state.AI) target = FindObjectOfType<Player>();
 		else target = player.target;
+	}
+
+	public override void Damage(float damage) {
+		StopCoroutine("ShowHP");
+		StartCoroutine("ShowHP");
+		base.Damage(damage);
+	}
+
+	protected IEnumerator ShowHP() {
+		hpBar.gameObject.SetActive(true);
+		yield return new WaitForSeconds(2f);
+		hpBar.gameObject.SetActive(false);
+	}
+
+	protected override void Die() {
+		GameController.player.Unpossess(false);
+		base.Die();
 	}
 }

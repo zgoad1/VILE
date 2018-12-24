@@ -40,20 +40,25 @@ public class Controllable : Targetable {
 		}
 		set {
 			h = Mathf.Clamp(value, 0, maxHP);
+			hpBar.value = h;
 			if(h == 0) Die();
 		}
 	}
 	protected bool dead = false;
+	public UIBar hpBar;
 
 	// stamina and attacking
 	protected bool attacking = false;
-	private float st = 100;
-	protected float stamina {
+	protected float st = 100;
+	public float stamina {
 		get {
 			return st;
 		}
 		set {
 			st = Mathf.Clamp(value, 0, 100);
+			if(this is Player) {
+				((Player)this).stBar.value = st;
+			}
 		}
 	}
 	protected float atk1Cost = 5;
@@ -111,6 +116,7 @@ public class Controllable : Targetable {
 	[HideInInspector] public Animator anim;
 	protected int stunCount = 0;
 	protected float prevAnimSpeed = 1;  // for stopping animation when stunned, then resuming
+	protected Vector3 newHpScale = Vector3.one, newStScale = Vector3.one;
 
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
@@ -424,13 +430,18 @@ public class Controllable : Targetable {
 		return stamina >= atkCost && cooldownTimer <= 0;
 	}
 
-	public void Damage(float damage) {
+	public override void Damage(float damage) {
+		base.Damage(damage);
 		hp -= damage;
-		// knockback, effects, grace period, etc.
+		if(damage >= 5) {
+			Knockback();	// activates invincibility period
+		}
 	}
 
 	protected virtual void Die() {
 		dead = true;
-		Destroy(gameObject);	// replace this when we have overrides
+		gameObject.SetActive(false);
+		hpBar.gameObject.SetActive(false);
+		//Destroy(gameObject);	// replace this when we have overrides
 	}
 }

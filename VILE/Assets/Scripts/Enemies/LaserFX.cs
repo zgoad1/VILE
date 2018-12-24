@@ -55,7 +55,7 @@ public class LaserFX : MonoBehaviour {
 		hitting = true;
 		Targetable target = other.GetComponent<Targetable>();
 		if(target != null) {
-			// damage
+			target.Damage(1);
 		}
 		StopSparks();
 	}
