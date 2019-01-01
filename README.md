@@ -4,7 +4,6 @@
 ![alt text](https://github.com/zgoad1/VILE/blob/master/Images/attack.png)
 
 ## To Do
-- put an infinite charging source in the start room
 - average, everyday room designs
 - advanced room designs
 - reticle distance limit visualization
@@ -33,7 +32,6 @@
 **- A -**
 
 **- B -**
-- You can raycast through walls to shock doors
 - Reticle sometimes disappears forever 
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
