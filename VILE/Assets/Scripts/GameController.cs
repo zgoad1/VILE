@@ -5,6 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
+	public static GameController instance;
 	public static Player player;
 	public static MainCamera mainCam;
 	public static Camera mainCamCam;
@@ -25,6 +26,10 @@ public class GameController : MonoBehaviour {
 	// wall glow animation
 	[SerializeField] private Material wallGlow;
 	private Color newColorWG = Color.black;
+
+	[SerializeField] private int numPremadeObjects = 10;    // how many of each object to pool
+	[SerializeField] private List<GameObject> objectList;   // said objects
+	private static List<GameObject> objectPool = new List<GameObject>();
 
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
@@ -47,11 +52,16 @@ public class GameController : MonoBehaviour {
 	void Awake () {
 		Reset();
 		if(number == 0) {
+			instance = this;
 			DontDestroyOnLoad(gameObject);
 		} else {
 			Destroy(gameObject);
 		}
 		number++;
+
+		if(SceneManager.GetActiveScene().name == "Level") {
+			CreateObjectPool();
+		}
 	}
 	
 	// Update is called once per frame
@@ -90,6 +100,9 @@ public class GameController : MonoBehaviour {
 	// Instantly change scene to nextScene
 	public static void LoadNextScene() {
 		SceneManager.LoadScene(nextScene);
+		if(nextScene.ToString() == "Level") {
+			instance.CreateObjectPool();
+		}
 	}
 
 	public static void Pause() {
@@ -118,5 +131,42 @@ public class GameController : MonoBehaviour {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 		Time.timeScale = 1;
+	}
+
+	// Create a bunch of objects that will need to be instantiated over and over
+	// so we can pretend to do that while saving resources
+	private void CreateObjectPool() {
+		for(int i = 0; i < numPremadeObjects; i++) {
+			foreach(GameObject ob in objectList) {
+				GameObject newOb = Instantiate(ob);
+				objectPool.Add(newOb);
+				newOb.SetActive(false);
+			}
+		}
+	}
+
+	public static void InstantiateFromPool(GameObject ob, Transform transform) {
+		if(instance.objectList.Contains(ob)) {
+			foreach(GameObject o in objectPool) {
+				// Pretend to instantiate the first matching object in the pool
+				if(o.name.Remove(o.name.Length - 7) == ob.name) {   // remove "(Clone)" and compare names
+					o.GetComponent<PooledObject>().Restart();
+
+					// copy transform of original object
+					o.transform.SetParent(transform.parent);
+					o.transform.localPosition = transform.localPosition;
+					o.transform.localRotation = transform.localRotation;
+					o.transform.localScale = transform.localScale;
+
+					// move to back of list
+					objectPool.Remove(o);
+					objectPool.Add(o);
+
+					return;
+				}
+			}
+		} else {
+			Debug.LogError("Tried to instantiate pooled object that isn't pooled");
+		}
 	}
 }

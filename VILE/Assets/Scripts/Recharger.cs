@@ -28,7 +28,7 @@ public class Recharger : MonoBehaviour {
 			if(!electricityParticles.isPlaying) {
 				electricityParticles.Play();
 			}
-			newScale.z = dist / radius / 2f;
+			newScale.z = dist / radius / 3f;
 			transform.localScale = newScale;
 		} else {
 			electricityParticles.Stop();

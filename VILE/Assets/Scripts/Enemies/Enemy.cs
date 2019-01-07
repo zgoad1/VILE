@@ -6,8 +6,9 @@ public class Enemy : Controllable {
 	
 	protected static Player player;
 	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
-	protected float playerDamage = 0.2f;	// damage to apply every frame in which the player
+	protected float playerDamage = 0.2f;    // damage to apply every frame in which the player
 											// is possessing this enemy
+	[SerializeField] protected GameObject deathObject;	// an object that does VFX for death (explosions, etc)
 
 	protected override void Reset() {
 		base.Reset();
@@ -84,7 +85,10 @@ public class Enemy : Controllable {
 	}
 
 	protected override void Die() {
-		GameController.player.Unpossess(false);
+		if(this == GameController.player.possessed && player.possessing) GameController.player.Unpossess(false);
+		// Create the death VFX
+		GameController.InstantiateFromPool(deathObject, transform);
 		base.Die();
+		Destroy(gameObject);
 	}
 }

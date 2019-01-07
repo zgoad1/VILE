@@ -440,7 +440,7 @@ public class Controllable : Targetable {
 
 	protected virtual void Die() {
 		dead = true;
-		gameObject.SetActive(false);
+		//gameObject.SetActive(false);
 		hpBar.gameObject.SetActive(false);
 		//Destroy(gameObject);	// replace this when we have overrides
 	}

@@ -38,6 +38,6 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- Start room lighting is wacky in build
+- Start room lighting is wacky in build (maybe because no outside walls?)
 - Killing the FlashEye causes Tess to spark
 - Animation messes up occasionally when coming out of lightning bolt

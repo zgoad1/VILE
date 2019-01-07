@@ -11,8 +11,6 @@ public class Player : Controllable {
 	private Transform sprintCam;
 	private EpilepsyController flasher;
 	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
-	private bool possessing = false;
-	private Enemy possessed = null;
 	//private LightningMeshEffect a2fx;
 	private ParticleSystem a2fx;
 	private bool canSprint = true;
@@ -22,6 +20,9 @@ public class Player : Controllable {
 	private int comboNumber = 0;
 	public UIBar stBar;
 	private float rechargeFactor = 0.05f;
+
+	[HideInInspector] public bool possessing = false;
+	[HideInInspector] public Enemy possessed = null;
 
 	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;

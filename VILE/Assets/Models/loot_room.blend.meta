@@ -6,7 +6,37 @@ ModelImporter:
   - first:
       74: 1989289236423521904
     second: Default Take
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Floor__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: OuterWalls__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Poles__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rails__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Underside__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls__tex_lootroom
+    second: {fileID: 2100000, guid: e26b57fa0bff7bf4987635d59a6b536f, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
