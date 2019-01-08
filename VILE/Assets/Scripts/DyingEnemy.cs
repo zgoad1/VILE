@@ -20,6 +20,23 @@ public class DyingEnemy : PooledObject {
 		pieces = transform;
 	}
 
+	// Start is called before the first frame update
+	void Start() {
+		// Set initial variables so we can revert to this upon Restart
+		foreach(Transform t in pieces) {
+			if(t.GetComponent<ParticleSystem>() == null) {
+				MeshCollider mc = t.gameObject.AddComponent<MeshCollider>();
+				mc.convex = true;
+				if(t.gameObject.layer == LayerMask.NameToLayer("Default")) {
+					t.gameObject.layer = LayerMask.NameToLayer("SmallParts");
+				}
+				initialPositions.Add(t.position);
+				initialRotations.Add(t.rotation);
+			}
+		}
+		PlayEffects();
+	}
+
 	// Relocate all the pieces and remove their physics
 	public override void Restart() {
 		gameObject.SetActive(true);
@@ -28,20 +45,6 @@ public class DyingEnemy : PooledObject {
 			Destroy(t.GetComponent<Rigidbody>());
 			t.position = initialPositions[i];
 			t.rotation = initialRotations[i];
-		}
-		PlayEffects();
-	}
-
-	// Start is called before the first frame update
-	void Start() {
-		// Set initial variables so we can revert to this upon Restart
-		foreach(Transform t in pieces) {
-			t.gameObject.AddComponent<BoxCollider>();
-			if(t.gameObject.layer == LayerMask.NameToLayer("Default")) {
-				t.gameObject.layer = LayerMask.NameToLayer("SmallParts");
-			}
-			initialPositions.Add(t.position);
-			initialRotations.Add(t.rotation);
 		}
 		PlayEffects();
 	}
@@ -63,7 +66,10 @@ public class DyingEnemy : PooledObject {
 		int uh = 0;
 		for(float i = 0; i < particles.main.duration; i += particles.main.duration / initialPositions.Count, uh++) {
 			Rigidbody rb = pieces.GetChild(sequence[uh]).gameObject.AddComponent<Rigidbody>();
-			rb.AddExplosionForce(Random.Range(1000, 3000), transform.position, 100);
+			float minRange = -5;
+			float maxRange = 5;
+			Vector3 randomOffset = new Vector3(Random.Range(minRange, maxRange), Random.Range(minRange, maxRange), Random.Range(minRange, maxRange));
+			rb.AddExplosionForce(Random.Range(2000, 3000), transform.position + randomOffset, 100);
 			yield return new WaitForSeconds(particles.main.duration / initialPositions.Count);
 		}
 	}

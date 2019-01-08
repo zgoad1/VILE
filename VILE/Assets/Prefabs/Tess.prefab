@@ -4894,7 +4894,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: 536c1b2b13077764c815e48dcf33a3d9, type: 2}
   m_CullingMode: 2
   m_UpdateMode: 0
-  m_ApplyRootMotion: 0
+  m_ApplyRootMotion: 1
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -4962,7 +4962,7 @@ MonoBehaviour:
   camDistance: 14
   maxHP: 100
   hpBar: {fileID: 0}
-  attack1Cooldown: 0.5
+  attack1Cooldown: 0
   attack2Cooldown: 3
   attack1Power: 10
   attack2Power: 20
@@ -4973,6 +4973,8 @@ MonoBehaviour:
   target: {fileID: 0}
   isLightning: 0
   stBar: {fileID: 0}
+  possessing: 0
+  possessed: {fileID: 0}
   iPos: {x: 0, y: 0, z: 0}
 --- !u!1 &1113012394028012
 GameObject:
@@ -10570,8 +10572,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 3, y: 2.5, z: 3}
-  m_Center: {x: 0, y: -1.25, z: 0}
+  m_Size: {x: 3, y: 3, z: 3}
+  m_Center: {x: 0, y: -1.5, z: 0}
 --- !u!114 &114411551245503988
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -25914,11 +25916,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: TessLightning
       objectReference: {fileID: 0}
-    - target: {fileID: 198597506483584028, guid: 94041a72ef125e54ab9c4de050a481a9,
-        type: 3}
-      propertyPath: LightsModule.light
-      value: 
-      objectReference: {fileID: 108324407035367168}
     - target: {fileID: 4115629922568146, guid: 94041a72ef125e54ab9c4de050a481a9, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -25963,6 +25960,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 198597506483584028, guid: 94041a72ef125e54ab9c4de050a481a9,
+        type: 3}
+      propertyPath: LightsModule.light
+      value: 
+      objectReference: {fileID: 108324407035367168}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 94041a72ef125e54ab9c4de050a481a9, type: 3}
 --- !u!4 &4115629728508029 stripped

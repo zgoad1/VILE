@@ -13,13 +13,16 @@ public class Player : Controllable {
 	private static Vector2 screenCenter = new Vector2(0.5f, 0.5f);
 	//private LightningMeshEffect a2fx;
 	private ParticleSystem a2fx;
-	private bool canSprint = true;
+	private bool canPossess = true;
 	private LayerMask rayMask;
 	private LayerMask solidLayer;
 	private AttackHitbox ahbL, ahbR;
-	private int comboNumber = 0;
 	public UIBar stBar;
 	private float rechargeFactor = 0.05f;
+
+	// timer (for animations)
+	private float timerStart = 0;
+	private float timer = 0;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -303,48 +306,32 @@ public class Player : Controllable {
 	protected override void Attack1() {
 		base.Attack1();
 		SetHandTrails(true);
-		switch(comboNumber) {
-			case 0:
-				StartCoroutine("Attack1aCR");
-				break;
-			case 1:
-				StartCoroutine("Attack1bCR");
-				break;
-			default:
-				StartCoroutine("Attack1cCR");
-				break;
-		}
-		comboNumber = (comboNumber + 1) % 3;
+		anim.SetTrigger("attack1");
 	}
 
-	protected IEnumerator Attack1aCR() {
-		// start animation, handle code in animation events
-		// can just replace these coroutines
-		yield return null;
+	public void AnimFunc_UnsetComboing() {
+		anim.SetBool("attackComboing", false);
 	}
 
-	protected IEnumerator Attack1bCR() {
-		yield return null;
-	}
-
-	protected IEnumerator Attack1cCR() {
-		yield return null;
+	public void AnimFunc_SetComboing() {
+		anim.SetBool("attackComboing", true);
 	}
 
 	protected override void Attack2() {
 		SetHandTrails(true);
 		base.Attack2();
-		cooldownTimer = 1.6f;
+		cooldownTimer = 2f;
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
 		StartCoroutine("Attack2CR");
 	}
 
 	private IEnumerator Attack2CR() {
-		canSprint = false;
+		canPossess = false;
 		yield return new WaitForSeconds(0.8f);
 		a2fx.Play();//gameObject.SetActive(true);
-		// exert hitbox if we decide to make it multi-hit
+		yield return new WaitForSeconds(0.4f);
+		// exert hitbox, don't stun enemies (only target)
 		if(target != null) target.Damage(25);
 		if(target is Enemy) ((Enemy)target).Stun();
 		else if(target is Door) {
@@ -352,14 +339,14 @@ public class Player : Controllable {
 			((Door)target).Spark();
 		}
 		yield return new WaitForSeconds(0.8f);
-		canSprint = true;
+		canPossess = true;
 		//a2fx.Deactivate();
 	}
 
 	#endregion
 
 	protected bool CanPossessTarget() {
-		return target is Enemy && ((Enemy)target).control == state.STUNNED && canSprint;
+		return target is Enemy && ((Enemy)target).control == state.STUNNED && canPossess;
 	}
 
 	//private IEnumerator EnableCollision() {

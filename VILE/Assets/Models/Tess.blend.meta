@@ -1,102 +1,302 @@
 fileFormatVersion: 2
 guid: 72ca005e5531e0f40b05334db1ad523c
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: Armature
-    100004: Chest
-    100006: Fingers1_L
-    100008: Fingers1_R
-    100010: Fingers2_L
-    100012: Fingers2_R
-    100014: Foot_L
-    100016: Foot_R
-    100018: Forearm_L
-    100020: Forearm_R
-    100022: Hand_L
-    100024: Hand_R
-    100026: Head
-    100028: Head_001
-    100030: LowerLeg_L
-    100032: LowerLeg_R
-    100034: Neck
-    100036: Root
-    100038: Shoulder_L
-    100040: Shoulder_R
-    100042: tail1_L
-    100044: tail1_R
-    100046: tail2_L
-    100048: tail2_R
-    100050: Tess
-    100052: Thigh_L
-    100054: Thigh_R
-    100056: Thumb_L
-    100058: Thumb_R
-    100060: Toes_L
-    100062: Toes_R
-    100064: UpperArm_L
-    100066: UpperArm_R
-    100068: Waist
-    400000: //RootNode
-    400002: Armature
-    400004: Chest
-    400006: Fingers1_L
-    400008: Fingers1_R
-    400010: Fingers2_L
-    400012: Fingers2_R
-    400014: Foot_L
-    400016: Foot_R
-    400018: Forearm_L
-    400020: Forearm_R
-    400022: Hand_L
-    400024: Hand_R
-    400026: Head
-    400028: Head_001
-    400030: LowerLeg_L
-    400032: LowerLeg_R
-    400034: Neck
-    400036: Root
-    400038: Shoulder_L
-    400040: Shoulder_R
-    400042: tail1_L
-    400044: tail1_R
-    400046: tail2_L
-    400048: tail2_R
-    400050: Tess
-    400052: Thigh_L
-    400054: Thigh_R
-    400056: Thumb_L
-    400058: Thumb_R
-    400060: Toes_L
-    400062: Toes_R
-    400064: UpperArm_L
-    400066: UpperArm_R
-    400068: Waist
-    2100000: dress
-    2100002: socks
-    2100004: skin
-    2100006: hair
-    2100008: dress__tex_Tess
-    2100010: socks__tex_Tess
-    2100012: skin__tex_Tess
-    2100014: hair__tex_Tess
-    2100016: black__tex_Tess
-    2100018: black
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Tess
-    7400000: Default Take
-    7400002: Tess_run
-    7400004: Tess_idle
-    7400006: Tess_recover
-    7400008: Tess_attack2_charge
-    7400010: Tess_attack2_windup
-    7400012: Tess_attack2
-    7400014: Tess_fall
-    9500000: //RootNode
-    13700000: Tess
-    2186277476908879412: ImportLogs
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: Armature
+  - first:
+      1: 100004
+    second: Chest
+  - first:
+      1: 100006
+    second: Fingers1_L
+  - first:
+      1: 100008
+    second: Fingers1_R
+  - first:
+      1: 100010
+    second: Fingers2_L
+  - first:
+      1: 100012
+    second: Fingers2_R
+  - first:
+      1: 100014
+    second: Foot_L
+  - first:
+      1: 100016
+    second: Foot_R
+  - first:
+      1: 100018
+    second: Forearm_L
+  - first:
+      1: 100020
+    second: Forearm_R
+  - first:
+      1: 100022
+    second: Hand_L
+  - first:
+      1: 100024
+    second: Hand_R
+  - first:
+      1: 100026
+    second: Head
+  - first:
+      1: 100028
+    second: Head_001
+  - first:
+      1: 100030
+    second: LowerLeg_L
+  - first:
+      1: 100032
+    second: LowerLeg_R
+  - first:
+      1: 100034
+    second: Neck
+  - first:
+      1: 100036
+    second: Root
+  - first:
+      1: 100038
+    second: Shoulder_L
+  - first:
+      1: 100040
+    second: Shoulder_R
+  - first:
+      1: 100042
+    second: tail1_L
+  - first:
+      1: 100044
+    second: tail1_R
+  - first:
+      1: 100046
+    second: tail2_L
+  - first:
+      1: 100048
+    second: tail2_R
+  - first:
+      1: 100050
+    second: Tess
+  - first:
+      1: 100052
+    second: Thigh_L
+  - first:
+      1: 100054
+    second: Thigh_R
+  - first:
+      1: 100056
+    second: Thumb_L
+  - first:
+      1: 100058
+    second: Thumb_R
+  - first:
+      1: 100060
+    second: Toes_L
+  - first:
+      1: 100062
+    second: Toes_R
+  - first:
+      1: 100064
+    second: UpperArm_L
+  - first:
+      1: 100066
+    second: UpperArm_R
+  - first:
+      1: 100068
+    second: Waist
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: Armature
+  - first:
+      4: 400004
+    second: Chest
+  - first:
+      4: 400006
+    second: Fingers1_L
+  - first:
+      4: 400008
+    second: Fingers1_R
+  - first:
+      4: 400010
+    second: Fingers2_L
+  - first:
+      4: 400012
+    second: Fingers2_R
+  - first:
+      4: 400014
+    second: Foot_L
+  - first:
+      4: 400016
+    second: Foot_R
+  - first:
+      4: 400018
+    second: Forearm_L
+  - first:
+      4: 400020
+    second: Forearm_R
+  - first:
+      4: 400022
+    second: Hand_L
+  - first:
+      4: 400024
+    second: Hand_R
+  - first:
+      4: 400026
+    second: Head
+  - first:
+      4: 400028
+    second: Head_001
+  - first:
+      4: 400030
+    second: LowerLeg_L
+  - first:
+      4: 400032
+    second: LowerLeg_R
+  - first:
+      4: 400034
+    second: Neck
+  - first:
+      4: 400036
+    second: Root
+  - first:
+      4: 400038
+    second: Shoulder_L
+  - first:
+      4: 400040
+    second: Shoulder_R
+  - first:
+      4: 400042
+    second: tail1_L
+  - first:
+      4: 400044
+    second: tail1_R
+  - first:
+      4: 400046
+    second: tail2_L
+  - first:
+      4: 400048
+    second: tail2_R
+  - first:
+      4: 400050
+    second: Tess
+  - first:
+      4: 400052
+    second: Thigh_L
+  - first:
+      4: 400054
+    second: Thigh_R
+  - first:
+      4: 400056
+    second: Thumb_L
+  - first:
+      4: 400058
+    second: Thumb_R
+  - first:
+      4: 400060
+    second: Toes_L
+  - first:
+      4: 400062
+    second: Toes_R
+  - first:
+      4: 400064
+    second: UpperArm_L
+  - first:
+      4: 400066
+    second: UpperArm_R
+  - first:
+      4: 400068
+    second: Waist
+  - first:
+      21: 2100000
+    second: dress
+  - first:
+      21: 2100002
+    second: socks
+  - first:
+      21: 2100004
+    second: skin
+  - first:
+      21: 2100006
+    second: hair
+  - first:
+      21: 2100008
+    second: dress__tex_Tess
+  - first:
+      21: 2100010
+    second: socks__tex_Tess
+  - first:
+      21: 2100012
+    second: skin__tex_Tess
+  - first:
+      21: 2100014
+    second: hair__tex_Tess
+  - first:
+      21: 2100016
+    second: black__tex_Tess
+  - first:
+      21: 2100018
+    second: black
+  - first:
+      23: 2300000
+    second: //RootNode
+  - first:
+      33: 3300000
+    second: //RootNode
+  - first:
+      43: 4300000
+    second: Tess
+  - first:
+      74: 7400000
+    second: Default Take
+  - first:
+      74: 7400002
+    second: Tess_run
+  - first:
+      74: 7400004
+    second: Tess_idle
+  - first:
+      74: 7400006
+    second: Tess_recover
+  - first:
+      74: 7400008
+    second: Tess_attack2_charge
+  - first:
+      74: 7400010
+    second: Tess_attack2_windup
+  - first:
+      74: 7400012
+    second: Tess_attack2
+  - first:
+      74: 7400014
+    second: Tess_fall
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Tess
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
+  - first:
+      74: 4193239204476094298
+    second: Attack1a
+  - first:
+      74: 7136672929897671527
+    second: Attack1b
+  - first:
+      74: 3428394727727035699
+    second: Attack1c
+  - first:
+      74: 459480893055391566
+    second: Attack1d
   externalObjects: {}
   materials:
     importMaterials: 1
@@ -128,6 +328,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_idle
       takeName: Tess_idle2
+      internalID: 7400004
       firstFrame: 0
       lastFrame: 64
       wrapMode: 0
@@ -148,7 +349,14 @@ ModelImporter:
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
-      events: []
+      events:
+      - time: 0
+        functionName: AnimFunc_UnsetComboing
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}
@@ -156,6 +364,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Default Take
       takeName: Default Take
+      internalID: 7400000
       firstFrame: 0
       lastFrame: 15
       wrapMode: 0
@@ -184,6 +393,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_run
       takeName: Tess_run
+      internalID: 7400002
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -212,6 +422,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_recover
       takeName: Tess_recover
+      internalID: 7400006
       firstFrame: 0
       lastFrame: 31
       wrapMode: 0
@@ -240,6 +451,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_attack2_charge
       takeName: Tess_attack2_charge
+      internalID: 7400008
       firstFrame: 0
       lastFrame: 1
       wrapMode: 0
@@ -268,6 +480,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_attack2_windup
       takeName: Tess_attack2_windup
+      internalID: 7400010
       firstFrame: 0
       lastFrame: 16
       wrapMode: 0
@@ -296,6 +509,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_attack2
       takeName: Tess_attack2
+      internalID: 7400012
       firstFrame: 0
       lastFrame: 24
       wrapMode: 0
@@ -324,8 +538,139 @@ ModelImporter:
     - serializedVersion: 16
       name: Tess_fall
       takeName: Tess_fall
+      internalID: 7400014
       firstFrame: 0
       lastFrame: 59
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0
+        functionName: AnimFunc_UnsetComboing
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Attack1a
+      takeName: Attack1a
+      internalID: 4193239204476094298
+      firstFrame: -1
+      lastFrame: 11
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events:
+      - time: 0.02341137
+        functionName: AnimFunc_SetComboing
+        data: 
+        objectReferenceParameter: {instanceID: 0}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Attack1b
+      takeName: Attack1b
+      internalID: 7136672929897671527
+      firstFrame: -1
+      lastFrame: 11
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Attack1c
+      takeName: Attack1c
+      internalID: 3428394727727035699
+      firstFrame: -1
+      lastFrame: 17
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Attack1d
+      takeName: Attack1d
+      internalID: 459480893055391566
+      firstFrame: -1
+      lastFrame: 19
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
@@ -355,6 +700,7 @@ ModelImporter:
     globalScale: 2
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -362,10 +708,13 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -379,6 +728,10 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
@@ -392,7 +745,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    rootMotionBoneName: 
+    rootMotionBoneName: Root
     hasTranslationDoF: 0
     hasExtraRoot: 0
     skeletonHasParents: 1
