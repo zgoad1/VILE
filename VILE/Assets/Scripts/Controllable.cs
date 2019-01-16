@@ -4,6 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
 [RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(Animator))]
 public class Controllable : Targetable {
 
 	// NOTE: COLLISION DETECTION MUST BE CONTINUOUS or animations will be wacky
@@ -389,6 +390,7 @@ public class Controllable : Targetable {
 		control = state.PLAYER;
 		cam.idistance = camDistance;
 		cam.lookAt = camLook;
+		cooldownTimer = 0;
 		if(cc != null) cc.enabled = true;
 		currentPlayer = this;
 	}

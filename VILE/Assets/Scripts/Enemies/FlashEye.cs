@@ -4,14 +4,21 @@ using UnityEngine;
 
 public class FlashEye : Enemy {
 
+	[Tooltip("Enemy will try to maintain this distance from the player at all times.")]
+	public float desiredDistance = 100;
+
 	private FlashEyeBall ball;
 	private float maxVel = 2.3f;
 	private float maxAIVelPerSec = 64;
 	private Vector3 newEuler = Vector3.zero;
-	private Vector3 targetPos = Vector3.zero;
+	private Vector3 moveTowards = Vector3.zero;
+	private Vector3 rotateTowards = Vector3.zero;
 	private Vector3 velocityPerSec = Vector3.zero;
 	private LaserFX laser;
 	private LayerMask solidLayer;
+	private Vector3 desiredPosition = Vector3.zero; // desired position based on desiredDistance
+
+
 
 	protected override void Reset() {
 		base.Reset();
@@ -46,20 +53,36 @@ public class FlashEye : Enemy {
 
 	protected override void AIUpdate() {
 		base.AIUpdate();
-		// set velocity
-		Vector3 dist = target.transform.position - transform.position;
+
+		// get variables
+		moveTowards = tracker.playerPosition;
+		moveTowards.y = transform.position.y;
+		// If we can see the player, move to a safe distance from them; else, approach the point at which they were last seen.
+		if(((MemoryTracker)tracker).playerVisible) {
+			desiredPosition = moveTowards + desiredDistance * (transform.position - moveTowards).normalized;
+		} else {
+			desiredPosition = moveTowards;
+		}
+		Vector3 dist = desiredPosition - transform.position;
 		dist.y = 0;
-		velocityPerSec += dist.normalized * 0.5f;//= Vector3.ClampMagnitude(velocityPerSec + dist.normalized * 0.5f, maxVel);  // from per second to per frame
+
+		// set velocity
+		velocityPerSec += dist.normalized * 0.7f;
 		if(velocityPerSec.magnitude > maxAIVelPerSec) {
 			velocityPerSec /= (velocityPerSec.magnitude / maxAIVelPerSec);
 		}
 		velocity = velocityPerSec / 60;
+
+		#region attempt to attack
+		if(CanAttack(atk1Cost) && CanSeePlayer()) {
+			Attack1();
+		}
+		#endregion
+
+		// Move
+		//transform.position = desiredPosition;
 		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 		RotateWithVelocity();
-
-		if(Input.GetKeyDown(KeyCode.Space)) {
-			laser.ShootLaser();
-		}
 	}
 
 	protected override void PlayerUpdate() {
@@ -67,7 +90,6 @@ public class FlashEye : Enemy {
 		if(!attacking) {
 			SetMotion();    // velocity is set here
 			//velocity = Vector3.Lerp(velocity, Vector3.zero, 0.1f * 60 * Time.smoothDeltaTime);
-			velocityPerSec = velocity * 60;
 
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
@@ -75,9 +97,10 @@ public class FlashEye : Enemy {
 			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.05f * 60 * Time.smoothDeltaTime);
 			//RotateWithVelocity();
 		}
+		velocityPerSec = velocity * 60;
 
 		//Debug.Log("Velocity: " + velocity);
-		cc.Move(velocity);
+		cc.Move(velocityPerSec * Time.smoothDeltaTime);
 		SetTarget();
 
 		EnemyPlayerUpdate();
@@ -113,15 +136,15 @@ public class FlashEye : Enemy {
 	private void RotateWithVelocity() {
 		// i played with math until it worked
 		if(target != null) {
-			targetPos.x = Mathf.Lerp(targetPos.x, target.transform.position.x, 0.1f);
-			targetPos.y = transform.position.y;
-			targetPos.z = Mathf.Lerp(targetPos.z, target.transform.position.z, 0.1f);
+			rotateTowards.x = Mathf.Lerp(rotateTowards.x, tracker.playerPosition.x, 0.1f);
+			rotateTowards.y = transform.position.y;
+			rotateTowards.z = Mathf.Lerp(rotateTowards.z, tracker.playerPosition.z, 0.1f);
 		} else {
-			targetPos = transform.position + transform.forward;
-			targetPos.y = transform.position.y;
+			rotateTowards = transform.position + transform.forward;
+			rotateTowards.y = transform.position.y;
 		}
 		Quaternion r1 = transform.rotation;
-		transform.LookAt(targetPos);
+		transform.LookAt(rotateTowards);
 		Quaternion r2 = transform.rotation;
 		Quaternion newRot = Quaternion.Slerp(r1, r2, 0.02f);
 		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
@@ -129,6 +152,11 @@ public class FlashEye : Enemy {
 		newEuler.z = newRot.eulerAngles.z;
 		newRot.eulerAngles = newEuler;
 		transform.rotation = newRot;
+	}
+
+	protected override void Attack1() {
+		base.Attack1();
+		laser.ShootLaser();
 	}
 
 	protected override void Attack2() {

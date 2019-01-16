@@ -26,15 +26,20 @@ public class FlashEyeBall : MonoBehaviour {
 			// if no target, raycast in the direction of the reticle and face the hit point
 			// if that hits nothing, face in that direction
 			RaycastHit hit;
-			if(Physics.Raycast(Controllable.mainCam.transform.position, Controllable.mainCam.transform.forward, out hit, 200, layerMask)) {
+			if(Physics.Raycast(Controllable.mainCam.transform.position, Controllable.mainCam.transform.forward, out hit, parent.sightLength, layerMask)) {
 				transform.forward = Vector3.Slerp(transform.forward, (hit.point - transform.position).normalized, 0.5f * 60 * Time.deltaTime);
 			} else {
 				transform.forward = Vector3.Slerp(transform.forward, Controllable.mainCam.transform.forward, 0.2f * 60 * Time.deltaTime);
 			}
 		} else {
 			// raise accuracy for player
-			float accuracy = parent.control == Controllable.state.AI ? 0.3f : 0.5f;
-			transform.forward = Vector3.Slerp(transform.forward, (parent.target.transform.position - transform.position).normalized, accuracy * 60 * Time.deltaTime);
+			if(parent.control == Controllable.state.AI) {
+				float accuracy = 0.3f;
+				transform.forward = Vector3.Slerp(transform.forward, (GameController.playerTarget.position - transform.position).normalized, accuracy * 60 * Time.deltaTime);
+			} else {
+				float accuracy = 0.5f;
+				transform.forward = Vector3.Slerp(transform.forward, (parent.target.camLook.transform.position - transform.position).normalized, accuracy * 60 * Time.deltaTime);
+			}
 		}
 	}
 }

@@ -14,9 +14,10 @@ public class Targetable : MonoBehaviour {
 	[HideInInspector] public bool isOnScreen = false;
 	[HideInInspector] public bool canTarget = true;
 
-	public float radius = 0.2f;	// A raycast is done to test if the object is behind a wall. The raycast is done
-								// from the player's position to the object's position minus this radius, so it
-								// keeps us from hitting the object and triggering a false positive in the raycast.
+	[Tooltip("A raycast is done to test if the object is behind a wall. The raycast is done " + 
+			"from the player's position to the object's position minus this radius, so it " + 
+			"keeps us from hitting the object and triggering a false positive in the raycast.")]
+	public float radius = 0.2f;	
 
 	protected bool invincible = false;
 	protected float gracePeriod = 0.8f;

@@ -9633,10 +9633,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   damage: 1
+  layerMask: 0
   sparks: {fileID: 1346412182593846}
   laserParts: {fileID: 0}
   hitSparks: {fileID: 0}
   hitParts: {fileID: 0}
+  sparkDistance: 400
 --- !u!198 &198040625517511482
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -28848,6 +28850,7 @@ GameObject:
   - component: {fileID: 114007807651602606}
   - component: {fileID: 54477146278313866}
   - component: {fileID: 143938056631688966}
+  - component: {fileID: 1051793371}
   m_Layer: 13
   m_Name: FlashEye
   m_TagString: Untagged
@@ -28920,8 +28923,8 @@ MonoBehaviour:
   camDistance: 25
   maxHP: 100
   hpBar: {fileID: 0}
-  attack1Cooldown: 0.5
-  attack2Cooldown: 3
+  attack1Cooldown: 6
+  attack2Cooldown: 6
   attack1Power: 10
   attack2Power: 20
   velocity: {x: 0, y: 0, z: 0}
@@ -28931,6 +28934,8 @@ MonoBehaviour:
   target: {fileID: 0}
   deathObject: {fileID: 7414752342150661629, guid: 283bda1992a956446ba1aa99a826cfce,
     type: 3}
+  sightLength: 200
+  desiredDistance: 100
 --- !u!54 &54477146278313866
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -28965,3 +28970,19 @@ CharacterController:
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 6.5, z: 0}
+--- !u!114 &1051793371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1874314668453682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 1596a64437174aa45b3db550cb143bda, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerPosition: {x: 0, y: 0, z: 0}
+  controller: {fileID: 114007807651602606}
+  playerVisible: 0

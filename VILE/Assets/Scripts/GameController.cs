@@ -17,6 +17,9 @@ public class GameController : MonoBehaviour {
 	private static int number = 0;
 	private static string nextScene;
 	public static bool paused = false;
+	// The exact point on the player at which enemies should attack. Needed for precise raycasting.
+	public static Transform playerTarget;
+	public static int defaultLayerMask;
 
 	// laser barriers
 	[SerializeField] private Material laserBarrier;
@@ -46,6 +49,8 @@ public class GameController : MonoBehaviour {
 		blackfade = GameObject.Find("Blackfade").GetComponent<Animator>();
 		enemyHpBarObject = Resources.Load<GameObject>("Enemy HP");
 		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
+		playerTarget = FindObjectOfType<Player>().transform.Find("Target Transform");
+		defaultLayerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Default");
 	}
 
 	// Use this for initialization

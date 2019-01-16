@@ -2,13 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(PlayerTracker))]
 public class Enemy : Controllable {
 	
 	protected static Player player;
 	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
 	protected float playerDamage = 0.2f;    // damage to apply every frame in which the player
 											// is possessing this enemy
-	[SerializeField] protected GameObject deathObject;	// an object that does VFX for death (explosions, etc)
+	[SerializeField] protected GameObject deathObject;  // an object that does VFX for death (explosions, etc)
+	protected PlayerTracker tracker;
+	protected bool checkedForPlayer = false;    // whether we've called CanSeePlayer() this frame (saves a raycast when calling CanSeePlayer() twice in a frame)
+	protected bool sawPlayer = false;
+
+	[Tooltip("How far this enemy can see")]
+	public float sightLength = 200;
+
+	public bool CanSeePlayer() {
+		if(checkedForPlayer) return sawPlayer;
+		checkedForPlayer = true;
+		RaycastHit hit;
+		if(Physics.Raycast(transform.position, GameController.playerTarget.position - transform.position, out hit, sightLength, GameController.defaultLayerMask)) {
+			sawPlayer = hit.transform.gameObject.GetComponent<Player>() != null;
+			return sawPlayer;
+		}
+		sawPlayer = false;
+		return false;
+	}
 
 	protected override void Reset() {
 		base.Reset();
@@ -25,6 +44,7 @@ public class Enemy : Controllable {
 		}
 
 		player = FindObjectOfType<Player>();
+		tracker = GetComponent<PlayerTracker>();
 
 		gracePeriod = 0f;	// no invincibility period
 	}
@@ -44,7 +64,9 @@ public class Enemy : Controllable {
 
 	protected override void Update() {
 		base.Update();
-		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);
+		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);   // don't use tracker here bc this is used
+																								// in calcs for player (raycast to enemy
+		checkedForPlayer = false;
 
 		#region Set HPBar position
 		Vector3 newScreenCoords = screenCoords;

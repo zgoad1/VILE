@@ -5,10 +5,10 @@ using UnityEngine;
 public class LaserFX : MonoBehaviour {
 
 	public float damage = 1;
+	public int layerMask;
 
 	[Space]
 
-	private int layerMask;
 	[SerializeField] private GameObject sparks;			// the hit point sparks' gameObject
 	[SerializeField] private ParticleSystem laserParts;	// laser particles
 	[SerializeField] private ParticleSystem hitSparks;	// the sparks at the hit point (parent of hitParts)
@@ -16,6 +16,7 @@ public class LaserFX : MonoBehaviour {
 	private bool hitting;
 	private AudioManager am;
 	private AudioSource laserSound;
+	public float sparkDistance = 400; // actual length of laser beam
 
 	private void Reset() {
 		layerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters");
@@ -38,7 +39,7 @@ public class LaserFX : MonoBehaviour {
 		RaycastHit hit;
 		// this has to be done with a raycast so we can get the normal and the exact hit point
 		// 400 is the approximate length of the laser particle effect
-		if(hitting && Physics.Raycast(transform.position, transform.forward, out hit, 400, layerMask)) {
+		if(hitting && Physics.Raycast(transform.position, transform.forward, out hit, sparkDistance, layerMask)) {
 			//Debug.Log("Ray collided with " + hit.collider.gameObject.name + "\nDistance: " + (hit.point - transform.position).magnitude);
 			// play sparks
 			hitSparks.Play();

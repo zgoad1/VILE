@@ -158,6 +158,7 @@ public class Player : Controllable {
 			foreach(Targetable t in targets) {
 				if(t.distanceFromPlayer < minDist) {
 					RaycastHit hit;
+					// This is actually the most effective way to do this raycast
 					if(!Physics.Raycast(transform.position, t.transform.position - transform.position, out hit, t.distanceFromPlayer - t.radius, rayMask)) {
 						minDist = t.distanceFromPlayer;
 						newTarget = t;
