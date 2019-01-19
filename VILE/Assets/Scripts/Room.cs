@@ -15,8 +15,9 @@ using UnityEngine;
  * 
  */
 public class Room : MonoBehaviour {
-	
+
 	// READ ONLY (I'd use readonly but that makes stuff invisible in the inspector)
+	public area type = area.HALLS;
 	[Range(0, 1)] public float frequency = 1f;			// how common this room is (0 for start and end room)
 	public int limit = -1;								// how many of this room there can be (negative for unlimited)
 	public bool indep = true;							// whether this room is the head of a big room, or a single small room
@@ -45,9 +46,19 @@ public class Room : MonoBehaviour {
 
 	public enum direction {
 		LEFT = 2, RIGHT = 0, UP = 1, DOWN = 3
-	};
+	}
+
+	public enum area {
+		INTERSECTION, HALLS, TUNNELS
+	}
 
 
+
+	/**It does what it says. 
+	 */
+	private direction GetOpposite(direction d) {
+		return (direction)(((int)d + 2) % 4);
+	}
 
 	/**Whether this room needs another room connected to it after it's placed by
 	 * the map generator. Doesn't take other rooms currently on the map into account yet.
@@ -62,22 +73,43 @@ public class Room : MonoBehaviour {
 	/**Whether this room can have a specified room in the given direction.
 	 * Takes inclusion/exclusion lists into account, as well as whether the
 	 * given room matches up with the opening.
-	 * (either both or neither rooms have an opening into each other)
+	 * (either both or neither rooms have an opening into each other, and if they do, 
+	 * their area types must match)
 	 */
 	public bool CanHave(Room that, direction d) {
+		if(!AreaMatch(that, d)) return false;
 		switch(d) {
 			case direction.LEFT:
-				return (leftList.Count == 0 || leftList.Contains(that)) && !leftExclude.Contains(that) && !(doors.Contains(direction.LEFT) ^ that.doors.Contains(direction.RIGHT));
+				return (leftList.Count == 0 || leftList.Contains(that)) && !leftExclude.Contains(that);
 			case direction.RIGHT:
-				return (rightList.Count == 0 || rightList.Contains(that)) && !rightExclude.Contains(that) && !(doors.Contains(direction.RIGHT) ^ that.doors.Contains(direction.LEFT));
+				return (rightList.Count == 0 || rightList.Contains(that)) && !rightExclude.Contains(that);
 			case direction.UP:
-				return (upList.Count == 0 || upList.Contains(that)) && !upExclude.Contains(that) && !(doors.Contains(direction.UP) ^ that.doors.Contains(direction.DOWN));
+				return (upList.Count == 0 || upList.Contains(that)) && !upExclude.Contains(that);
 			case direction.DOWN:
-				return (downList.Count == 0 || downList.Contains(that)) && !downExclude.Contains(that) && !(doors.Contains(direction.DOWN) ^ that.doors.Contains(direction.UP));
+				return (downList.Count == 0 || downList.Contains(that)) && !downExclude.Contains(that);
 			default:
-				Debug.LogError("Room.CanMove() - invalid direction");
+				Debug.LogError("Room.CanHave() - invalid direction");
 				return false;
 		}
+	}
+
+	/**Helper method for CanHave().
+	 * Determines whether two rooms' areas match up.
+	 * We don't need to compare areas if the rooms don't open into each other.
+	 */
+	 private bool AreaMatch(Room that, direction d) {
+		// If the rooms open into each other...
+		bool b1 = doors.Contains(d), b2 = that.doors.Contains(GetOpposite(d));
+		if(b1 && b2) {
+			// ...compare their area types.
+			if(type == area.INTERSECTION ^ that.type == area.INTERSECTION) return true;
+			return type != area.INTERSECTION && type == that.type;
+		} else if(!b1 && !b2) {
+			// Else if the rooms don't open into each other, so area types don't matter.
+			return true;
+		}
+		// Otherwise we have doors that don't match up.
+		return false;
 	}
 
 	/**Whether this room is the head (starting point for generator) of a big room
@@ -114,9 +146,10 @@ public class Room : MonoBehaviour {
 
 	/**Whether two rooms have the same amount of openings in the same places. 
 	 * i.e. whether this room could safely be replaced by that room
+	 * exceptions: area intersections cannot be replaced
 	 */
 	public bool SameDoors(Room that) {
-		if(doors.Count != that.doors.Count) return false;
+		if(that.type == area.INTERSECTION || doors.Count != that.doors.Count) return false;
 		foreach(direction d in doors) {
 			if(!that.doors.Contains(d)) return false;
 		}

@@ -64,8 +64,6 @@ public class Enemy : Controllable {
 
 	protected override void Update() {
 		base.Update();
-		distanceFromPlayer = Vector3.Distance(player.transform.position, transform.position);   // don't use tracker here bc this is used
-																								// in calcs for player (raycast to enemy
 		checkedForPlayer = false;
 
 		#region Set HPBar position

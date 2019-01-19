@@ -1,0 +1,103 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Arc stone
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _ALPHAMODULATE_ON _ALPHAPREMULTIPLY_ON _EMISSION _FADING_ON _MAPPING_LATITUDE_LONGITUDE_LAYOUT
+    _NORMALMAP _PARALLAXMAP
+  m_LightmapFlags: 1
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BumpMap:
+        m_Texture: {fileID: 2800000, guid: 8b8c8a10edf94ddc8cc4cc4fcd5696a9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailAlbedoMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailMask:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _EmissionMap:
+        m_Texture: {fileID: 2800000, guid: 28f149f9eb20447449d4fdd6acf3ee77, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTex:
+        m_Texture: {fileID: 2800000, guid: 28f149f9eb20447449d4fdd6acf3ee77, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0.10252553}
+    - _MetallicGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _OcclusionMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _ParallaxMap:
+        m_Texture: {fileID: 2800000, guid: 8b8c8a10edf94ddc8cc4cc4fcd5696a9, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _BlendOp: 0
+    - _BumpScale: 0.75
+    - _CameraFadingEnabled: 1
+    - _CameraFarFadeDistance: 2
+    - _CameraNearFadeDistance: 1
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _DetailNormalMapScale: 7
+    - _DistortionBlend: 0
+    - _DistortionEnabled: 0
+    - _DistortionStrength: 10.18
+    - _DistortionStrengthScaled: 1.018
+    - _DstBlend: 10
+    - _EmissionEnabled: 1
+    - _Exposure: 1
+    - _FlipbookMode: 0
+    - _GlossMapScale: 1
+    - _Glossiness: 0.5
+    - _GlossyReflections: 1
+    - _ImageType: 0
+    - _Layout: 0
+    - _LightingEnabled: 1
+    - _Mapping: 1
+    - _Metallic: 0.75
+    - _MirrorOnBack: 0
+    - _Mode: 3
+    - _OcclusionStrength: 0.591
+    - _Parallax: 0.04
+    - _Rotation: 0
+    - _SmoothnessTextureChannel: 0
+    - _SoftParticlesEnabled: 0
+    - _SoftParticlesFarFadeDistance: 1
+    - _SoftParticlesNearFadeDistance: 0
+    - _SpecularHighlights: 1
+    - _SrcBlend: 1
+    - _UVSec: 0
+    - _ZWrite: 0
+    m_Colors:
+    - _CameraFadeParams: {r: 1, g: 1, b: 0, a: 0}
+    - _Color: {r: 0, g: 0.053587552, b: 0.21698111, a: 0.78431374}
+    - _EmissionColor: {r: 1.116451, g: 1.116451, b: 1.116451, a: 1}
+    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
+    - _Tint: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}

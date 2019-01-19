@@ -36,7 +36,7 @@ public class MapGenerator : MonoBehaviour {
 
 	enum dIndex {
 		RIGHT = 0, UP = 1, LEFT = 2, DOWN = 3
-	};
+	}
 
 
 
@@ -102,7 +102,11 @@ public class MapGenerator : MonoBehaviour {
 			Vector2 newCoords = open[0].coords + directions[(int)GetOpenDirection(open[0])];
 			do {
 				// choose a random room to place out of all the rooms that could fit there
-				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
+				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);								// would it work to move this out of the loop?
+				if(canFit.Count == 0) {
+					Debug.LogError("No fitting room to attach to " + open[0] + " in the direction " + GetOpenDirection(open[0]) + 
+						"\nIncoming ArgumentOutOfRangeException.");
+				}
 				success = TryPlaceRoom(newCoords, GetRandomRoom(canFit));
 			} while(!success);
 

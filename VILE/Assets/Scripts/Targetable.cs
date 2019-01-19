@@ -17,7 +17,7 @@ public class Targetable : MonoBehaviour {
 	[Tooltip("A raycast is done to test if the object is behind a wall. The raycast is done " + 
 			"from the player's position to the object's position minus this radius, so it " + 
 			"keeps us from hitting the object and triggering a false positive in the raycast.")]
-	public float radius = 0.2f;	
+	public float radius = 5f;	
 
 	protected bool invincible = false;
 	protected float gracePeriod = 0.8f;
@@ -35,6 +35,10 @@ public class Targetable : MonoBehaviour {
 		camLook = camLookOb.transform;
 	}
 
+	protected virtual void Update() {
+		distanceFromPlayer = Vector3.Distance(GameController.player.transform.position, transform.position);
+	}
+
 	public virtual void SetScreenCoords() {
 		screenCoords = GameController.mainCamCam.WorldToScreenPoint(camLook.position);
 		screenCoords.x /= Screen.width;
@@ -46,9 +50,7 @@ public class Targetable : MonoBehaviour {
 	}
 
 	public virtual void Damage(float damage) {
-		// Damageable non-Controllable Targetables can disregard the float
-		// e.g. Doors should be destroyed/melted when hit by a laser, or
-		// opened when hit by lightning
+
 	}
 
 	public virtual void Knockback() {

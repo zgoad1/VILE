@@ -6,6 +6,10 @@ public class TargetableRenderer : MonoBehaviour {
 
 	public Targetable parent;
 
+	private void Reset() {
+		parent = GetComponentInParent<Targetable>();
+	}
+
 	protected void OnBecameVisible() {
 		Targetable.onScreen.Add(parent);
 		parent.isOnScreen = true;

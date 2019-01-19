@@ -20,6 +20,6 @@ public class MainCamera : MonoBehaviour {
 	}
 
 	public void ScreenShake(float intensity) {
-		FindObjectOfType<CameraControl>().ScreenShake(intensity);
+		GameController.camControl.ScreenShake(intensity);
 	}
 }

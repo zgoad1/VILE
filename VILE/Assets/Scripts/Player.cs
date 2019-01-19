@@ -121,21 +121,29 @@ public class Player : Controllable {
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);  // sets onGround
+		if(hit.gameObject.name == "conductor_port") {
+			Debug.Log("What");
+		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
-		} /*else if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.1f) {
+		} else if(hit.gameObject.GetComponent<Conductor>() == target && control == state.AI) {
+			TurnIntoLightning(false);
+			renderer.enabled = false;
+			GameController.mainCam.ScreenShake(1);
+			GameController.camControl.lookAt = target.transform;
+		}/*else if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.1f) {
 			cam.ScreenShake(Mathf.Abs(velocity.y));
 		}*/	// decided I like how she feels lighter when she lands
 		// make a "checkpoint" to keep from falling off map
 		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
 
-	/**Set the target to the closest enemy in the targets array
+	/**Set the target to the closest targetable in the targets array
 	 */
 	protected override void SetTarget() {
 		if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(false);
-		// add any onscreen enemies that are close enough to the center of the screen
+		// add any onscreen targets that are close enough to the center of the screen
 		// to the targets array (and remove those who aren't)
 		foreach(Targetable t in onScreen) {
 			bool inRange = IsInRange(t);
@@ -151,7 +159,7 @@ public class Player : Controllable {
 				}
 			}
 		}
-		// find the closest enemy in the targets array that isn't blocked by a wall
+		// find the closest taargetable in the targets array that isn't blocked by a wall
 		float minDist = Mathf.Infinity;
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
@@ -247,6 +255,7 @@ public class Player : Controllable {
 			cam.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
 			cam.ScreenShake(1.5f);
+			invincible = true;
 			//anim.speed = 0;
 			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;     // protect this part from repeated calls
@@ -256,6 +265,7 @@ public class Player : Controllable {
 			head.Stop();
 			cam.SetZoomTransform(null);
 			burst.Play();
+			invincible = false;
 			//anim.speed = 1;
 			//flasher.FlashStop();
 			if(rightKey <= 0.1f && fwdKey <= 0.1f && anim.GetBool("onGround")) {
@@ -346,8 +356,8 @@ public class Player : Controllable {
 
 	#endregion
 
-	protected bool CanPossessTarget() {
-		return target is Enemy && ((Enemy)target).control == state.STUNNED && canPossess;
+	public bool CanPossessTarget() {
+		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 
 	//private IEnumerator EnableCollision() {

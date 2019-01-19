@@ -31,10 +31,6 @@ public class Door : Targetable {
 		Open(open);
 	}
 
-	private void Update() {
-		distanceFromPlayer = Vector3.Distance(GameController.player.transform.position, transform.position);
-	}
-
 	public void Open(bool newOpen) {
 		canTarget = !newOpen;
 		open = newOpen;

@@ -30,6 +30,15 @@ public class GameController : MonoBehaviour {
 	[SerializeField] private Material wallGlow;
 	private Color newColorWG = Color.black;
 
+	// arc stone animation
+	[SerializeField] private Material arcStone;
+	private Vector2 arcStoneOffset = Vector2.zero;
+	private Color newColorAS = Color.gray;
+
+	// conductor animation
+	[SerializeField] private Material conductor;
+	private Vector2 conductorScrollSpeed = new Vector2(0, 0.02f);
+
 	[SerializeField] private int numPremadeObjects = 10;    // how many of each object to pool
 	[SerializeField] private List<GameObject> objectList;   // said objects
 	private static List<GameObject> objectPool = new List<GameObject>();
@@ -71,14 +80,27 @@ public class GameController : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		#region Material animations
+		// wall glow
 		newColorWG.r = 0.5f * Mathf.Sin(2 * Mathf.PI / 4 * Time.time) + 0.5f;
 		wallGlow.SetColor("_EmissionColor", newColorWG);
 
+		// laser barrier
 		newColorLB.a = 0.1f * Mathf.Sin(2 * Mathf.PI / 0.12f * Time.time) + .9f;
 		laserBarrier.color = newColorLB;
 
-		#region Pause
+		// arc stones
+		arcStoneOffset.y = 0.12f * Mathf.Sin(2 * Mathf.PI / 8 * Time.time);
+		arcStone.mainTextureOffset = arcStoneOffset;
+		float newColorASColor = 1.5f + 0.5f * Mathf.Sin(2 * Mathf.PI / 5 * Time.time);
+		newColorAS.r = newColorAS.g = newColorAS.b = newColorASColor;
+		arcStone.SetColor("_EmissionColor", newColorAS);
 
+		// conductor
+		conductor.mainTextureOffset += conductorScrollSpeed;
+		#endregion
+
+		#region Pause
 		if(Input.GetButtonDown("Pause")) {
 			if(!paused) Pause();
 			else Unpause();

@@ -33,7 +33,6 @@ public class PlayerReticle : MonoBehaviour {
 		Reset();
 	}
 	
-	// Update is called once per frame
 	void LateUpdate () {
 		// set position based on target
 		if(player.target != null) {
@@ -50,7 +49,7 @@ public class PlayerReticle : MonoBehaviour {
 		image.enabled = true;
 		if(player.target != null) {
 			image.sprite = targetSprite;
-			if(player.target is Enemy && ((Enemy)player.target).control == Controllable.state.STUNNED) {
+			if(player.CanPossessTarget()) {
 				int newFrames = GameController.frames / 2;
 				if(newFrames % 2 == 0) {
 					image.enabled = false;

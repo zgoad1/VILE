@@ -149,20 +149,6 @@ public class Controllable : Targetable {
 
 		renderer = GetComponentInChildren<SkinnedMeshRenderer>();
 		if(renderer == null) renderer = GetComponentInChildren<MeshRenderer>();
-		/*
-		if(renderer != null) {
-			TargetableRenderer cr;
-			if(this is Enemy) cr = renderer.GetComponent<EnemyRenderer>();
-			else cr = renderer.GetComponent<TargetableRenderer>();
-			if(cr == null) {
-				if(this is Enemy) cr = renderer.gameObject.AddComponent<EnemyRenderer>();
-				else cr = renderer.gameObject.AddComponent<TargetableRenderer>();
-			}
-			cr.parent = this;
-		} else {
-			Debug.LogWarning("You have a Controllable with a weird renderer (not mesh)");
-		}
-		*/
 
 		gravVec = new Vector3(0, -grav, 0);
 
@@ -173,7 +159,8 @@ public class Controllable : Targetable {
 		Reset();
 	}
 	
-	protected virtual void Update() {
+	protected override void Update() {
+		base.Update();
 		if(control == state.PLAYER) {
 			PlayerUpdate();
 		} else if(control == state.AI) {
