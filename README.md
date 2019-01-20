@@ -32,6 +32,8 @@
 **- A -**
 
 **- B -**
+- You can move while attacking.
+- Stamina is drained for extra clicks while attacking
 - Reticle sometimes disappears forever 
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
