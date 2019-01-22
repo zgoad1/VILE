@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class TransformChain : MonoBehaviour {
+	public bool drawGizmos = false;
 	public Transform parent;
-	[Range(0, 1)] public float lerpFactor = 0.2f;
+	[Range(0, 1)] public float tightness = 0.2f;
 
 	private Vector3 offset;
 
@@ -15,10 +16,10 @@ public class TransformChain : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update() {
-		transform.position = Vector3.Lerp(transform.position, parent.position + offset, lerpFactor);
+		transform.position = Vector3.Lerp(transform.position, parent.position + offset, tightness * 60 * Time.deltaTime);
 	}
 
-	private void OnDrawGizmosSelected() {
-		Gizmos.DrawSphere(transform.position, 1);
+	private void OnDrawGizmos() {
+		if(drawGizmos) Gizmos.DrawSphere(transform.position, 1);
 	}
 }

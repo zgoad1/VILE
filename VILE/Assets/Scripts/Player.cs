@@ -3,10 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : Controllable {
+	// claws are needed for animations
+	[SerializeField] private float clawLThickness = 0, clawRThickness = 0;
+	[SerializeField] private bool clawLVisible = false, clawRVisible = false;
+	[SerializeField] private TessClaw clawL, clawR;
+
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
 	private ParticleSystem head;
-	private TrailRenderer[] handTrails;
 	[HideInInspector] public bool isLightning = false;
 	private Transform sprintCam;
 	private EpilepsyController flasher;
@@ -34,15 +38,14 @@ public class Player : Controllable {
 
 	protected override void Reset() {
 		base.Reset();
-		lightning = GetComponentsInChildren<ParticleSystem>()[2];
-		burst = GetComponentsInChildren<ParticleSystem>()[3];
-		head = GetComponentsInChildren<ParticleSystem>()[4];
+		lightning = GetComponentsInChildren<ParticleSystem>()[0];
+		burst = GetComponentsInChildren<ParticleSystem>()[1];
+		head = GetComponentsInChildren<ParticleSystem>()[2];
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
-		a2fx = GetComponentsInChildren<ParticleSystem>()[5];
+		a2fx = GetComponentsInChildren<ParticleSystem>()[3];
 		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid");
-		handTrails = GetComponentsInChildren<TrailRenderer>();
 		//ahbL = GetComponentsInChildren<AttackHitbox>()[0];
 		//ahbR = GetComponentsInChildren<AttackHitbox>()[1];
 		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();//FindObjectOfType<UIBar>();
@@ -51,6 +54,8 @@ public class Player : Controllable {
 		stBar = GameObject.Find("Tess St").GetComponent<UIBar>();
 		stBar.character = this;
 		stBar.maxValue = 100;
+		//clawL = FindObjectsOfType<TessClaw>()[0];	//always gets it in the wrong order
+		//clawR = FindObjectsOfType<TessClaw>()[1];
 	}
 
 	protected override void Start() {
@@ -80,6 +85,20 @@ public class Player : Controllable {
 				Unpossess(true);
 			}
 		}
+		clawL.gameObject.SetActive(clawLVisible);
+		if(clawLVisible) {
+			clawL.thicknessRandomness = clawLThickness;
+			foreach(TrailRenderer t in clawL.trails) {
+				t.widthMultiplier = clawLThickness * 2;
+			}
+		}
+		clawR.gameObject.SetActive(clawRVisible);
+		if(clawRVisible) {
+			clawR.thicknessRandomness = clawRThickness;
+			foreach(TrailRenderer t in clawR.trails) {
+				t.widthMultiplier = clawRThickness * 2;
+			}
+		}
 	}
 
 	protected override void PlayerUpdate() {
@@ -90,7 +109,6 @@ public class Player : Controllable {
 		// Set the target dynamically if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
-			SetHandTrails(false);
 			SetTarget();
 		} else {
 			if(target != null) a2fx.transform.LookAt(target.camLook);
@@ -236,13 +254,6 @@ public class Player : Controllable {
 		}
 	}
 
-	private void SetHandTrails(bool enabled) {
-		foreach(TrailRenderer t in handTrails) {
-			if(enabled) t.Clear();
-			t.enabled = enabled;
-		}
-	}
-
 	#region Abilities
 
 	private void TurnIntoLightning(bool enable) {
@@ -316,7 +327,6 @@ public class Player : Controllable {
 
 	protected override void Attack1() {
 		base.Attack1();
-		SetHandTrails(true);
 		anim.SetTrigger("attack1");
 	}
 
@@ -329,7 +339,6 @@ public class Player : Controllable {
 	}
 
 	protected override void Attack2() {
-		SetHandTrails(true);
 		base.Attack2();
 		cooldownTimer = 2f;
 		anim.SetTrigger("attack2Charge");
