@@ -29,6 +29,7 @@ public class CameraControl : MonoBehaviour {
 	private float shakeStart;
 	private Transform zoomTransform = null;
 	private float zoomLerpFac = 0.1f;
+	private Vector3 zOff = Vector3.zero;	// used for zooming
 
 	// Use this for initialization
 	void Start() {
@@ -46,8 +47,11 @@ public class CameraControl : MonoBehaviour {
 
 	private void Update() {
 		if(readInput) {
-			currentX += sensitivityX * Input.GetAxis("Mouse X");
-			currentY = Mathf.Clamp(currentY - sensitivityY * inverted * Input.GetAxis("Mouse Y"), -60f, 75f);
+			currentX += sensitivityX * Input.GetAxis("Mouse X") * 60 * Time.deltaTime;
+			currentY = Mathf.Clamp(currentY - sensitivityY * inverted * Input.GetAxis("Mouse Y") * 60 * Time.deltaTime, -60f, 75f);
+		}
+		if(Input.GetKeyDown(KeyCode.I)) {
+			inverted = -inverted;
 		}
 	}
 
@@ -74,7 +78,10 @@ public class CameraControl : MonoBehaviour {
 				distance = idistance;
 				SetCam(distance);
 			}
-			camTransform.position = Vector3.Lerp(camTransform.position, adjTransform.position, lerpFac * 60 * Time.smoothDeltaTime);
+			camTransform.localPosition -= zOff;
+			camTransform.position = Vector3.Slerp(camTransform.position, adjTransform.position, lerpFac * 60 * Time.smoothDeltaTime);
+			zOff.z = Mathf.Lerp(zOff.z, 0, 0.1f);
+			camTransform.localPosition += zOff;
 			ScreenShakeUpdate();
 			camTransform.LookAt(lookAt);
 		}
@@ -104,19 +111,23 @@ public class CameraControl : MonoBehaviour {
 		// prevent weak shapes interrupting strong shakes, also eliminate negative input
 		if(intensity > screenShake) {
 			screenShake = intensity;
-			shakeStart = Time.time;
+			shakeStart = Time.realtimeSinceStartup;
 		}
 	}
 
 	private void ScreenShakeUpdate() {
 		if(screenShake > 0.01f) {
-			float timeDiff = Time.time - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
+			float timeDiff = Time.realtimeSinceStartup - shakeStart + 0.1f; // this'll be 0 the first frame, so I just added 0.1 so we don't divide by 0
 			shakeVec.y = -screenShake * (0.2f / timeDiff) * Mathf.Sin(2 * Mathf.PI / (timeDiff));
 			shakeVec.x = -screenShake * (0.2f / timeDiff) * Mathf.Cos(2 * Mathf.PI / (0.2f * timeDiff));
 			camTransform.position += shakeVec;
 			//Debug.Log("ShakeVec.y: " + shakeVec.y);
 			screenShake = Mathf.Lerp(screenShake, 0, 0.03f);
 		}
+	}
+
+	public void Zoom(float offset) {
+		zOff.z = offset;
 	}
 
 	public void SetZoomTransform(Transform t, float zoomSpeed) {

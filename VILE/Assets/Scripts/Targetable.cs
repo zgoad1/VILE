@@ -19,9 +19,6 @@ public class Targetable : MonoBehaviour {
 			"keeps us from hitting the object and triggering a false positive in the raycast.")]
 	public float radius = 5f;	
 
-	protected bool invincible = false;
-	protected float gracePeriod = 0.8f;
-
 	public static List<Targetable> onScreen = new List<Targetable>();
 
 	protected virtual void Reset() {
@@ -47,19 +44,5 @@ public class Targetable : MonoBehaviour {
 
 	public bool IsInFrontOf(Targetable t) {
 		return Helper.IsInFrontOf(t.transform, transform);
-	}
-
-	public virtual void Damage(float damage) {
-
-	}
-
-	public virtual void Knockback() {
-		StartCoroutine("GracePeriod");
-	}
-
-	protected IEnumerator GracePeriod() {
-		invincible = true;
-		yield return new WaitForSeconds(gracePeriod);
-		invincible = false;
 	}
 }

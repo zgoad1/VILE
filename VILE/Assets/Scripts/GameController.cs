@@ -43,6 +43,8 @@ public class GameController : MonoBehaviour {
 	[SerializeField] private List<GameObject> objectList;   // said objects
 	private static List<GameObject> objectPool = new List<GameObject>();
 
+	private static float ifov;
+
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
 		mainCam = FindObjectOfType<MainCamera>();
@@ -60,6 +62,7 @@ public class GameController : MonoBehaviour {
 		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
 		playerTarget = FindObjectOfType<Player>().transform.Find("Target Transform");
 		defaultLayerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Default");
+		ifov = mainCamCam.fieldOfView;
 	}
 
 	// Use this for initialization
@@ -106,6 +109,8 @@ public class GameController : MonoBehaviour {
 			else Unpause();
 		}
 		#endregion
+
+		mainCamCam.fieldOfView = Mathf.Lerp(mainCamCam.fieldOfView, ifov, 0.2f * 60 * Time.deltaTime);
 
 		frames++;
 	}
@@ -195,5 +200,24 @@ public class GameController : MonoBehaviour {
 		} else {
 			Debug.LogError("Tried to instantiate pooled object that isn't pooled");
 		}
+	}
+
+	public static void HitStop(float intensity) {
+		Debug.Log("Hit stop intensity: " + intensity);
+		IEnumerator cr = instance.HitStopCR(intensity);
+		instance.StartCoroutine(cr);
+		camControl.ScreenShake(intensity * 2);
+		CamZoom(18 * intensity + 2);
+		//camControl.Zoom(intensity * 500);
+	}
+
+	private IEnumerator HitStopCR(float intensity) {
+		Time.timeScale = 0.1f;
+		yield return new WaitForSecondsRealtime(intensity);
+		if(!paused) Time.timeScale = 1;
+	}
+
+	public static void CamZoom(float intensity) {
+		mainCamCam.fieldOfView = ifov - intensity;
 	}
 }

@@ -55,8 +55,8 @@ public class LaserFX : MonoBehaviour {
 		//Debug.Log("Particle collided with " + other.name);
 		hitting = true;
 		Targetable target = other.GetComponent<Targetable>();
-		if(target != null) {
-			target.Damage(1);
+		if(target is Controllable) {
+			((Controllable)target).Damage(1, 0.02f);
 		}
 		StopSparks();
 	}
@@ -67,6 +67,11 @@ public class LaserFX : MonoBehaviour {
 		hitSparks.Stop();  // hit sparks play automatically as long as they're a child of the laser
 						   //am.Play("Laser");
 		laserSound.Play();
+	}
+
+	public void StopLaser() {
+		laserParts.Stop();
+		hitting = false;
 	}
 
 	private void StopSparks() {

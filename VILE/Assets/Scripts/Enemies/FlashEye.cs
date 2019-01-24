@@ -17,6 +17,7 @@ public class FlashEye : Enemy {
 	private LaserFX laser;
 	private LayerMask solidLayer;
 	private Vector3 desiredPosition = Vector3.zero; // desired position based on desiredDistance
+	private float distanceFromDistance = 30;		// max distance from desiredDistance in which we may attack
 
 
 
@@ -54,30 +55,34 @@ public class FlashEye : Enemy {
 	protected override void AIUpdate() {
 		base.AIUpdate();
 
-		// get variables
-		moveTowards = tracker.playerPosition;
-		moveTowards.y = transform.position.y;
-		// If we can see the player, move to a safe distance from them; else, approach the point at which they were last seen.
-		if(((MemoryTracker)tracker).playerVisible) {
-			desiredPosition = moveTowards + desiredDistance * (transform.position - moveTowards).normalized;
+		if(!attacking) {
+			//get variables
+			moveTowards = tracker.playerPosition;
+			moveTowards.y = transform.position.y;
+			// If we can see the player, move to a safe distance from them; else, approach the point at which they were last seen.
+			if(((MemoryTracker)tracker).playerVisible) {
+				desiredPosition = moveTowards + desiredDistance * (transform.position - moveTowards).normalized;
+			} else {
+				desiredPosition = moveTowards;
+			}
+			Vector3 dist = desiredPosition - transform.position;
+			dist.y = 0;
+
+			// set velocity
+			velocityPerSec += dist.normalized * 0.7f;
+			if(velocityPerSec.magnitude > maxAIVelPerSec) {
+				velocityPerSec /= (velocityPerSec.magnitude / maxAIVelPerSec);
+			}
+			velocity = velocityPerSec / 60;
+
+			// attempt to attack if we're close enough to the desired position
+			if(CanAttack(atk1Cost) && CanSeePlayer() && Mathf.Abs(distanceFromPlayer - desiredDistance) < distanceFromDistance) {
+				Attack1();
+			}
 		} else {
-			desiredPosition = moveTowards;
+			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.01f);
+			velocityPerSec = velocity * 60;
 		}
-		Vector3 dist = desiredPosition - transform.position;
-		dist.y = 0;
-
-		// set velocity
-		velocityPerSec += dist.normalized * 0.7f;
-		if(velocityPerSec.magnitude > maxAIVelPerSec) {
-			velocityPerSec /= (velocityPerSec.magnitude / maxAIVelPerSec);
-		}
-		velocity = velocityPerSec / 60;
-
-		#region attempt to attack
-		if(CanAttack(atk1Cost) && CanSeePlayer()) {
-			Attack1();
-		}
-		#endregion
 
 		// Move
 		//transform.position = desiredPosition;
@@ -122,6 +127,8 @@ public class FlashEye : Enemy {
 		if(stunCount == 2) {
 			maxVel /= 4;
 			maxAIVelPerSec /= 4;
+			desiredDistance /= 4;
+			distanceFromDistance /= 4;
 			// make flying enemies fall
 			gameObject.layer = LayerMask.NameToLayer("Enemies");
 			onGround = false;
@@ -129,6 +136,7 @@ public class FlashEye : Enemy {
 			// keep rotating blades if we're still in the air
 			anim.speed = prevAnimSpeed;
 		}
+		laser.StopLaser();
 		velocityPerSec = Vector3.zero;
 		RotateWithVelocity();
 	}
@@ -162,5 +170,10 @@ public class FlashEye : Enemy {
 	protected override void Attack2() {
 		base.Attack2();
 		laser.ShootLaser();
+	}
+
+	public override void Knockback(Vector3 force) {
+		base.Knockback(force);
+		laser.StopLaser();
 	}
 }

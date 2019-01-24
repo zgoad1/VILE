@@ -46,7 +46,7 @@ public class Enemy : Controllable {
 		player = FindObjectOfType<Player>();
 		tracker = GetComponent<PlayerTracker>();
 
-		gracePeriod = 0f;	// no invincibility period
+		defaultGracePeriod = 0f;	// no invincibility period
 	}
 
 	protected override void PlayerUpdate() {
@@ -58,7 +58,8 @@ public class Enemy : Controllable {
 	protected virtual void EnemyPlayerUpdate() {
 		SetScreenCoords();
 		hpBar.gameObject.SetActive(true);
-		Damage(playerDamage);
+		//Damage(playerDamage);
+		hp -= playerDamage * 60 * Time.deltaTime;
 		GameController.player.stamina += playerDamage / 2f;
 	}
 
@@ -93,15 +94,17 @@ public class Enemy : Controllable {
 	}
 
 	public override void Damage(float damage) {
-		StopCoroutine("ShowHP");
-		StartCoroutine("ShowHP");
+		if(!invincible) {
+			StopCoroutine("ShowHP");
+			StartCoroutine("ShowHP");
+		}
 		base.Damage(damage);
 	}
 
 	protected IEnumerator ShowHP() {
 		hpBar.gameObject.SetActive(true);
 		yield return new WaitForSeconds(2f);
-		hpBar.gameObject.SetActive(false);
+		if(this != GameController.player.target) hpBar.gameObject.SetActive(false);
 	}
 
 	protected override void Die() {

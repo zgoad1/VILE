@@ -9177,7 +9177,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.5
+        time: 0.5416667
         value: 0
         inSlope: Infinity
         outSlope: Infinity
@@ -9232,7 +9232,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.29166666
+        time: 0.33333334
         value: 0.5
         inSlope: 0
         outSlope: 0
@@ -9241,7 +9241,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.5
+        time: 0.5416667
         value: 0
         inSlope: 0
         outSlope: 0
@@ -40722,7 +40722,7 @@ AnimationClip:
         inWeight: 0
         outWeight: 0
       - serializedVersion: 3
-        time: 0.5
+        time: 0.5416667
         value: 0
         inSlope: Infinity
         outSlope: Infinity
@@ -40777,7 +40777,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.29166666
+        time: 0.33333334
         value: 0.5
         inSlope: 0
         outSlope: 0
@@ -40786,7 +40786,7 @@ AnimationClip:
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
-        time: 0.5
+        time: 0.5416667
         value: 0
         inSlope: 0
         outSlope: 0
@@ -50498,6 +50498,13 @@ AnimationClip:
   m_HasGenericRootTransform: 0
   m_HasMotionFloatCurves: 0
   m_Events:
+  - time: 0
+    functionName: AnimFunc_DrainStamina
+    data: 
+    objectReferenceParameter: {fileID: 0}
+    floatParameter: 0
+    intParameter: 0
+    messageOptions: 0
   - time: 0.016583053
     functionName: AnimFunc_SetComboing
     data: 

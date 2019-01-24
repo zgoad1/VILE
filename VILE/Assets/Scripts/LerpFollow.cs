@@ -4,13 +4,13 @@ using UnityEngine;
 
 // Follows the parent transform's position using lerp.
 // Also draws cool electricity effects maybe if I can do it
-public class LerpFollow : MonoBehaviour {
+public class LerpFollow : TransformChain {
 
 	[Range(0, 1)] public float tightness = 0.2f;
 	public Transform follow;
-	public LerpFollow[] next = new LerpFollow[1];
-	[Tooltip("Only important for Tess Claw points. Whether this is the starting point of the chain.")]
-	public bool root = false;
+	//public LerpFollow[] next = new LerpFollow[1];
+	//[Tooltip("Only important for Tess Claw points. Whether this is the starting point of the chain.")]
+	//public bool root = false;
 
 	private void OnEnable() {
 		transform.position = follow.position;

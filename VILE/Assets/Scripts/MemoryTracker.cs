@@ -14,7 +14,7 @@ public class MemoryTracker : PlayerTracker {
 		controller = GetComponent<Enemy>();
 	}
 
-	void Update() {
+	protected override void Update() {
 		if(controller.CanSeePlayer()) {
 			playerPosition = GameController.player.transform.position;
 			playerVisible = true;

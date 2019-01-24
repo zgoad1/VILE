@@ -32,14 +32,13 @@
 **- A -**
 
 **- B -**
-- You can move while attacking.
-- Stamina is drained for extra clicks while attacking
-- Reticle sometimes disappears forever 
+- Reticle/targeting does not work when the enemy approaches the center of the screen from a distance
+- Reticle sometimes disappears forever? 
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- the tunnel is a bug says tristan
 - Spamming attacks will cause an extra land animation to play
-- Start room lighting is wacky in build (maybe because no outside walls?)
 - Animation messes up occasionally when coming out of lightning bolt

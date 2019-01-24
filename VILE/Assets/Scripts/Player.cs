@@ -67,8 +67,6 @@ public class Player : Controllable {
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
 
-		atk2Cost = 25;
-
 		SetPlayer();
 	}
 
@@ -103,16 +101,24 @@ public class Player : Controllable {
 
 	protected override void PlayerUpdate() {
 
-		base.PlayerUpdate();
-		
-		SetMotion();
+		//base.PlayerUpdate();
+		SetControls();
+		sprinting = sprintKey;
 		// Set the target dynamically if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
+			SetMotion();
 			SetTarget();
-		} else {
-			if(target != null) a2fx.transform.LookAt(target.camLook);
-			else a2fx.transform.forward = camTransform.forward;
+		}
+		PlayerMove();
+		if(!attacking || anim.GetBool("attackComboing")) {
+			PlayerAttack();
+		}
+		if(attacking) {
+			PlayerDirection();
+			if(target != null) {
+				a2fx.transform.LookAt(target.camLook);
+			} else a2fx.transform.forward = camTransform.forward;
 			if(fwdKey > 0) {
 				Targetable prevTarget = target;
 				SetTarget();
@@ -139,9 +145,6 @@ public class Player : Controllable {
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);  // sets onGround
-		if(hit.gameObject.name == "conductor_port") {
-			Debug.Log("What");
-		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
@@ -160,6 +163,10 @@ public class Player : Controllable {
 	/**Set the target to the closest targetable in the targets array
 	 */
 	protected override void SetTarget() {
+		/* NOTE: The below line disables the target's HPBar, and reenables it later if it's still the target.
+		 * However, UIBar.Update() is called at some point IN BETWEEN those two lines. As a fix, UIBar.Update() 
+		 * was moved to UIBar.LateUpdate().
+		 */
 		if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(false);
 		// add any onscreen targets that are close enough to the center of the screen
 		// to the targets array (and remove those who aren't)
@@ -177,7 +184,7 @@ public class Player : Controllable {
 				}
 			}
 		}
-		// find the closest taargetable in the targets array that isn't blocked by a wall
+		// find the closest targetable in the targets array that isn't blocked by a wall
 		float minDist = Mathf.Infinity;
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
@@ -326,21 +333,31 @@ public class Player : Controllable {
 	}
 
 	protected override void Attack1() {
-		base.Attack1();
+		//base.Attack1();
 		anim.SetTrigger("attack1");
+	}
+
+	public void AnimFunc_DrainStamina() {
+		stamina -= atk1Cost;
 	}
 
 	public void AnimFunc_UnsetComboing() {
 		anim.SetBool("attackComboing", false);
+		attacking = false;
+		suspendTimer = false;
 	}
 
 	public void AnimFunc_SetComboing() {
 		anim.SetBool("attackComboing", true);
+		// didn't work
+		//anim.ResetTrigger("land");	// can get set at end of combo and not activate if we spam attacks
+		attacking = true;
+		suspendTimer = true;
 	}
 
 	protected override void Attack2() {
 		base.Attack2();
-		cooldownTimer = 2f;
+		cooldownTimer = attack2Cooldown;
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
 		StartCoroutine("Attack2CR");
@@ -352,9 +369,10 @@ public class Player : Controllable {
 		a2fx.Play();//gameObject.SetActive(true);
 		yield return new WaitForSeconds(0.4f);
 		// exert hitbox, don't stun enemies (only target)
-		if(target != null) target.Damage(25);
-		if(target is Enemy) ((Enemy)target).Stun();
-		else if(target is Door) {
+		if(target is Enemy) {
+			((Enemy)target).Damage(attack2Power);
+			((Enemy)target).Stun();
+		} else if(target is Door) {
 			((Door)target).Open(true);
 			((Door)target).Spark();
 		}
@@ -368,12 +386,5 @@ public class Player : Controllable {
 	public bool CanPossessTarget() {
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
-
-	//private IEnumerator EnableCollision() {
-	//	yield return null;
-	//	yield return null;
-	//	yield return new WaitForSeconds(0.1f);
-	//	gameObject.layer = LayerMask.NameToLayer("Characters");
-	//}
 
 }

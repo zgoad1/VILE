@@ -2,15 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-/**Damages each character it collides with exactly once between activations.
+/**Continuously exerts damage on everything that's not invincible (e.g. due to grace period)
  */
 
 [RequireComponent(typeof(BoxCollider))]
 public class AttackHitbox : MonoBehaviour {
 
-	protected new BoxCollider collider;
-	protected List<Controllable> hits = new List<Controllable>();   // characters currently in the hitbox
+	[SerializeField] protected new BoxCollider collider;
 	public float power = 5;
+	public Controllable parent;
+	[Tooltip("Which of the Controllable's 2 attacks this applies to.")]
+	[Range(1, 2)] public int index;
+	public float knockbackPower = 0;
+	public float gracePeriod = 0.5f;
 
 	private void Reset() {
 		collider = GetComponent<BoxCollider>();
@@ -19,18 +23,24 @@ public class AttackHitbox : MonoBehaviour {
 
 	protected void OnTriggerEnter(Collider other) {
 		Controllable character = other.gameObject.GetComponent<Controllable>();
-		if(character != null) {
-			character.Damage(power);
-			hits.Add(character);
+		if(character != null && character != parent && !character.invincible) {
+			character.Damage(power, gracePeriod);
+			if(knockbackPower > 0) {
+				character.Knockback(knockbackPower * (character.transform.position - parent.transform.position).normalized);
+			}
 		}
 	}
 
-	public void Activate() {
-		collider.enabled = true;
+	protected void OnTriggerStay(Collider other) {
+		OnTriggerEnter(other);
 	}
 
-	public void Deactivate() {
-		hits.Clear();
-		collider.enabled = false;
+	// Update power, in case it's changed for some reason.
+	protected void OnEnable() {
+		if(index == 1) {
+			power = parent.attack1Power;
+		} else {
+			power = parent.attack2Power;
+		}
 	}
 }

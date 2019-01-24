@@ -42,10 +42,10 @@ public class Controllable : Targetable {
 		set {
 			h = Mathf.Clamp(value, 0, maxHP);
 			hpBar.value = h;
-			if(h == 0) Die();
+			if(h == 0 && !dead) Die();
 		}
 	}
-	protected bool dead = false;
+	public bool dead = false;
 	public UIBar hpBar;
 
 	// stamina and attacking
@@ -62,22 +62,25 @@ public class Controllable : Targetable {
 			}
 		}
 	}
-	protected float atk1Cost = 5;
-	protected float atk2Cost = 20;
+	public float attack1Power = 10f;
+	public float attack2Power = 20f;
+	[SerializeField] protected float atk1Cost = 5;
+	[SerializeField] protected float atk2Cost = 20;
 	[SerializeField] protected float attack1Cooldown = 0.5f;
 	[SerializeField] protected float attack2Cooldown = 3f;
-	[SerializeField] protected float attack1Power = 10f;
-	[SerializeField] protected float attack2Power = 20f;
 	private float ct = 0;	// attack cooldowns (in seconds) - attacks fail while this > 0
 	protected float cooldownTimer {
 		get {
 			return ct;
 		}
 		set {
-			ct = Mathf.Max(0, value);
-			if(ct == 0) attacking = false;
+			if(!suspendTimer) {
+				ct = Mathf.Max(0, value);
+				if(ct == 0) attacking = false;
+			}
 		}
 	}
+	protected bool suspendTimer = false;
 
 	// velocity and transform-related
 	private bool og = false;
@@ -118,6 +121,8 @@ public class Controllable : Targetable {
 	protected int stunCount = 0;
 	protected float prevAnimSpeed = 1;  // for stopping animation when stunned, then resuming
 	protected Vector3 newHpScale = Vector3.one, newStScale = Vector3.one;
+	protected float defaultGracePeriod = 0.8f;
+	[HideInInspector] public bool invincible = false;
 
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
@@ -206,75 +211,78 @@ public class Controllable : Targetable {
 		SetControls();
 		sprinting = sprintKey;  // later change this to account for stamina
 		if(!attacking) {
-			#region Calculate movement with boring math
-			onGround = false;
-
-			// calculate movement
-			velocity.y = upMov;
-			#region Sliding
-			float slideFriction = 0.5f;
-			if(!notOnSlope) {
-				velocity.x += -upMov * hitNormal.x * (1f - slideFriction);
-				velocity.z += -upMov * hitNormal.z * (1f - slideFriction);
-				hitNormal = Vector3.zero;
-				onGround = false;
-				//Debug.Log("Sliding");
-			}
-			#endregion
-			cc.Move(velocity * 60 * Time.smoothDeltaTime);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
-
-			// speed is the distance from where we were last frame to where we are now
-			float movDist = Vector3.Distance(prevPosition, transform.position);
-			anim.SetFloat("speed", movDist);
-			velocity = (transform.position - prevPosition).normalized;
-			velocity.y = 0;
-			prevPosition = transform.position;
-			//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
-			transform.forward = Vector3.Slerp(transform.forward, velocity, 0.2f);
-			playerRot.y = transform.rotation.y;
-			playerRot.w = transform.rotation.w;
-			transform.rotation = playerRot;
-
-			// jumping & falling
-			if(!onGround || !notOnSlope) {
-				upMov -= grav;
-				//Debug.Log("onGround: " + onGround + "\nnotOnSlope: " + notOnSlope);
-				//Debug.Log("Increasing gravity: " + upMov);
-			} else {
-				upMov = -grav;
-				//if(jKey) Debug.LogWarning("Apex\njKey = " + jKey + "\nonGround = " + onGround + "\ncanStillJump = " + canStillJump);
-			}
-			//sprintKey = false;
-			if(sprinting) {
-				// sprinting is like a boost rather than an increase in movement speed.
-				// i.e., instead of moving your legs faster, it's like attaching a rocket to your behind.
-				// so if we're sprinting then we don't reset the movement direction.
-			} else {
-				velocity.x = 0f;
-				velocity.z = 0f;
-			}
-			#endregion
-
-			// attacking
-			// already know !attacking
-			if(atk1Key && CanAttack(atk1Cost))		Attack1();
-			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
+			PlayerMove();
+			PlayerAttack();
 		}
-
+		// (attacking can change in PlayerAttack())
 		if(attacking) {
-			// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
-			if(target != null) {
-				target.SetScreenCoords();  // make the reticle keep moving
-				Vector3 toTarget = target.transform.position - transform.position;
-				toTarget.y = 0;
-				toTarget = toTarget.normalized;
-				transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
-			} else {
-				Vector3 newForward = camTransform.forward;
-				newForward.y = 0;
-				transform.forward = Vector3.Slerp(transform.forward, newForward, 0.2f);
-			}
+			PlayerDirection();
 		}
+	}
+
+	protected virtual void PlayerMove() {
+		#region Calculate movement with boring math
+		onGround = false;
+
+		// calculate movement
+		velocity.y = upMov;
+		#region Sliding
+		float slideFriction = 0.5f;
+		if(!notOnSlope) {
+			velocity.x += -upMov * hitNormal.x * (1f - slideFriction);
+			velocity.z += -upMov * hitNormal.z * (1f - slideFriction);
+			hitNormal = Vector3.zero;
+			onGround = false;
+			//Debug.Log("Sliding");
+		}
+		#endregion
+		cc.Move(velocity * 60 * Time.smoothDeltaTime);  // T R I G G E R S   C O L L I S I O N   D E T E C T I O N  (AND CAN SET ONGROUND TO TRUE)
+
+		// speed is the distance from where we were last frame to where we are now
+		float movDist = Vector3.Distance(prevPosition, transform.position);
+		anim.SetFloat("speed", movDist);
+		velocity = (transform.position - prevPosition).normalized;
+		velocity.y = 0;
+		prevPosition = transform.position;
+		//Debug.Log("speed: " + anim.GetFloat("speed") + "\nmovDirec: " + movDirec);
+		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.2f);
+		playerRot.y = transform.rotation.y;
+		playerRot.w = transform.rotation.w;
+		transform.rotation = playerRot;
+
+		// jumping & falling
+		if(!onGround || !notOnSlope) {
+			upMov -= grav;
+		} else {
+			upMov = -grav;
+		}
+		if(sprinting) {
+			// sprinting is like a boost rather than an increase in movement speed.
+			// i.e., instead of moving your legs faster, it's like attaching a rocket to your behind.
+			// so if we're sprinting then we don't reset the movement direction.
+		} else {
+			velocity.x = 0f;
+			velocity.z = 0f;
+		}
+		#endregion
+	}
+	protected virtual void PlayerDirection() {
+		// While attacking, turn to face the enemy. If there is no enemy, face camera's forward
+		if(target != null) {
+			target.SetScreenCoords();  // make the reticle keep moving
+			Vector3 toTarget = target.transform.position - transform.position;
+			toTarget.y = 0;
+			toTarget = toTarget.normalized;
+			transform.forward = Vector3.Slerp(transform.forward, toTarget, 0.2f);
+		} else {
+			Vector3 newForward = camTransform.forward;
+			newForward.y = 0;
+			transform.forward = Vector3.Slerp(transform.forward, newForward, 0.2f);
+		}
+	}
+	protected virtual void PlayerAttack() {
+		if(atk1Key && CanAttack(atk1Cost)) Attack1();
+		else if(atk2Key && CanAttack(atk2Cost)) Attack2();
 	}
 
 	protected virtual void AIUpdate() {
@@ -419,12 +427,35 @@ public class Controllable : Targetable {
 		return stamina >= atkCost && cooldownTimer <= 0;
 	}
 
-	public override void Damage(float damage) {
-		base.Damage(damage);
-		hp -= damage;
-		if(damage >= 5) {
-			Knockback();	// activates invincibility period
+	public virtual void Damage(float damage) {
+		Damage(damage, defaultGracePeriod);
+	}
+
+	public virtual void Damage(float damage, float gracePeriod) {
+		if(!invincible) {
+			hp -= damage;
+			float powerFactor = damage / 120;
+			float deathFactor = dead ? 5 : 1;
+			GameController.HitStop(Mathf.Min(0.8f, powerFactor * deathFactor));
+			IEnumerator gp = GracePeriod(gracePeriod);
+			StartCoroutine(gp);
 		}
+	}
+
+	public virtual void Knockback(Vector3 force) {
+		anim.SetTrigger("hurt");
+	}
+
+	protected IEnumerator GracePeriod() {
+		invincible = true;
+		yield return new WaitForSeconds(defaultGracePeriod);
+		invincible = false;
+	}
+
+	protected IEnumerator GracePeriod(float gracePeriod) {
+		invincible = true;
+		yield return new WaitForSeconds(gracePeriod);
+		invincible = false;
 	}
 
 	protected virtual void Die() {
