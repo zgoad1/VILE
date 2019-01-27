@@ -29,14 +29,14 @@ public class Room : MonoBehaviour {
 	[Space]
 	public List<Room> leftList = new List<Room>();      // which rooms are allowed to be to the left (empty for any)
 	public List<Room> rightList = new List<Room>();     // which rooms are allowed to be to the right (empty for any)
-	public List<Room> upList = new List<Room>();        // which rooms are allowed to be to the up (empty for any)
-	public List<Room> downList = new List<Room>();      // which rooms are allowed to be to the down (empty for any)
+	public List<Room> upList = new List<Room>();        // which rooms are allowed to be ahead (empty for any)
+	public List<Room> downList = new List<Room>();      // which rooms are allowed to be behind (empty for any)
 
 	[Space]
 	public List<Room> leftExclude = new List<Room>();   // which rooms are not allowed to be to the left (empty for none)
 	public List<Room> rightExclude = new List<Room>();  // which rooms are not allowed to be to the right (empty for none)
-	public List<Room> upExclude = new List<Room>();     // which rooms are not allowed to be to the up (empty for none)
-	public List<Room> downExclude = new List<Room>();   // which rooms are not allowed to be to the down (empty for none)
+	public List<Room> upExclude = new List<Room>();     // which rooms are not allowed to be ahead (empty for none)
+	public List<Room> downExclude = new List<Room>();   // which rooms are not allowed to be behind (empty for none)
 
 	// READ + WRITE
 	[HideInInspector] public int distFromStart;			// how far this room is placed from the start room

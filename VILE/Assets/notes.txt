@@ -1,0 +1,4 @@
+ADDING ENEMIES:
+- GroundTest should be placed at "feet"
+- Make sure GroundTest intersects ground when enemy is "standing"
+- GroundTest layer should be changed to character's layer

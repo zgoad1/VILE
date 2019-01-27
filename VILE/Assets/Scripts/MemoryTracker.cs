@@ -7,7 +7,7 @@ public class MemoryTracker : PlayerTracker {
 	/// Only update the player's perceived position when we can see them
 	/// </summary>
 
-	public bool playerVisible = false;
+	[HideInInspector] public bool playerVisible = false;
 	public Enemy controller;
 
 	private void Reset() {

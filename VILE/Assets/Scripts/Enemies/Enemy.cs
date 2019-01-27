@@ -59,7 +59,7 @@ public class Enemy : Controllable {
 		SetScreenCoords();
 		hpBar.gameObject.SetActive(true);
 		//Damage(playerDamage);
-		hp -= playerDamage * 60 * Time.deltaTime;
+		//hp -= playerDamage * 60 * Time.deltaTime;
 		GameController.player.stamina += playerDamage / 2f;
 	}
 

@@ -26,17 +26,7 @@ public class FlashEye : Enemy {
 		ball = GetComponentInChildren<FlashEyeBall>();
 		laser = GetComponentInChildren<LaserFX>();
 		solidLayer = LayerMask.NameToLayer("Solid");
-		rb.isKinematic = false;
 		camDistance = 25;
-	}
-
-	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
-		// if we hit the ground relatively quickly
-		if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.5f) {
-			// shake strength inversely proportional to distance from player
-			GameController.camControl.ScreenShake(1f - distanceFromPlayer / 150f);
-		}
-		base.OnControllerColliderHit(hit);	// sets onGround
 	}
 
 	protected override void Update() {
@@ -85,34 +75,36 @@ public class FlashEye : Enemy {
 		}
 
 		// Move
-		//transform.position = desiredPosition;
-		cc.Move(velocityPerSec * Time.smoothDeltaTime);
+		ApplyGravity();
+		cc.Move((velocityPerSec + yMove * 60) * Time.smoothDeltaTime);
 		RotateWithVelocity();
 	}
 
 	protected override void PlayerUpdate() {
-		SetControls();
-		if(!attacking) {
-			SetMotion();    // velocity is set here
-			//velocity = Vector3.Lerp(velocity, Vector3.zero, 0.1f * 60 * Time.smoothDeltaTime);
+		base.PlayerUpdate();
+		RotateWithVelocity();
+		//SetControls();
+		//if(!attacking) {
+		//	SetVelocity();    // velocity is set here
+		//	//velocity = Vector3.Lerp(velocity, Vector3.zero, 0.1f * 60 * Time.smoothDeltaTime);
 
-			if(atk1Key && CanAttack(atk1Cost)) Attack1();
-			else if(atk2Key && CanAttack(atk2Cost)) Attack2();
-		} else {
-			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.05f * 60 * Time.smoothDeltaTime);
-			//RotateWithVelocity();
-		}
-		velocityPerSec = velocity * 60;
+		//	if(atk1Key && CanAttack(atk1Cost)) Attack1();
+		//	else if(atk2Key && CanAttack(atk2Cost)) Attack2();
+		//} else {
+		//	velocity = Vector3.Lerp(velocity, Vector3.zero, 0.05f * 60 * Time.smoothDeltaTime);
+		//	//RotateWithVelocity();
+		//}
+		//velocityPerSec = velocity * 60;
 
-		//Debug.Log("Velocity: " + velocity);
-		cc.Move(velocityPerSec * Time.smoothDeltaTime);
-		SetTarget();
+		////Debug.Log("Velocity: " + velocity);
+		//cc.Move(velocityPerSec * Time.smoothDeltaTime);
+		//SetTarget();
 
 		EnemyPlayerUpdate();
 	}
 
-	protected override void SetMotion() {
-		base.SetMotion();
+	protected override void SetVelocity() {
+		base.SetVelocity();
 		//velocity = Vector3.ClampMagnitude(velocity, maxVel / 60);
 		// whoops that function didn't do what I thought it did
 
@@ -130,8 +122,9 @@ public class FlashEye : Enemy {
 			desiredDistance /= 4;
 			distanceFromDistance /= 4;
 			// make flying enemies fall
-			gameObject.layer = LayerMask.NameToLayer("Enemies");
-			onGround = false;
+			Helper.SetAllLayers(gameObject, LayerMask.NameToLayer("Enemies"));
+			GetComponentInChildren<GroundTest>().groundLayers = 1 << LayerMask.NameToLayer("Solid");
+			GetComponentInChildren<GroundTest>().PublicReset();
 		} else {
 			// keep rotating blades if we're still in the air
 			anim.speed = prevAnimSpeed;

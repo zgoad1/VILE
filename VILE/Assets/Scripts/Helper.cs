@@ -19,4 +19,14 @@ public class Helper {
 		float angle = Vector2.Angle(t1v, t2v);
 		t1.Rotate(new Vector3(0, tightness * angle, 0));
 	}
+
+	// set this layer and all child layers that matched this layer to a new layer
+	// (e.g. can set FlashEye from FlyingEnemies to Enemies but keeps laser on Effects)
+	public static void SetAllLayers(GameObject g, int layer) {
+		int prevLayer = g.layer;
+		g.layer = layer;
+		foreach(Transform t in g.transform) {
+			if(t.gameObject.layer == prevLayer) t.gameObject.layer = layer;
+		}
+	}
 }

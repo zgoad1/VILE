@@ -19,7 +19,7 @@ public class LaserFX : MonoBehaviour {
 	public float sparkDistance = 400; // actual length of laser beam
 
 	private void Reset() {
-		layerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters");
+		layerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Enemies") | 1 << LayerMask.NameToLayer("FlyingCharacters");
 		laserParts = GetComponent<ParticleSystem>();
 		hitSparks = GetComponentsInChildren<ParticleSystem>()[1];
 		sparks = hitSparks.gameObject;
@@ -56,6 +56,7 @@ public class LaserFX : MonoBehaviour {
 		hitting = true;
 		Targetable target = other.GetComponent<Targetable>();
 		if(target is Controllable) {
+			//Debug.Log("Laser Damaging " + target);
 			((Controllable)target).Damage(1, 0.02f);
 		}
 		StopSparks();

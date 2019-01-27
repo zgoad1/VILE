@@ -203,7 +203,7 @@ public class GameController : MonoBehaviour {
 	}
 
 	public static void HitStop(float intensity) {
-		Debug.Log("Hit stop intensity: " + intensity);
+		//Debug.Log("Hit stop intensity: " + intensity);
 		IEnumerator cr = instance.HitStopCR(intensity);
 		instance.StartCoroutine(cr);
 		camControl.ScreenShake(intensity * 2);

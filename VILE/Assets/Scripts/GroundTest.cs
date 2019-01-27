@@ -6,15 +6,23 @@ using UnityEngine;
  * when we hit the ground.
  */
 
+[RequireComponent(typeof(Collider))]
 public class GroundTest : MonoBehaviour {
 
-	private LayerMask ground;
-	private Controllable parent;
-	private List<Collider> grounds = new List<Collider>();
+	public LayerMask groundLayers = 512;
+	protected Controllable parent;
+	protected List<Collider> grounds = new List<Collider>();
+	private bool onGround = false;
 
 	private void Reset() {
-		ground = LayerMask.NameToLayer("Solid");
 		parent = GetComponentInParent<Controllable>();
+		GetComponent<Collider>().isTrigger = true;
+	}
+
+	public void PublicReset() {
+		onGround = false;
+		Leave();
+		grounds.Clear();
 	}
 
 	private void Start() {
@@ -22,11 +30,10 @@ public class GroundTest : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter(Collider other) {
-		if(other.gameObject.layer == ground) {
+		if(LayerIsGround(other.gameObject.layer)) {
 			grounds.Add(other);
-			if(grounds.Count == 1 && !parent.anim.GetBool("onGround")) {
-				//Debug.Log("landing");
-				parent.anim.SetTrigger("land");
+			if(grounds.Count == 1 && !onGround) {
+				Land();
 			} else {
 				//Debug.Log("grounds: " + grounds.Count + "\ny-velocity: " + parent.velocity.y);
 			}
@@ -34,21 +41,32 @@ public class GroundTest : MonoBehaviour {
 	}
 
 	private void OnTriggerStay(Collider other) {
-		if(other.gameObject.layer == ground) {
-			parent.anim.SetBool("onGround", true);
+		if(LayerIsGround(other.gameObject.layer)) {
+			onGround = true;
 		}
 	}
 
 	private void OnTriggerExit(Collider other) {
-		if(other.gameObject.layer == ground) {
+		if(LayerIsGround(other.gameObject.layer)) {
 			grounds.Remove(other);
 			if(grounds.Count == 0) {
-				if(parent.anim.GetBool("onGround")) {
-					// set this trigger on the frame when we leave the ground
-					parent.anim.SetTrigger("offGround");
+				if(onGround) {
+					Leave();
 				}
-				parent.anim.SetBool("onGround", false);
+				onGround = false;
 			}
 		}
+	}
+
+	private bool LayerIsGround(int layer) {
+		return groundLayers == (groundLayers | (1 << layer));
+	}
+
+	protected virtual void Land() {
+		parent.onGround = true;
+		parent.yMove.y = 0;
+	}
+	protected virtual void Leave() {
+		parent.onGround = false;
 	}
 }

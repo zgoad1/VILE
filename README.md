@@ -32,13 +32,14 @@
 **- A -**
 
 **- B -**
+- Sprinting sometimes doesn't make you invincible
+- CR's animation places it at origin
 - Reticle/targeting does not work when the enemy approaches the center of the screen from a distance
-- Reticle sometimes disappears forever? 
 - turning does not use deltatime
+- sprinting into a corner can clip you through the wall
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- you can sometimes attack while falling from Attack1d and it sometimes triggers an extra landing animation (land is triggered during Attack1a)
 - the tunnel is a bug says tristan
-- Spamming attacks will cause an extra land animation to play
-- Animation messes up occasionally when coming out of lightning bolt

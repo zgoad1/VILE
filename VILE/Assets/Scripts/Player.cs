@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : Controllable {
+	[SerializeField] protected float runSpeed = 0.2f;
 	// claws are needed for animations
 	[SerializeField] private float clawLThickness = 0, clawRThickness = 0;
 	[SerializeField] private bool clawLVisible = false, clawRVisible = false;
-	[SerializeField] private TessClaw clawL, clawR;
+	[SerializeField] private TessClaw clawL, clawR;	// these are used
 
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
@@ -23,10 +24,8 @@ public class Player : Controllable {
 	private AttackHitbox ahbL, ahbR;
 	public UIBar stBar;
 	private float rechargeFactor = 0.05f;
-
-	// timer (for animations)
-	private float timerStart = 0;
-	private float timer = 0;
+	protected bool sprintKey = false;
+	protected bool sprinting = false;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -46,23 +45,19 @@ public class Player : Controllable {
 		a2fx = GetComponentsInChildren<ParticleSystem>()[3];
 		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid");
-		//ahbL = GetComponentsInChildren<AttackHitbox>()[0];
-		//ahbR = GetComponentsInChildren<AttackHitbox>()[1];
-		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();//FindObjectOfType<UIBar>();
+		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();
 		hpBar.character = this;
 		hpBar.maxValue = maxHP;
 		stBar = GameObject.Find("Tess St").GetComponent<UIBar>();
 		stBar.character = this;
 		stBar.maxValue = 100;
-		//clawL = FindObjectsOfType<TessClaw>()[0];	//always gets it in the wrong order
-		//clawR = FindObjectsOfType<TessClaw>()[1];
 	}
 
 	protected override void Start() {
 		base.Start();
 		
 		prevPosition = transform.position;
-		camTransform.position = transform.position;
+		GameController.mainCam.transform.position = transform.position;
 
 		Cursor.lockState = CursorLockMode.Locked;
 		Cursor.visible = false;
@@ -71,18 +66,25 @@ public class Player : Controllable {
 	}
 
 	protected override void Update() {
+		// check if we fell off the map
 		if(transform.position.y < -1) transform.position = iPos;
+
+		// normal, non-possessing update method
 		if(!possessing) base.Update();
 		else {
+			// follow enemy we're possessing
 			transform.position = possessed.transform.position;
-			transform.rotation = mainCam.transform.rotation;
+			transform.forward = GameController.mainCam.transform.forward;
 
+			// continue setting target
 			SetTarget();
 
+			// accept unpossess input
 			if(Input.GetButtonDown("Run")) {
 				Unpossess(true);
 			}
 		}
+		#region claw animations
 		clawL.gameObject.SetActive(clawLVisible);
 		if(clawLVisible) {
 			clawL.thicknessRandomness = clawLThickness;
@@ -97,28 +99,34 @@ public class Player : Controllable {
 				t.widthMultiplier = clawRThickness * 2;
 			}
 		}
+		#endregion
 	}
 
 	protected override void PlayerUpdate() {
 
+		if(Input.GetKeyDown(KeyCode.Space)) {
+			Damage(5, 2);
+		}
+
 		//base.PlayerUpdate();
 		SetControls();
-		sprinting = sprintKey;
+		sprinting = stamina > 0 ? sprintKey : false;
 		// Set the target dynamically if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
-			SetMotion();
+			SetVelocity();
 			SetTarget();
+			if(atk2Key && CanAttack(atk2Cost)) Attack2();
 		}
 		PlayerMove();
 		if(!attacking || anim.GetBool("attackComboing")) {
-			PlayerAttack();
+			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 		}
 		if(attacking) {
 			PlayerDirection();
 			if(target != null) {
 				a2fx.transform.LookAt(target.camLook);
-			} else a2fx.transform.forward = camTransform.forward;
+			} else a2fx.transform.forward = GameController.mainCam.transform.forward;
 			if(fwdKey > 0) {
 				Targetable prevTarget = target;
 				SetTarget();
@@ -139,12 +147,13 @@ public class Player : Controllable {
 		if(Input.GetButtonUp("Run")) {
 			// switch state
 			control = state.PLAYER;
+		} else {
+			cc.Move((target.transform.position - transform.position).normalized * runSpeed * 60 * Time.smoothDeltaTime);
 		}
-		cc.Move((target.transform.position - transform.position).normalized * (runSpeed / 2f) * 60 * Time.smoothDeltaTime);
 	}
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
-		base.OnControllerColliderHit(hit);  // sets onGround
+		base.OnControllerColliderHit(hit);
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
@@ -153,11 +162,9 @@ public class Player : Controllable {
 			renderer.enabled = false;
 			GameController.mainCam.ScreenShake(1);
 			GameController.camControl.lookAt = target.transform;
-		}/*else if(!onGround && hit.gameObject.layer == solidLayer && velocity.y < -0.1f) {
-			cam.ScreenShake(Mathf.Abs(velocity.y));
-		}*/	// decided I like how she feels lighter when she lands
+		}
 		// make a "checkpoint" to keep from falling off map
-		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
+		if(onGround && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
 
 	/**Set the target to the closest targetable in the targets array
@@ -228,36 +235,39 @@ public class Player : Controllable {
 		return false;
 	}
 
-	protected override void SetMotion() {
-		bool inH = true, inV = true;    // used in conjunction to determine whether the player is doing any input
-		if(rightKey != 0) {
-			rightMov = Mathf.Lerp(rightMov, (rightKey * speed), accel);
-		} else {
-			inH = false;
-			rightMov = Mathf.Lerp(rightMov, 0f, decel);
-		}
-		if(fwdKey != 0 || sprinting) {
-			fwdMov = Mathf.Lerp(fwdMov, sprinting ? runSpeed : (fwdKey * speed), accel);
-		} else {
-			inV = false;
-			fwdMov = Mathf.Lerp(fwdMov, 0f, decel);
-		}
-		anim.SetBool("input", inH || inV);
-		SetVelocity();
+	protected override void SetControls() {
+		base.SetControls();
+		SetSprintKey();
+	}
+
+	// Accept sprint input (sprintKey)
+	protected virtual void SetSprintKey() {
+		sprintKey = Input.GetButton("Run");
 	}
 
 	protected override void SetVelocity() {
-		// change forward's y to 0 then normalize, in case the camera is pointed down or up
-		Vector3 tempForward = camTransform.forward;
+		sprinting = stamina > 0 ? sprintKey : false;
+
+		anim.SetBool("input", motionInput.magnitude != 0);
+
+		Vector3 tempForward = GameController.mainCam.transform.forward;
 		tempForward.y = 0f;
+		tempForward.Normalize();
 
 		// get movement direction vector
-		if(sprinting && !attacking && (velocity != Vector3.zero || !isLightning)) {
+		if(sprinting && !attacking && (objectVelocity.magnitude != 0 || !isLightning)) {
+			// sprinting
 			TurnIntoLightning(true);
-			velocity = Vector3.Lerp(velocity, (tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov * 10), 0.1f);
+			velocity = Vector3.Lerp(velocity,
+				(tempForward + GameController.mainCam.transform.right.normalized * motionInput.x * 1.5f).normalized * runSpeed,
+				0.1f);
 		} else {
+			// not sprinting
 			TurnIntoLightning(false);
-			velocity = (tempForward.normalized * fwdMov + camTransform.right.normalized * rightMov);
+			velocity = Vector3.Lerp(
+				velocity,
+				(tempForward * motionInput.normalized.z + GameController.mainCam.transform.right * motionInput.normalized.x) * speed,
+				accel * (cc.isGrounded ? 1 : 0.1f));
 		}
 	}
 
@@ -269,10 +279,11 @@ public class Player : Controllable {
 			renderer.enabled = false;   // make player disappear
 			lightning.Play();       // start particles
 			head.Play();
-			transform.rotation = camTransform.rotation;
-			cam.SetZoomTransform(sprintCam, 0.1f);
+			transform.rotation = GameController.mainCam.transform.rotation;
+			GameController.camControl.SetZoomTransform(sprintCam, 0.1f);
 			burst.Play();
-			cam.ScreenShake(1.5f);
+			GameController.camControl.ScreenShake(1.5f);
+			if(gracePeriodCR != null) StopCoroutine(gracePeriodCR);
 			invincible = true;
 			//anim.speed = 0;
 			//flasher.FlashStart(Color.red, Color.white, -1);
@@ -281,12 +292,12 @@ public class Player : Controllable {
 			renderer.enabled = true;    // make player reappear
 			lightning.Stop();       // stop particles
 			head.Stop();
-			cam.SetZoomTransform(null);
+			GameController.camControl.SetZoomTransform(null);
 			burst.Play();
 			invincible = false;
 			//anim.speed = 1;
 			//flasher.FlashStop();
-			if(rightKey <= 0.1f && fwdKey <= 0.1f && anim.GetBool("onGround")) {
+			if(motionInput.magnitude < 0.1f && onGround) {
 				anim.SetTrigger("land");
 			}
 			isLightning = false;    // protect this part from repeated calls
@@ -301,9 +312,9 @@ public class Player : Controllable {
 		gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");
 		targets.Remove(e);
 		possessed = e;
-		fwdMov = 0;     // instantly decelerate these so momentum doesn't carry
+		//fwdMov = 0;     // instantly decelerate these so momentum doesn't carry
+		//rightMov = 0;	// over when we Unpossess
 		anim.speed = 0;
-		rightMov = 0;	// over when we Unpossess
 	}
 
 	/**If the run key is pressed, we're manually un-possessing an enemy;
@@ -333,7 +344,7 @@ public class Player : Controllable {
 	}
 
 	protected override void Attack1() {
-		//base.Attack1();
+		velocity = Vector3.zero;
 		anim.SetTrigger("attack1");
 	}
 
@@ -349,14 +360,18 @@ public class Player : Controllable {
 
 	public void AnimFunc_SetComboing() {
 		anim.SetBool("attackComboing", true);
-		// didn't work
-		//anim.ResetTrigger("land");	// can get set at end of combo and not activate if we spam attacks
 		attacking = true;
 		suspendTimer = true;
 	}
 
+	// in case we somehow land while performing an attack, we don't want to transition to land
+	public void AnimFunc_UnsetLand() {
+		anim.ResetTrigger("land");
+	}
+
 	protected override void Attack2() {
 		base.Attack2();
+		velocity = Vector3.zero;
 		cooldownTimer = attack2Cooldown;
 		anim.SetTrigger("attack2Charge");
 		anim.SetTrigger("attack2");
@@ -366,7 +381,7 @@ public class Player : Controllable {
 	private IEnumerator Attack2CR() {
 		canPossess = false;
 		yield return new WaitForSeconds(0.8f);
-		a2fx.Play();//gameObject.SetActive(true);
+		a2fx.Play();
 		yield return new WaitForSeconds(0.4f);
 		// exert hitbox, don't stun enemies (only target)
 		if(target is Enemy) {
@@ -378,7 +393,6 @@ public class Player : Controllable {
 		}
 		yield return new WaitForSeconds(0.8f);
 		canPossess = true;
-		//a2fx.Deactivate();
 	}
 
 	#endregion
