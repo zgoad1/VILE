@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class TransformChain : MonoBehaviour {
 	public bool root;
-	public TransformChain[] next;
+	public TransformChain[] next = new TransformChain[0];
 }

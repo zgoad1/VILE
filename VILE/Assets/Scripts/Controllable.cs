@@ -189,7 +189,7 @@ public class Controllable : Targetable {
 		}
 	}
 
-	// Move player based on velocity
+	// Move player based on velocity; handle some additional physics
 	protected virtual void PlayerMove() {
 		ApplyGravity();
 
@@ -202,7 +202,6 @@ public class Controllable : Targetable {
 
 		// motion & velocity tracking
 		cc.Move((velocity + yMove) * 60 * Time.smoothDeltaTime);
-		//Debug.Log("cc.velocity: " + cc.velocity);
 		objectVelocity = transform.position - prevPosition;
 		anim.SetFloat("speed", objectVelocity.magnitude);
 		Vector3 tempForward = objectVelocity.magnitude <= 0.01f ? transform.forward : objectVelocity;
@@ -239,6 +238,7 @@ public class Controllable : Targetable {
 	}
 
 	protected virtual void AIUpdate() {
+		// This is just here to apply gravity. Velocity will be whatever it's left at.
 		PlayerMove();
 	}
 
@@ -296,7 +296,7 @@ public class Controllable : Targetable {
 		velocity = Vector3.Lerp(
 			velocity, 
 			(tempForward * motionInput.normalized.z + GameController.mainCam.transform.right * motionInput.normalized.x) * speed, 
-			accel * (cc.isGrounded ? 1 : 0.1f));
+			accel * (onGround ? 1 : 0.1f));
 	}
 
 	// Make this object the player
@@ -365,7 +365,7 @@ public class Controllable : Targetable {
 
 	public virtual void Damage(float damage, float gracePeriod) {
 		if(!invincible) {
-			hp -= damage;
+			DeductHP(damage);
 			float powerFactor = damage / 120;
 			float deathFactor = dead ? 5 : 1;
 			if(powerFactor * deathFactor > 0.02f) {
@@ -374,6 +374,11 @@ public class Controllable : Targetable {
 			gracePeriodCR = GracePeriod(gracePeriod);
 			StartCoroutine(gracePeriodCR);
 		}
+	}
+
+	// can be overridden, e.g. to implement location-based damage modifiers
+	public virtual void DeductHP(float damage) {
+		hp -= damage;
 	}
 
 	public virtual void Knockback(Vector3 force) {

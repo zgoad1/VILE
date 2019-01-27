@@ -16,7 +16,7 @@ public class MemoryTracker : PlayerTracker {
 
 	protected override void Update() {
 		if(controller.CanSeePlayer()) {
-			playerPosition = GameController.player.transform.position;
+			playerPosition = GameController.playerTarget.position;
 			playerVisible = true;
 		} else {
 			playerVisible = false;

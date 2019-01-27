@@ -28916,8 +28916,8 @@ MonoBehaviour:
   isOnScreen: 0
   canTarget: 1
   radius: 0.2
-  speed: 5
-  acceleration: 0.05
+  speed: 3.5
+  acceleration: 0.01
   gravity: 0.03
   yMove: {x: 0, y: 0, z: 0}
   camDistance: 25
@@ -29007,6 +29007,7 @@ MonoBehaviour:
   groundLayers:
     serializedVersion: 2
     m_Bits: 4608
+  onGround: 0
 --- !u!1001 &6369800853907006849
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -29079,11 +29080,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7337019073217756003, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
-        type: 3}
-      propertyPath: groundLayers.m_Bits
-      value: 4608
-      objectReference: {fileID: 0}
     - target: {fileID: 7337019073217755932, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
       propertyPath: m_Size.x
@@ -29098,6 +29094,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Size.y
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337019073217756003, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
+        type: 3}
+      propertyPath: groundLayers.m_Bits
+      value: 4608
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7337019073217756003, guid: 29d29d9ec79f6e04880a16cfe9edfc4d, type: 3}

@@ -79,6 +79,8 @@ public class GameController : MonoBehaviour {
 		if(SceneManager.GetActiveScene().name == "Level") {
 			CreateObjectPool();
 		}
+
+		Time.timeScale = 1;	// Suddenly became necessary on 1-27-19. All other references to Time.timeScale were checked; none happen.
 	}
 	
 	// Update is called once per frame

@@ -32,14 +32,8 @@ public class FlashEye : Enemy {
 	protected override void Update() {
 		base.Update();
 
-		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.5f);
-
-		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
-		// controls for more realistic rotation
-		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
-		newEuler.y = transform.eulerAngles.y;
-		newEuler.z = transform.eulerAngles.z;
-		transform.eulerAngles = newEuler;
+		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.5f);   // done in PlayerMove()
+		RotateWithVelocity();
 	}
 
 	protected override void AIUpdate() {
@@ -70,36 +64,18 @@ public class FlashEye : Enemy {
 				Attack1();
 			}
 		} else {
-			velocity = Vector3.Lerp(velocity, Vector3.zero, 0.01f);
+			velocity = Vector3.Lerp(velocity, Vector3.zero, accel);
 			velocityPerSec = velocity * 60;
 		}
 
 		// Move
 		ApplyGravity();
 		cc.Move((velocityPerSec + yMove * 60) * Time.smoothDeltaTime);
-		RotateWithVelocity();
 	}
 
 	protected override void PlayerUpdate() {
 		base.PlayerUpdate();
-		RotateWithVelocity();
-		//SetControls();
-		//if(!attacking) {
-		//	SetVelocity();    // velocity is set here
-		//	//velocity = Vector3.Lerp(velocity, Vector3.zero, 0.1f * 60 * Time.smoothDeltaTime);
-
-		//	if(atk1Key && CanAttack(atk1Cost)) Attack1();
-		//	else if(atk2Key && CanAttack(atk2Cost)) Attack2();
-		//} else {
-		//	velocity = Vector3.Lerp(velocity, Vector3.zero, 0.05f * 60 * Time.smoothDeltaTime);
-		//	//RotateWithVelocity();
-		//}
-		//velocityPerSec = velocity * 60;
-
-		////Debug.Log("Velocity: " + velocity);
-		//cc.Move(velocityPerSec * Time.smoothDeltaTime);
-		//SetTarget();
-
+		velocityPerSec = velocity * 60;
 		EnemyPlayerUpdate();
 	}
 
@@ -135,24 +111,12 @@ public class FlashEye : Enemy {
 	}
 
 	private void RotateWithVelocity() {
-		// i played with math until it worked
-		if(target != null) {
-			rotateTowards.x = Mathf.Lerp(rotateTowards.x, tracker.playerPosition.x, 0.1f);
-			rotateTowards.y = transform.position.y;
-			rotateTowards.z = Mathf.Lerp(rotateTowards.z, tracker.playerPosition.z, 0.1f);
-		} else {
-			rotateTowards = transform.position + transform.forward;
-			rotateTowards.y = transform.position.y;
-		}
-		Quaternion r1 = transform.rotation;
-		transform.LookAt(rotateTowards);
-		Quaternion r2 = transform.rotation;
-		Quaternion newRot = Quaternion.Slerp(r1, r2, 0.02f);
+		// TODO: make it rotate about the main camera's x-axis (and z-axis for sideways?), corresponding to input
+		// controls for more realistic rotation
 		newEuler.x = Mathf.Min(velocityPerSec.magnitude / 2, 15);  // x rotation is dependent on speed
-		newEuler.y = newRot.eulerAngles.y;
-		newEuler.z = newRot.eulerAngles.z;
-		newRot.eulerAngles = newEuler;
-		transform.rotation = newRot;
+		newEuler.y = transform.eulerAngles.y;
+		newEuler.z = transform.eulerAngles.z;
+		transform.eulerAngles = newEuler;
 	}
 
 	protected override void Attack1() {

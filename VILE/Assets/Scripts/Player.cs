@@ -104,10 +104,6 @@ public class Player : Controllable {
 
 	protected override void PlayerUpdate() {
 
-		if(Input.GetKeyDown(KeyCode.Space)) {
-			Damage(5, 2);
-		}
-
 		//base.PlayerUpdate();
 		SetControls();
 		sprinting = stamina > 0 ? sprintKey : false;
@@ -117,6 +113,10 @@ public class Player : Controllable {
 			SetVelocity();
 			SetTarget();
 			if(atk2Key && CanAttack(atk2Cost)) Attack2();
+		}
+
+		if(Input.GetKeyDown(KeyCode.Space)) {
+			yMove.y = 1;
 		}
 		PlayerMove();
 		if(!attacking || anim.GetBool("attackComboing")) {
@@ -148,7 +148,7 @@ public class Player : Controllable {
 			// switch state
 			control = state.PLAYER;
 		} else {
-			cc.Move((target.transform.position - transform.position).normalized * runSpeed * 60 * Time.smoothDeltaTime);
+			cc.Move((target.transform.position - transform.position).normalized * runSpeed * 1.5f * 60 * Time.smoothDeltaTime);
 		}
 	}
 
@@ -267,7 +267,7 @@ public class Player : Controllable {
 			velocity = Vector3.Lerp(
 				velocity,
 				(tempForward * motionInput.normalized.z + GameController.mainCam.transform.right * motionInput.normalized.x) * speed,
-				accel * (cc.isGrounded ? 1 : 0.1f));
+				accel * (onGround ? 1 : 0.1f));
 		}
 	}
 

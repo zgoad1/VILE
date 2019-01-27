@@ -82,6 +82,7 @@ public class Enemy : Controllable {
 		SetTarget();
 		hpBar = Instantiate(GameController.enemyHpBarObject).GetComponent<UIBar>();
 		hpBar.character = this;
+		hpBar.value = hp;
 		hpBar.maxValue = maxHP;
 		hpBar.gameObject.SetActive(false);
 		hpBar.transform.SetParent(GameController.UICanvas.transform);

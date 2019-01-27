@@ -12,7 +12,7 @@ public class GroundTest : MonoBehaviour {
 	public LayerMask groundLayers = 512;
 	protected Controllable parent;
 	protected List<Collider> grounds = new List<Collider>();
-	private bool onGround = false;
+	public bool onGround = false;
 
 	private void Reset() {
 		parent = GetComponentInParent<Controllable>();

@@ -70,7 +70,8 @@ class UpgradeVSProject {
 					sb.AppendFormat("  - {0}{1}", frameworkUpdate, Environment.NewLine);
 			}
 
-			EditorUtility.DisplayDialog("Framework Update", sb.ToString(), "OK");
+			//EditorUtility.DisplayDialog("Framework Update", sb.ToString(), "OK");
+			UnityEngine.Debug.Log("Done.");
 		} else {
 			EditorUtility.DisplayDialog("Framework Update", "No solutions were changed", "OK");
 		}
