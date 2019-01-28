@@ -13,6 +13,7 @@ public class TargetableRenderer : MonoBehaviour {
 	protected void OnBecameVisible() {
 		Targetable.onScreen.Add(parent);
 		parent.isOnScreen = true;
+		Debug.Log(parent + " became visible");
 		//Debug.Log("visible! Controllable.onScreen.count: " + Controllable.onScreen.Count);
 	}
 

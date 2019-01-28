@@ -144,7 +144,7 @@ public class GameController : MonoBehaviour {
 		Controllable[] characters = FindObjectsOfType<Controllable>();
 		foreach(Controllable c in characters) {
 			c.enabled = false;
-			c.anim.speed = 0;
+			if(c.anim != null) c.anim.speed = 0;
 		}
 		player.readInput = false;
 		player.velocity = Vector3.zero;
@@ -158,7 +158,7 @@ public class GameController : MonoBehaviour {
 		Controllable[] characters = FindObjectsOfType<Controllable>();
 		foreach(Controllable c in characters) {
 			c.enabled = true;
-			c.anim.speed = 1;
+			if(c.anim != null) c.anim.speed = 1;
 		}
 		player.readInput = true;
 		camControl.readInput = true;

@@ -89,8 +89,6 @@ public class Controllable : Targetable {
 
 	// input
 	[HideInInspector] public bool readInput = true;
-	protected float rightKey;
-	protected float fwdKey;
 	protected bool atk1Key = false;
 	protected bool atk2Key = false;
 

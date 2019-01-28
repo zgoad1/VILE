@@ -32,14 +32,9 @@
 **- A -**
 
 **- B -**
-- Flying plane does not reach edges of map
-- Time starts out scaled at 0
-- Reticle doesn't show possessible animation as soon as an enemy is stunned1
-- HP bars aren't always active when they should be
+- Reticle/targeting does not work when the enemy approaches the center of the screen from a distance
 - robots can get stuck on corner barrier posts
 - CR's animation places it at origin
-- Reticle/targeting does not work when the enemy approaches the center of the screen from a distance
-- sometimes the reticle refuses to target a particular enemy, but works for others
 - sprinting into a corner can clip you through the wall
 - turning does not use deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
@@ -47,5 +42,6 @@
 
 **- C -**
 - Fencer arms do not calculate bounds (disappear when main body is off camera)
+- every time you target something while the reticle is gray, it will fade in again after a few seconds
 - you can sometimes attack while falling from Attack1d and it sometimes triggers an extra landing animation (land is triggered during Attack1a)
 - the tunnel is a bug says tristan

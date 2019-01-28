@@ -29,4 +29,19 @@ public class Helper {
 			if(t.gameObject.layer == prevLayer) t.gameObject.layer = layer;
 		}
 	}
+
+	public static Targetable GetRelatedTargetable(GameObject o) {
+		Targetable t;
+		t = o.GetComponent<Targetable>();
+		if(t != null) return t;
+		t = o.GetComponentInChildren<Targetable>();
+		if(t != null) return t;
+		Transform p = o.transform.parent;
+		while(p != null) {
+			t = p.GetComponent<Targetable>();
+			if(t != null) return t;
+			p = p.parent;
+		}
+		return null;
+	}
 }

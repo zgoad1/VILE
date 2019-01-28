@@ -8,7 +8,7 @@ public class SpawnPoint : MonoBehaviour {
 
 	public Color color = Color.red;
 	public Mesh gfx;
-	public List<Spawnable> spawnables;
+	public List<Spawnable> spawnables = new List<Spawnable>();
 
 	private float sum = 0;
 

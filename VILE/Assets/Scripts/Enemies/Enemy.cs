@@ -7,9 +7,10 @@ public class Enemy : Controllable {
 	
 	protected static Player player;
 	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
-	protected float playerDamage = 0.2f;    // damage to apply every frame in which the player
-											// is possessing this enemy
-	[SerializeField] protected GameObject deathObject;  // an object that does VFX for death (explosions, etc)
+	[Tooltip("Damage to apply every frame in which the player is possessing this enemy.")]
+	[SerializeField] protected float playerDamage = 0.2f;
+	[Tooltip("VFX to play upon death.")]
+	[SerializeField] protected GameObject deathObject;
 	protected PlayerTracker tracker;
 	protected bool checkedForPlayer = false;    // whether we've called CanSeePlayer() this frame (saves a raycast when calling CanSeePlayer() twice in a frame)
 	protected bool sawPlayer = false;
@@ -17,16 +18,25 @@ public class Enemy : Controllable {
 	[Tooltip("How far this enemy can see")]
 	public float sightLength = 200;
 
+	// debug
+	public Vector3 playerPoint;
+
 	public bool CanSeePlayer() {
 		if(checkedForPlayer) return sawPlayer;
 		checkedForPlayer = true;
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position, GameController.playerTarget.position - transform.position, out hit, sightLength, GameController.defaultLayerMask)) {
 			sawPlayer = hit.transform.gameObject.GetComponent<Player>() != null;
+			playerPoint = hit.point;
 			return sawPlayer;
 		}
 		sawPlayer = false;
 		return false;
+	}
+
+	private void OnDrawGizmos() {
+		Gizmos.color = Color.blue;
+		Gizmos.DrawSphere(playerPoint, 0.5f);
 	}
 
 	protected override void Reset() {
@@ -59,7 +69,7 @@ public class Enemy : Controllable {
 		SetScreenCoords();
 		hpBar.gameObject.SetActive(true);
 		//Damage(playerDamage);
-		//hp -= playerDamage * 60 * Time.deltaTime;
+		hp -= playerDamage * 60 * Time.deltaTime;
 		GameController.player.stamina += playerDamage / 2f;
 	}
 

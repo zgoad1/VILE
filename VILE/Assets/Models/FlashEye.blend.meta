@@ -1,47 +1,144 @@
 fileFormatVersion: 2
 guid: 894206501df8caf488af46d84081297c
 ModelImporter:
-  serializedVersion: 23
-  fileIDToRecycleName:
-    100000: //RootNode
-    100002: Armature
-    100004: Ball
-    100006: Body
-    100008: Bone
-    100010: Bone_001
-    100012: Bone_002
-    100014: Ball_0
-    100016: Blades
-    100018: Spinner
-    100020: Body_0
-    400000: //RootNode
-    400002: Armature
-    400004: Ball
-    400006: Body
-    400008: Bone
-    400010: Bone_001
-    400012: Bone_002
-    400014: Ball_0
-    400016: Blades
-    400018: Spinner
-    400020: Body_0
-    2100000: Material
-    2100002: wire_black
-    2100004: metal_gray
-    2100006: light_white
-    2100008: metal_white
-    2300000: //RootNode
-    3300000: //RootNode
-    4300000: Cube
-    4300002: Mesh
-    4300004: Ball
-    4300006: Body
-    7400000: Default Take
-    9500000: //RootNode
-    13700000: Ball
-    13700002: Body
-    2186277476908879412: ImportLogs
-  externalObjects: {}
+  serializedVersion: 25
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: //RootNode
+  - first:
+      1: 100002
+    second: Armature
+  - first:
+      1: 100004
+    second: Ball
+  - first:
+      1: 100006
+    second: Body
+  - first:
+      1: 100008
+    second: Bone
+  - first:
+      1: 100010
+    second: Bone_001
+  - first:
+      1: 100012
+    second: Bone_002
+  - first:
+      1: 100014
+    second: Ball_0
+  - first:
+      1: 100016
+    second: Blades
+  - first:
+      1: 100018
+    second: Spinner
+  - first:
+      1: 100020
+    second: Body_0
+  - first:
+      4: 400000
+    second: //RootNode
+  - first:
+      4: 400002
+    second: Armature
+  - first:
+      4: 400004
+    second: Ball
+  - first:
+      4: 400006
+    second: Body
+  - first:
+      4: 400008
+    second: Bone
+  - first:
+      4: 400010
+    second: Bone_001
+  - first:
+      4: 400012
+    second: Bone_002
+  - first:
+      4: 400014
+    second: Ball_0
+  - first:
+      4: 400016
+    second: Blades
+  - first:
+      4: 400018
+    second: Spinner
+  - first:
+      4: 400020
+    second: Body_0
+  - first:
+      21: 2100000
+    second: Material
+  - first:
+      21: 2100002
+    second: wire_black
+  - first:
+      21: 2100004
+    second: metal_gray
+  - first:
+      21: 2100006
+    second: light_white
+  - first:
+      21: 2100008
+    second: metal_white
+  - first:
+      23: 2300000
+    second: //RootNode
+  - first:
+      33: 3300000
+    second: //RootNode
+  - first:
+      43: 4300000
+    second: Cube
+  - first:
+      43: 4300002
+    second: Mesh
+  - first:
+      43: 4300004
+    second: Ball
+  - first:
+      43: 4300006
+    second: Body
+  - first:
+      74: 7400000
+    second: Default Take
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Ball
+  - first:
+      137: 13700002
+    second: Body
+  - first:
+      41386430: 2186277476908879412
+    second: ImportLogs
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: light_white
+    second: {fileID: 2100000, guid: 5b75d144668242c4c938a86a7ff218a2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_gray
+    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: metal_white
+    second: {fileID: 2100000, guid: 2e59f95285d0f764a89bf3e7cc17688d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: wire_black
+    second: {fileID: -9007632685173550870, guid: e6ce9e1098e1f8b449ee38ddc7219b5e,
+      type: 3}
   materials:
     importMaterials: 1
     materialName: 0
@@ -68,13 +165,43 @@ ModelImporter:
     animationWrapMode: 0
     extraExposedTransformPaths: []
     extraUserProperties: []
-    clipAnimations: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Default Take
+      takeName: Default Take
+      internalID: 7400000
+      firstFrame: 0
+      lastFrame: 31
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask: []
+      maskType: 3
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
     isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 2
     meshCompression: 0
     addColliders: 0
+    useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
@@ -82,10 +209,13 @@ ModelImporter:
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
     preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
@@ -99,6 +229,10 @@ ModelImporter:
     normalImportMode: 0
     tangentImportMode: 3
     normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
   importAnimation: 1
   copyAvatar: 0
   humanDescription:

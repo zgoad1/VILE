@@ -29,9 +29,10 @@ public class Player : Controllable {
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
-
-	// temp
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
+
+	// debug
+	public Vector3 targetRayHitPoint, targetRayStart, targetRayEnd;
 
 	public static List<Targetable> targets = new List<Targetable>();
 
@@ -44,7 +45,7 @@ public class Player : Controllable {
 		flasher = FindObjectOfType<EpilepsyController>();
 		a2fx = GetComponentsInChildren<ParticleSystem>()[3];
 		solidLayer = LayerMask.NameToLayer("Solid");
-		rayMask = 1 << LayerMask.NameToLayer("Solid");
+		rayMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Enemies") | 1 << LayerMask.NameToLayer("FlyingCharacters") | 1 << LayerMask.NameToLayer("Default");
 		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();
 		hpBar.character = this;
 		hpBar.maxValue = maxHP;
@@ -103,11 +104,8 @@ public class Player : Controllable {
 	}
 
 	protected override void PlayerUpdate() {
-
-		//base.PlayerUpdate();
 		SetControls();
-		sprinting = stamina > 0 ? sprintKey : false;
-		// Set the target dynamically if we're not attacking.
+		// Set the target normally if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
 			SetVelocity();
@@ -127,7 +125,7 @@ public class Player : Controllable {
 			if(target != null) {
 				a2fx.transform.LookAt(target.camLook);
 			} else a2fx.transform.forward = GameController.mainCam.transform.forward;
-			if(fwdKey > 0) {
+			if(motionInput.z > 0) {
 				Targetable prevTarget = target;
 				SetTarget();
 				if(target == null) target = prevTarget;
@@ -198,12 +196,12 @@ public class Player : Controllable {
 			foreach(Targetable t in targets) {
 				if(t.distanceFromPlayer < minDist) {
 					RaycastHit hit;
-					// This is actually the most effective way to do this raycast
-					if(!Physics.Raycast(transform.position, t.transform.position - transform.position, out hit, t.distanceFromPlayer - t.radius, rayMask)) {
-						minDist = t.distanceFromPlayer;
-						newTarget = t;
-					} else {
-						//Debug.Log("Raycst hit: " + hit.transform.gameObject);
+					if(Physics.Raycast(camLook.position, t.camLook.position - camLook.position, out hit, t.distanceFromPlayer, rayMask)) {
+						if(Helper.GetRelatedTargetable(hit.collider.gameObject) == t) {
+							minDist = t.distanceFromPlayer;
+							newTarget = t;
+						}
+						targetRayHitPoint = hit.point;
 					}
 				}
 			}
@@ -216,6 +214,19 @@ public class Player : Controllable {
 			target = null;
 		}
 	}
+
+	// debug
+	//private void OnDrawGizmos() {
+	//	Gizmos.color = Color.red;
+	//	foreach(Targetable t in onScreen) {
+	//		if(t == target) Gizmos.color = Color.yellow;
+	//		else Gizmos.color = Color.red;
+	//		Gizmos.DrawLine(camLook.position, t.camLook.position);
+	//		//Gizmos.DrawWireSphere(t.camLook.position, t.radius);
+	//	}
+	//	Gizmos.color = Color.yellow;
+	//	Gizmos.DrawSphere(targetRayHitPoint, 1f);
+	//}
 
 	public bool IsInRange(Targetable e) {
 		if(!e.canTarget) return false;
@@ -398,6 +409,7 @@ public class Player : Controllable {
 	#endregion
 
 	public bool CanPossessTarget() {
+		if(canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED)) Debug.Log("Target is possessable");
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 

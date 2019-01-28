@@ -58,7 +58,7 @@ public class MapGenerator : MonoBehaviour {
 		roomsMade = 0;
 		tileOffset = new Vector3(gridSize.x / 2, 0, -gridSize.y / 2) * (-roomSize);
 		flyingPlane = GameObject.Find("Flying Plane");
-		flyingPlane.transform.position = new Vector3(-roomSize / 2, flyingHeight, -roomSize / 2);
+		flyingPlane.transform.position = new Vector3(-roomSize / 2, flyingHeight, roomSize / 2);
 		flyingPlane.transform.localScale = new Vector3(gridSize.x * roomSize / 10, 1, gridSize.y * roomSize / 10);
 	}
 
