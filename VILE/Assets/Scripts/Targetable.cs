@@ -5,12 +5,13 @@ using UnityEngine;
 // Doors and Controllables.
 
 public class Targetable : MonoBehaviour {
-	[HideInInspector] public Transform camLook;    // where the reticle should move to
-									// (doubles as a lookAt for the camera for Controllables)
-									// in general, the center of the object
+	[HideInInspector] public Transform camLook; // where the reticle should move to
+												// (doubles as a lookAt for the camera for Controllables)
+												// in general, the center of the object
 	[HideInInspector] public Vector3 screenCoords = Vector3.zero;
 	[HideInInspector] public bool isTarget = false;
 	[HideInInspector] public float distanceFromPlayer = 0;
+	[HideInInspector] public float distanceFromCenter = 0;
 	[HideInInspector] public bool isOnScreen = false;
 	[HideInInspector] public bool canTarget = true;
 
@@ -33,7 +34,7 @@ public class Targetable : MonoBehaviour {
 			GameObject newLookat = new GameObject("CamLookat");
 			camLookOb = newLookat.AddComponent<CamLookat>();
 			newLookat.transform.SetParent(transform);
-			newLookat.transform.position = Vector3.zero;
+			newLookat.transform.localPosition = Vector3.zero;
 		}
 		camLook = camLookOb.transform;
 	}

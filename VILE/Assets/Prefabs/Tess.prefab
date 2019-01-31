@@ -45,8 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 0}
   tightness: 0.2
 --- !u!1 &262182494
 GameObject:
@@ -93,8 +94,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 1722312426}
   tightness: 0.2
 --- !u!1 &566165450
 GameObject:
@@ -171,8 +173,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 1833819842}
   tightness: 0.2
 --- !u!1 &749011456
 GameObject:
@@ -226,8 +229,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 0}
   tightness: 0.2
 --- !u!1 &922024505
 GameObject:
@@ -274,8 +278,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 653111946}
   tightness: 0.2
 --- !u!1 &993023087
 GameObject:
@@ -322,8 +327,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 1345477641}
   tightness: 0.2
 --- !u!1 &1259578892
 GameObject:
@@ -370,8 +376,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 1334773996}
   tightness: 0.2
 --- !u!1 &1334773995
 GameObject:
@@ -418,8 +425,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 653111946}
   tightness: 0.2
 --- !u!1 &1345477640
 GameObject:
@@ -466,8 +474,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 749011457}
   tightness: 0.2
 --- !u!1 &1386939255
 GameObject:
@@ -514,8 +523,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 0}
   tightness: 0.2
 --- !u!1 &1548217319
 GameObject:
@@ -569,8 +579,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 0}
   tightness: 0.2
 --- !u!1 &1606635556
 GameObject:
@@ -617,8 +628,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 993023088}
   tightness: 0.2
 --- !u!1 &1641770984
 GameObject:
@@ -665,8 +677,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 993023088}
   tightness: 0.2
 --- !u!1 &1648037249
 GameObject:
@@ -713,8 +726,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 922024506}
   tightness: 0.2
 --- !u!1 &1722312425
 GameObject:
@@ -761,8 +775,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 653111946}
   tightness: 0.2
 --- !u!1 &1788317580
 GameObject:
@@ -809,8 +824,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 0}
   tightness: 0.2
 --- !u!1 &1833819841
 GameObject:
@@ -857,8 +873,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 1548217320}
   tightness: 0.2
 --- !u!1 &1848653287
 GameObject:
@@ -905,8 +922,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0255bb55d772bdd4692c249ade47a060, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  root: 0
+  next: []
   drawGizmos: 0
-  parent: {fileID: 993023088}
   tightness: 0.2
 --- !u!1 &1033174590092354
 GameObject:
@@ -5767,9 +5785,9 @@ MonoBehaviour:
   screenCoords: {x: 0, y: 0, z: 0}
   isTarget: 0
   distanceFromPlayer: 0
+  distanceFromCenter: 0
   isOnScreen: 0
   canTarget: 1
-  radius: 0.2
   speed: 0.6
   acceleration: 2
   gravity: 0.02
@@ -5789,6 +5807,7 @@ MonoBehaviour:
   readInput: 1
   anim: {fileID: 0}
   invincible: 0
+  sightLength: 200
   control: 0
   target: {fileID: 0}
   runSpeed: 2.5
@@ -5803,6 +5822,9 @@ MonoBehaviour:
   possessing: 0
   possessed: {fileID: 0}
   iPos: {x: 0, y: 0, z: 0}
+  targetRayHitPoint: {x: 0, y: 0, z: 0}
+  targetRayStart: {x: 0, y: 0, z: 0}
+  targetRayEnd: {x: 0, y: 0, z: 0}
 --- !u!54 &1685438914
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -6427,6 +6449,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2721ad24c477c364c98db9734d4583fe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  groundLayers:
+    serializedVersion: 2
+    m_Bits: 512
   onGround: 0
 --- !u!1 &1574345453694586
 GameObject:
@@ -11535,7 +11560,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 1.5
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -11588,7 +11613,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 10
+      scalar: 20
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -11703,7 +11728,7 @@ ParticleSystem:
         m_NumAlphaKeys: 2
     startSize:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0.3
       minScalar: 1
       maxCurve:
@@ -11756,7 +11781,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeY:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0.3
       minScalar: 1
       maxCurve:
@@ -11809,7 +11834,7 @@ ParticleSystem:
         m_RotationOrder: 4
     startSizeZ:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0.3
       minScalar: 1
       maxCurve:
@@ -12080,7 +12105,7 @@ ParticleSystem:
     serializedVersion: 6
     enabled: 1
     type: 4
-    angle: 1
+    angle: 0.7
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
     radiusThickness: 1
@@ -12166,7 +12191,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0.05
     radius:
-      value: 0.1
+      value: 0.15
       mode: 0
       spread: 0
       speed:
@@ -12286,7 +12311,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 3
       scalar: 128
-      minScalar: 64
+      minScalar: 16
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -15302,7 +15327,7 @@ ParticleSystem:
         m_RotationOrder: 4
     minVertexDistance: 0.2
     textureMode: 0
-    ribbonCount: 3
+    ribbonCount: 1
     shadowBias: 0.5
     worldSpace: 0
     dieWithParticles: 1

@@ -103,7 +103,8 @@ public class Controllable : Targetable {
 	protected float defaultGracePeriod = 0.8f;
 	[HideInInspector] public bool invincible = false;
 	protected IEnumerator gracePeriodCR;
-
+	[Tooltip("How far this Controllable can see")]
+	public float sightLength = 200;
 	[HideInInspector] public state control = state.AI;
 	/**Camera is not affected by the target.
 	 * The target only affects where you face when you're attacking.

@@ -46,6 +46,10 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	private void Update() {
+
+		dir = new Vector3(0, 0, -distance);
+		lookOffset = new Vector3(0f, height, 0f);
+
 		if(readInput) {
 			currentX += sensitivityX * Input.GetAxis("Mouse X") * 60 * Time.deltaTime;
 			currentY = Mathf.Clamp(currentY - sensitivityY * inverted * Input.GetAxis("Mouse Y") * 60 * Time.deltaTime, -60f, 75f);
@@ -66,8 +70,7 @@ public class CameraControl : MonoBehaviour {
 			ScreenShakeUpdate();
 		} else {
 			RaycastHit hit;
-			Vector3 rayDir = Vector3.zero;
-			rayDir = transform.position - (lookAt.position + lookOffset);
+			Vector3 rayDir = transform.position - (lookAt.position + lookOffset);
 			if(Physics.Raycast(lookAt.position + lookOffset, rayDir, out hit, idistance, raymask)) {
 				Vector3 newPos = hit.point + hit.normal * rad;
 				distance = Mathf.Min(idistance, Vector3.Distance(lookAt.position + lookOffset, newPos));

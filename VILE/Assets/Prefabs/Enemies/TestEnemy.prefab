@@ -1,5 +1,49 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1618091430
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1618091431}
+  - component: {fileID: 1618091432}
+  m_Layer: 16
+  m_Name: CamLookat
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1618091431
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618091430}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 6444118383136116407}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1618091432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1618091430}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a325d3737c3298748951aeeb8f342ce4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2261433675932291865
 GameObject:
   m_ObjectHideFlags: 0
@@ -18,7 +62,8 @@ GameObject:
   - component: {fileID: 2380707468488547832}
   - component: {fileID: 7505794102618347466}
   - component: {fileID: 7343190934761442983}
-  m_Layer: 0
+  - component: {fileID: 216590460}
+  m_Layer: 16
   m_Name: TestEnemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -34,9 +79,10 @@ RectTransform:
   m_GameObject: {fileID: 2261433675932291865}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: -1, y: 1, z: 1}
   m_Children:
   - {fileID: 7175428656620044347}
+  - {fileID: 1618091431}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -294,19 +340,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7cdbac37bc5a81841b5037fdb29169b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  camLook: {fileID: 0}
+  camLook: {fileID: 1618091431}
   screenCoords: {x: 0, y: 0, z: 0}
   isTarget: 0
   distanceFromPlayer: 0
+  distanceFromCenter: 0
   isOnScreen: 0
   canTarget: 1
-  radius: 5
   speed: 0.225
   acceleration: 0.175
   gravity: 0.03
   yMove: {x: 0, y: 0, z: 0}
   camDistance: 14
-  maxHP: 100
+  maxHP: 50
   dead: 0
   hpBar: {fileID: 0}
   attack1Power: 10
@@ -318,13 +364,30 @@ MonoBehaviour:
   onGround: 0
   velocity: {x: 0, y: 0, z: 0}
   readInput: 1
-  anim: {fileID: 0}
+  anim: {fileID: 1142586939240853009}
   invincible: 0
+  sightLength: 200
   control: 0
   target: {fileID: 0}
-  deathObject: {fileID: 0}
-  sightLength: 200
+  playerDamage: 0.2
+  deathObject: {fileID: 4957065820185104361, guid: cea32a2c9d0509541ae7eb8d4af358c0,
+    type: 3}
+  playerPoint: {x: 0, y: 0, z: 0}
   tmp: {fileID: 1653468999182519847}
+--- !u!114 &216590460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2261433675932291865}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: a39ec5ccdf1c6044187f34189a0e73ae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  parent: {fileID: 7343190934761442983}
 --- !u!1 &6841795037824073719
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,7 +400,7 @@ GameObject:
   - component: {fileID: 6180666790177360378}
   - component: {fileID: 3870790754488942587}
   - component: {fileID: 3824275023995325982}
-  m_Layer: 0
+  m_Layer: 16
   m_Name: TMP SubMesh [tiberian SDF Material + LiberationSans SDF Atlas]
   m_TagString: Untagged
   m_Icon: {fileID: 0}

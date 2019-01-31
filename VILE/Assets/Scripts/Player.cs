@@ -113,9 +113,11 @@ public class Player : Controllable {
 			if(atk2Key && CanAttack(atk2Cost)) Attack2();
 		}
 
+		// debug
 		if(Input.GetKeyDown(KeyCode.Space)) {
 			yMove.y = 1;
 		}
+
 		PlayerMove();
 		if(!attacking || anim.GetBool("attackComboing")) {
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
@@ -153,7 +155,7 @@ public class Player : Controllable {
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
-			Debug.Log("Possessing " + target);
+			//Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
 		} else if(hit.gameObject.GetComponent<Conductor>() == target && control == state.AI) {
 			TurnIntoLightning(false);
@@ -177,9 +179,7 @@ public class Player : Controllable {
 		// to the targets array (and remove those who aren't)
 		foreach(Targetable t in onScreen) {
 			bool inRange = IsInRange(t);
-			// don't consider the player (if possessing an enemy)
-			// don't consider things behind the player when the camera is behind the player
-			if(t != possessed /*&& (t.IsInFrontOf(this) || !t.IsInFrontOf(this) && Helper.IsInFrontOf(GameController.mainCam.transform, t.transform))*/) {
+			if(t != possessed) {
 				if(!t.isTarget && inRange) {
 					t.isTarget = true;
 					targets.Add(t);
@@ -194,22 +194,20 @@ public class Player : Controllable {
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
 			foreach(Targetable t in targets) {
-				if(t.distanceFromPlayer < minDist) {
+				float distScore = t.distanceFromPlayer + Mathf.Pow(t.distanceFromCenter * 100, 2);
+				if(distScore < minDist) {
 					RaycastHit hit;
-					if(Physics.Raycast(camLook.position, t.camLook.position - camLook.position, out hit, t.distanceFromPlayer, rayMask)) {
+					if(Physics.Linecast(camLook.position, t.camLook.position, out hit, rayMask)) {
 						if(Helper.GetRelatedTargetable(hit.collider.gameObject) == t) {
-							minDist = t.distanceFromPlayer;
+							minDist = distScore;
 							newTarget = t;
 						}
 						targetRayHitPoint = hit.point;
 					}
 				}
 			}
-			// if we're not in the middle of an attack or combo, update target
-			if(!attacking) {
-				target = newTarget;
-				if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(true);
-			}
+			target = newTarget;
+			if(target is Enemy) ((Enemy)target).hpBar.gameObject.SetActive(true);
 		} else {
 			target = null;
 		}
@@ -230,6 +228,7 @@ public class Player : Controllable {
 
 	public bool IsInRange(Targetable e) {
 		if(!e.canTarget) return false;
+		if(e.distanceFromPlayer > sightLength) return false;
 
 		bool targetInFront = e.IsInFrontOf(this);
 		bool lookingAtTarget = Helper.IsInFrontOf(GameController.mainCam.transform, e.transform);
@@ -239,8 +238,8 @@ public class Player : Controllable {
 
 		float maxDist = 0.175f;  // only check objects in a circle of a radius of this fraction of the screen size
 		e.SetScreenCoords();
-		float dist = Vector2.Distance(e.screenCoords, screenCenter);
-		if(dist < maxDist) {
+		e.distanceFromCenter = Vector2.Distance(e.screenCoords, screenCenter);
+		if(e.distanceFromCenter < maxDist) {
 			return true;
 		}
 		return false;
@@ -271,7 +270,7 @@ public class Player : Controllable {
 			TurnIntoLightning(true);
 			velocity = Vector3.Lerp(velocity,
 				(tempForward + GameController.mainCam.transform.right.normalized * motionInput.x * 1.5f).normalized * runSpeed,
-				0.1f);
+				0.1f * 60 * Time.deltaTime);
 		} else {
 			// not sprinting
 			TurnIntoLightning(false);
@@ -402,14 +401,13 @@ public class Player : Controllable {
 			((Door)target).Open(true);
 			((Door)target).Spark();
 		}
-		yield return new WaitForSeconds(0.8f);
+		yield return new WaitForSeconds(attack2Cooldown - 1.2f);
 		canPossess = true;
 	}
 
 	#endregion
 
 	public bool CanPossessTarget() {
-		if(canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED)) Debug.Log("Target is possessable");
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 

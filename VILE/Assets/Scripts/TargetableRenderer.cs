@@ -13,7 +13,7 @@ public class TargetableRenderer : MonoBehaviour {
 	protected void OnBecameVisible() {
 		Targetable.onScreen.Add(parent);
 		parent.isOnScreen = true;
-		Debug.Log(parent + " became visible");
+		//Debug.Log(parent + " became visible");
 		//Debug.Log("visible! Controllable.onScreen.count: " + Controllable.onScreen.Count);
 	}
 
@@ -21,6 +21,7 @@ public class TargetableRenderer : MonoBehaviour {
 		Targetable.onScreen.Remove(parent);
 		parent.isOnScreen = false;
 		Player.targets.Remove(parent);
+		//Debug.Log(parent + " disappeared");
 		//Debug.Log("INvisible! Controllable.onScreen.count: " + Controllable.onScreen.Count);
 	}
 

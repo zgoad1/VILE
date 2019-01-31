@@ -50,8 +50,10 @@ public class DyingEnemy : PooledObject {
 	}
 
 	private void PlayEffects() {
-		particles.Play();
-		StartCoroutine("Effects");
+		if(particles != null) {
+			particles.Play();
+			StartCoroutine("Effects");
+		}
 	}
 
 	// Blow off pieces gradually as particles play

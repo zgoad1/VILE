@@ -39,6 +39,10 @@ public class GameController : MonoBehaviour {
 	[SerializeField] private Material conductor;
 	private Vector2 conductorScrollSpeed = new Vector2(0, 0.02f);
 
+	// tunnel lights
+	[SerializeField] private Material tunnelGlow;
+	private Vector2 tunnelGlowOffset = Vector2.zero;
+
 	[SerializeField] private int numPremadeObjects = 10;    // how many of each object to pool
 	[SerializeField] private List<GameObject> objectList;   // said objects
 	private static List<GameObject> objectPool = new List<GameObject>();
@@ -89,6 +93,10 @@ public class GameController : MonoBehaviour {
 		// wall glow
 		newColorWG.r = 0.5f * Mathf.Sin(2 * Mathf.PI / 4 * Time.time) + 0.5f;
 		wallGlow.SetColor("_EmissionColor", newColorWG);
+
+		// tunnel wall lights
+		tunnelGlowOffset.y = 1 * Mathf.Sin(2 * Mathf.PI / 6.5f * Time.time);
+		tunnelGlow.mainTextureOffset = tunnelGlowOffset;
 
 		// laser barrier
 		newColorLB.a = 0.1f * Mathf.Sin(2 * Mathf.PI / 0.12f * Time.time) + .9f;

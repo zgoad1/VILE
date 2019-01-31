@@ -32,7 +32,8 @@
 **- A -**
 
 **- B -**
-- Reticle/targeting does not work when the enemy approaches the center of the screen from a distance
+- you can attack while sprintinggggg
+- Target is reset to null when target dies and doesn't get set while attacking
 - robots can get stuck on corner barrier posts
 - CR's animation places it at origin
 - sprinting into a corner can clip you through the wall
@@ -42,6 +43,4 @@
 
 **- C -**
 - Fencer arms do not calculate bounds (disappear when main body is off camera)
-- every time you target something while the reticle is gray, it will fade in again after a few seconds
 - you can sometimes attack while falling from Attack1d and it sometimes triggers an extra landing animation (land is triggered during Attack1a)
-- the tunnel is a bug says tristan

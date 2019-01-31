@@ -15,9 +15,6 @@ public class Enemy : Controllable {
 	protected bool checkedForPlayer = false;    // whether we've called CanSeePlayer() this frame (saves a raycast when calling CanSeePlayer() twice in a frame)
 	protected bool sawPlayer = false;
 
-	[Tooltip("How far this enemy can see")]
-	public float sightLength = 200;
-
 	// debug
 	public Vector3 playerPoint;
 

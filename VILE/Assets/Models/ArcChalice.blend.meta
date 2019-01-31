@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fdef82831660b424bbd5cd482d2d1a87
+guid: d22c83e843c1a754ea834775d65f957d
 ModelImporter:
   serializedVersion: 25
   internalIDToNameTable:
@@ -10,44 +10,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Floor__tex_tunnel_straight
-    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Light__tex_tunnel_straight
-    second: {fileID: 2100000, guid: 47973ab6c3a98404082fb2f601ba54c7, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Metal
+      name: Metal_1
     second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Metal__tex_tunnel_straight
-    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+      name: Metal_2
+    second: {fileID: 2100000, guid: 2e59f95285d0f764a89bf3e7cc17688d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Sides__tex_tunnel_straight
-    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: WallLights__tex_tunnel_straight
-    second: {fileID: 2100000, guid: b0272dd2824f7514b8deb626bdc18fc4, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: Walls__tex_tunnel_straight
-    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
-  - first:
-      type: UnityEngine:Material
-      assembly: UnityEngine.CoreModule
-      name: dark__tex_tunnel_straight
-    second: {fileID: -9007632685173550870, guid: e6ce9e1098e1f8b449ee38ddc7219b5e,
-      type: 3}
+      name: lights
+    second: {fileID: 2100000, guid: af53a24d9e8035340ab2b18312aa6f42, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -107,9 +81,9 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 10
+    globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
@@ -157,10 +131,10 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 1
+    hasExtraRoot: 0
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 0
+  animationType: 2
   humanoidOversampling: 1
   additionalBone: 0
   userData: 

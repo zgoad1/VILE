@@ -95,7 +95,7 @@ public class PlayerReticle : MonoBehaviour {
 	}
 
 	private void Reappear() {
-		if(disappearing) {
+		if(disappearing || aboutToDisappear) {
 			StopCoroutine("WaitToDisappear");
 			disappearing = false;
 			aboutToDisappear = false;

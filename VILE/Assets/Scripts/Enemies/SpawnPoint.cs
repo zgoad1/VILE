@@ -31,8 +31,10 @@ public class SpawnPoint : MonoBehaviour {
 		float currentSum = 0;
 		for(int i = 0; i < spawnables.Count; i++) {
 			if(rand >= currentSum && rand < currentSum + spawnables[i].likelihood) {
-				GameObject g = Instantiate(spawnables[i].toSpawn);
-				g.transform.position = transform.position;
+				if(spawnables[i] != null) {
+					GameObject g = Instantiate(spawnables[i].toSpawn);
+					g.transform.position = transform.position;
+				}
 				break;
 			} else {
 				currentSum += spawnables[i].likelihood;
