@@ -70,9 +70,11 @@ public class Player : Controllable {
 		// check if we fell off the map
 		if(transform.position.y < -1) transform.position = iPos;
 
-		// normal, non-possessing update method
-		if(!possessing) base.Update();
-		else {
+		if(!possessing) {
+			// normal, non-possessing update method
+			base.Update();
+			anim.SetBool("attacking", attacking);
+		} else {
 			// follow enemy we're possessing
 			transform.position = possessed.transform.position;
 			transform.forward = GameController.mainCam.transform.forward;
@@ -194,7 +196,7 @@ public class Player : Controllable {
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
 			foreach(Targetable t in targets) {
-				float distScore = t.distanceFromPlayer + Mathf.Pow(t.distanceFromCenter * 100, 2);
+				float distScore = t.distanceFromPlayerSquared + Mathf.Pow(t.distanceFromCenter * 100, 2);
 				if(distScore < minDist) {
 					RaycastHit hit;
 					if(Physics.Linecast(camLook.position, t.camLook.position, out hit, rayMask)) {
@@ -228,7 +230,7 @@ public class Player : Controllable {
 
 	public bool IsInRange(Targetable e) {
 		if(!e.canTarget) return false;
-		if(e.distanceFromPlayer > sightLength) return false;
+		if(e.distanceFromPlayerSquared > sightLength * sightLength) return false;
 
 		bool targetInFront = e.IsInFrontOf(this);
 		bool lookingAtTarget = Helper.IsInFrontOf(GameController.mainCam.transform, e.transform);

@@ -151,7 +151,6 @@ public class Controllable : Targetable {
 			cc.Move(yMove);
 		}
 		cooldownTimer -= Time.deltaTime;
-		anim.SetBool("attacking", attacking);
 	}
 
 	protected virtual void FixedUpdate() {

@@ -6,7 +6,7 @@ using System;
 /**Randomly generate a map of rooms.
  * If provided, use specified information.
  * 
- * NOTE: Starting room MUST be tagged "StartRoom", and ending room MUST be named "End"
+ * NOTE: Starting room MUST be tagged "StartRoom", and ending room MUST be tagged "EndRoom"
  */
 public class MapGenerator : MonoBehaviour {
 
@@ -100,13 +100,13 @@ public class MapGenerator : MonoBehaviour {
 			// try to connect a random room to the first open room's first opening until it works
 			bool success = false;
 			Vector2 newCoords = open[0].coords + directions[(int)GetOpenDirection(open[0])];
+			// choose a random room to place out of all the rooms that could fit there
+			List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
+			if(canFit.Count == 0) {
+				Debug.LogError("No fitting room to attach to " + open[0] + " in the direction " + GetOpenDirection(open[0]) +
+					"\nIncoming ArgumentOutOfRangeException.");
+			}
 			do {
-				// choose a random room to place out of all the rooms that could fit there
-				List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);								// would it work to move this out of the loop?
-				if(canFit.Count == 0) {
-					Debug.LogError("No fitting room to attach to " + open[0] + " in the direction " + GetOpenDirection(open[0]) + 
-						"\nIncoming ArgumentOutOfRangeException.");
-				}
 				success = TryPlaceRoom(newCoords, GetRandomRoom(canFit));
 			} while(!success);
 
@@ -128,15 +128,23 @@ public class MapGenerator : MonoBehaviour {
 		if(roomsMade < minRooms) {
 			GenerateMap(seed == "random" ? seed : seed + "_");
 		} else {
-			// place exit room as close to the desired position as possible
-			GameObject endRoom = Array.Find(rooms, r => r.name == "End");
-			int dist = roomsToExit;
-			while(!TryPlaceAtDist(dist, endRoom)) {
-				dist--;
-				if(dist < 1) {
-					Debug.LogError("MAP GENERATION FAILED COULDN'T FIND A PLACE TO PUT EXIT HELP ME MOMMY");
-					break;
+			// place exit room as close to the desired position as possible, kinda
+			List<GameObject> endRooms = new List<GameObject>();
+			foreach(GameObject o in rooms) {
+				if(o.tag == "EndRoom") endRooms.Add(o);
+			}
+			foreach(GameObject endRoom in endRooms) {
+				int dist = roomsToExit;
+				bool success = true;
+				while(!TryPlaceAtDist(dist, endRoom)) {
+					dist--;
+					if(dist < 1) {
+						// no rooms that can be replaced with this exit room
+						success = false;
+						break;
+					}
 				}
+				if(success) break;
 			}
 
 			// make sure at least one of each necessary room is placed
@@ -201,7 +209,7 @@ public class MapGenerator : MonoBehaviour {
 			if(rand < thisRoom.frequency 
 				&& thisRoom.indep 
 				&& (thisRoom.limit < 0 || amounts[randIndex] < thisRoom.limit) 
-				&& !(!thisRoom.IsOpen() && roomsMade < minRooms && open.Count == 1)
+				&& !(!thisRoom.IsOpenInitially() && roomsMade < minRooms && open.Count == 1)
 				|| GetSimilarRooms(list, thisRoom).Count == list.Count)
 			{
 				choice = list[randIndex];
@@ -219,9 +227,8 @@ public class MapGenerator : MonoBehaviour {
 			// place this room on the map
 			PlaceRoom(x, y, r);
 			return true;
-		} else {
-			return false;
 		}
+		return false;
 	}
 	bool TryPlaceRoom(Vector2 pos, GameObject r) {
 		return TryPlaceRoom((int)pos.x, (int)pos.y, r);
@@ -239,6 +246,7 @@ public class MapGenerator : MonoBehaviour {
 			// this dist is not in the dictionary (no rooms here)
 			return false;
 		}
+
 		if(canReplace.Count == 0) return false;
 
 		// choose a random room from the list to replace
@@ -257,9 +265,11 @@ public class MapGenerator : MonoBehaviour {
 	bool CanFitAt(int x, int y, Room r, bool ignoreRoomHere = false) {
 		if(!IsInBounds(x, y)) return false;						// this position is out of map bounds
 		if(!ignoreRoomHere && map[y, x] != null) return false;  // there's already a room here (and it matters in this context)
-		foreach(Room.direction d in r.doors) {
-			Vector2 newCoords = new Vector2(x, y);
-			if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
+		if(r.type != Room.area.INTERSECTION) {					// since intersections have variable numbers of doors, this doesn't matter
+			foreach(Room.direction d in r.doors) {
+				Vector2 newCoords = new Vector2(x, y);
+				if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
+			}
 		}
 		#region check constraints of surrounding rooms
 		Room left = RoomAt(x - 1, y);
@@ -332,15 +342,42 @@ public class MapGenerator : MonoBehaviour {
 		thisRoom.coords = new Vector2(x, y);
 		map[y, x].transform.position = new Vector3(thisRoom.coords.x, 0, -thisRoom.coords.y) * roomSize + tileOffset;
 		map[y, x].transform.SetParent(transform);
-		if(IsOpen(thisRoom)) {
-			open.Add(thisRoom);
-		}
 
 		// remove any adjacent rooms from open list if they've been closed by placing this room
-		foreach(Room.direction d in thisRoom.doors) {
-			Room adj = RoomAt(thisRoom.coords + directions[(int)d]);
-			if(adj != null && !IsOpen(adj)) {
-				open.Remove(adj);
+		// (we've already done logic to confirm we're fitting this room to other doorways)
+
+		Room.direction[] doorDirecs = { Room.direction.LEFT, Room.direction.RIGHT, Room.direction.UP, Room.direction.DOWN };
+
+		foreach(Room.direction d in doorDirecs) {
+			Vector2 newCoords = thisRoom.coords + directions[(int)d];
+			if(IsInBounds(newCoords)) {
+				// there may be a room here
+				Room adj = RoomAt(newCoords);
+				if(adj != null) {
+					// there is a room here
+
+					// handle adjacent room being area intersection
+					if(adj.type == Room.area.INTERSECTION) {
+						adj.doors.Remove(Room.GetOppositeDirection(d));
+					}
+
+					// handle thisRoom being area intersection
+					if(thisRoom.type == Room.area.INTERSECTION) {
+						thisRoom.doors.Remove(d);
+					}
+
+					// if adjacent room was closed by this, remove it from open list
+					if(!IsOpenStill(adj)) {
+						open.Remove(adj);
+					}
+				}
+			} else {
+				// that way is out of bounds
+
+				// handle thisRoom being area intersection
+				if(thisRoom.type == Room.area.INTERSECTION) {
+					thisRoom.doors.Remove(d);
+				}
 			}
 		}
 
@@ -354,9 +391,12 @@ public class MapGenerator : MonoBehaviour {
 		if(thisRoom.IsBig() && thisRoom.indep) {
 			List<RoomPart> parts = thisRoom.GetParts(new Vector2(x, y));
 			foreach(RoomPart p in parts) {
-				/* ??? */
 				PlaceRoom((int)p.loc.x, (int)p.loc.y, p.part);
 			}
+		}
+
+		if(IsOpenStill(thisRoom)) {
+			open.Add(thisRoom);
 		}
 
 		// log in roomInstances
@@ -389,7 +429,7 @@ public class MapGenerator : MonoBehaviour {
 
 	// the direction of the first open doorway of a room
 	Room.direction GetOpenDirection(Room r) {
-		if(r.IsOpen() || r.gameObject.tag == "StartRoom") {
+		if(r.IsOpenInitially() || r.gameObject.tag == "StartRoom") {
 			// return the first direction where there's a door in that direction with no room beyond it
 			foreach(Room.direction d in r.doors) {
 				if(RoomAt(r.coords + directions[(int)d]) == null) {
@@ -400,8 +440,14 @@ public class MapGenerator : MonoBehaviour {
 		return (Room.direction)(-1);
 	}
 
-	// whether a room with multiple doorways still has open doorways
-	bool IsOpen(Room r) {
+	// whether a room on the map with multiple doorways still has open doorways
+	// (area intersections are always considered closed, but can be placed anywhere)
+	bool IsOpenStill(Room r) {
+		if(r.type == Room.area.INTERSECTION) {
+			// area intersections are considered open when they are connected to less than 2 rooms
+			// (i.e., there are still at least 2 rooms left in its doors array)
+			return r.doors.Count > 2;
+		}
 		return GetOpenDirection(r) != (Room.direction)(-1);
 	}
 
@@ -420,7 +466,7 @@ public class MapGenerator : MonoBehaviour {
 	List<Room> GetSimilarRooms(List<Room> list, Room room) {
 		List<Room> ret = new List<Room>();
 		foreach(Room r in list) {
-			if(r.SameDoors(room) && !r.IsBig() && !r.necessary) ret.Add(r);
+			if(r.SameDoors(room) && !r.IsBig() && !r.necessary && r.type == room.type) ret.Add(r);
 		}
 		return ret;
 	}
@@ -428,7 +474,7 @@ public class MapGenerator : MonoBehaviour {
 		List<GameObject> ret = new List<GameObject>();
 		foreach(GameObject r in list) {
 			Room rm = r.GetComponent<Room>();
-			if(rm.SameDoors(room) && !rm.IsBig() && !rm.necessary) ret.Add(r);
+			if(rm.SameDoors(room) && !rm.IsBig() && !rm.necessary && rm.type == room.type) ret.Add(r);
 		}
 		return ret;
 	}

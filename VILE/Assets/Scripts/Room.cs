@@ -22,6 +22,7 @@ public class Room : MonoBehaviour {
 	public int limit = -1;								// how many of this room there can be (negative for unlimited)
 	public bool indep = true;							// whether this room is the head of a big room, or a single small room
 	public bool necessary = false;						// whether the room absolutely has to spawn (end, etc.)
+	// NOTE: For area intersecion instances, the below variable is changed dynamically as rooms are connected
 	public List<direction> doors;						// which sides of the room can connect to a new room
 
 	// NOTE: For big rooms, do not make loops in these lists. i.e., if room2 is in upList of room1, don't put room1
@@ -56,17 +57,18 @@ public class Room : MonoBehaviour {
 
 	/**It does what it says. 
 	 */
-	private direction GetOpposite(direction d) {
+	public static direction GetOppositeDirection(direction d) {
 		return (direction)(((int)d + 2) % 4);
 	}
 
-	/**Whether this room needs another room connected to it after it's placed by
-	 * the map generator. Doesn't take other rooms currently on the map into account yet.
+	/**Whether this room will need another room connected to it after it's placed by
+	 * the map generator. Doesn't take other rooms currently on the map into account.
+	 * That's done in MapGenerator.IsOpen
 	 * 
 	 * BUG FIX: Fix open big-room parts not getting added to open list by appending
 	 * "|| doors.Count == 1 && IsBig()"
 	 */
-	public bool IsOpen() {
+	public bool IsOpenInitially() {
 		return doors.Count > 1 || doors.Count == 1 && IsBig();
 	}
 
@@ -77,6 +79,7 @@ public class Room : MonoBehaviour {
 	 * their area types must match)
 	 */
 	public bool CanHave(Room that, direction d) {
+		// implicit parameter is the room that's already been placed; 'that' is the room to place
 		if(!AreaMatch(that, d)) return false;
 		switch(d) {
 			case direction.LEFT:
@@ -98,8 +101,12 @@ public class Room : MonoBehaviour {
 	 * We don't need to compare areas if the rooms don't open into each other.
 	 */
 	 private bool AreaMatch(Room that, direction d) {
+		// If the room we're placing is an area intersection, then we know we're placing it
+		// in front of a doorway; however, if the room already there is an area intersection,
+		// we can't just place *any* room next to it.
+		if(that.type == area.INTERSECTION && type != area.INTERSECTION) return true;
 		// If the rooms open into each other...
-		bool b1 = doors.Contains(d), b2 = that.doors.Contains(GetOpposite(d));
+		bool b1 = doors.Contains(d), b2 = that.doors.Contains(GetOppositeDirection(d));
 		if(b1 && b2) {
 			// ...compare their area types.
 			if(type == area.INTERSECTION ^ that.type == area.INTERSECTION) return true;

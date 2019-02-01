@@ -27,7 +27,7 @@ public class Fencer : Enemy {
 	}
 
 	protected override void AIUpdate() {
-		if(CanSeePlayer() && distanceFromPlayer < attackRadius) {
+		if(CanSeePlayer() && distanceFromPlayerSquared < attackRadius * attackRadius) {
 				state = FencerState.ATTACK;
 		} else if(CanSeePlayer() || Vector3.Distance(transform.position, tracker.playerPosition) > 8) {
 				state = FencerState.FOLLOW;

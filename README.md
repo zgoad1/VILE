@@ -13,6 +13,9 @@
 - basic cutscenes
 - saving data
 
+**Optimization**
+- replace some spotlights with decals
+
 **Post-release**
 - minimap
 - in-depth local scoreboard

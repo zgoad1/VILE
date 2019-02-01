@@ -10,7 +10,12 @@ public class Targetable : MonoBehaviour {
 												// in general, the center of the object
 	[HideInInspector] public Vector3 screenCoords = Vector3.zero;
 	[HideInInspector] public bool isTarget = false;
-	[HideInInspector] public float distanceFromPlayer = 0;
+	[HideInInspector] public float distanceFromPlayerSquared = 0;
+	[HideInInspector] public float distanceFromPlayer {
+		get {
+			return Mathf.Sqrt(distanceFromPlayerSquared);
+		}
+	}
 	[HideInInspector] public float distanceFromCenter = 0;
 	[HideInInspector] public bool isOnScreen = false;
 	[HideInInspector] public bool canTarget = true;
@@ -40,7 +45,7 @@ public class Targetable : MonoBehaviour {
 	}
 
 	protected virtual void Update() {
-		distanceFromPlayer = Vector3.Distance(GameController.player.camLook.position, camLook.position);
+		distanceFromPlayerSquared = (GameController.player.camLook.position - camLook.position).sqrMagnitude;
 	}
 
 	//private void OnDrawGizmosSelected() {

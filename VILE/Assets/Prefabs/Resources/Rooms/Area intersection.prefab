@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 0
-  frequency: 0.2
+  frequency: 0.1
   limit: -1
   indep: 1
   necessary: 0
