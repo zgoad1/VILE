@@ -6,7 +6,27 @@ ModelImporter:
   - first:
       74: 1989289236423521904
     second: Default Take
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: floor__tex_tunnel_straight_png
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rail_walls__tex_tunnel_straight_png
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: rails__tex_tunnel_straight_png
+    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: walls__tex_tunnel_straight_png
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -66,9 +86,9 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 10
     meshCompression: 0
-    addColliders: 0
+    addColliders: 1
     useSRGBMaterialColor: 1
     importVisibility: 1
     importBlendShapes: 1
@@ -116,10 +136,10 @@ ModelImporter:
     feetSpacing: 0
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   additionalBone: 0
   userData: 
