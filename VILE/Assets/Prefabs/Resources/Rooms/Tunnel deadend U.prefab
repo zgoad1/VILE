@@ -41,6 +41,16 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tunnel deadend U
       objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: 6094408a128a65a479783f8666c3d7e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -4425609515867240179, guid: 6094408a128a65a479783f8666c3d7e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: 6094408a128a65a479783f8666c3d7e5,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -95,6 +105,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3712410968195119671, guid: 6094408a128a65a479783f8666c3d7e5,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6094408a128a65a479783f8666c3d7e5, type: 3}

@@ -5784,7 +5784,7 @@ MonoBehaviour:
   camLook: {fileID: 0}
   screenCoords: {x: 0, y: 0, z: 0}
   isTarget: 0
-  squareDistanceFromPlayer: 0
+  distanceFromPlayerSquared: 0
   distanceFromCenter: 0
   isOnScreen: 0
   canTarget: 1
@@ -5807,7 +5807,7 @@ MonoBehaviour:
   readInput: 1
   anim: {fileID: 0}
   invincible: 0
-  sightLengthSquared: 40000
+  sightLength: 200
   control: 0
   target: {fileID: 0}
   runSpeed: 2.2
@@ -10487,13 +10487,22 @@ ParticleSystem:
         m_Curve:
         - serializedVersion: 3
           time: 0
-          value: 1
-          inSlope: -2
-          outSlope: -2
+          value: 0
+          inSlope: 20.288155
+          outSlope: 20.288155
           tangentMode: 0
           weightedMode: 0
           inWeight: 0
-          outWeight: 0
+          outWeight: 0.21111593
+        - serializedVersion: 3
+          time: 0.043188825
+          value: 1
+          inSlope: -1.1294609
+          outSlope: -1.1294609
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.12526473
         - serializedVersion: 3
           time: 1
           value: 0
@@ -16649,11 +16658,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4985323384670246}
     m_Modifications:
-    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
-        type: 3}
-      propertyPath: m_Name
-      value: GroundTest
-      objectReference: {fileID: 0}
     - target: {fileID: 7337019073217755933, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -16708,6 +16712,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
+        type: 3}
+      propertyPath: m_Name
+      value: GroundTest
       objectReference: {fileID: 0}
     - target: {fileID: 7337019073217756003, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
