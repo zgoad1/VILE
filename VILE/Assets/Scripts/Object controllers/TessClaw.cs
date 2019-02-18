@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// TODO: optimize
+// TODO: ☭☭☭
 
 [RequireComponent(typeof(MeshFilter))]
 [RequireComponent(typeof(MeshRenderer))]
@@ -45,6 +45,7 @@ public class TessClaw : MonoBehaviour {
 		for(int i = 0; i < armSegments; i++) {
 			AddTriPoints(i, i + 1);
 		}
+
 		for(int i = 0; i < numFingers; i++) {
 			int knuckle = armSegments + 1 + fingerSegments * i;
 			// connect knuckle to wrist
@@ -138,9 +139,9 @@ public class TessClaw : MonoBehaviour {
 			UpdateTriOffset(p.transform);
 
 			// add 3 vertices for this point
-			vertices.Add(new Vector3(p.transform.localPosition.x, p.transform.localPosition.y, p.transform.localPosition.z) + triOffset[0] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);// - out1 * thickness - out1 * Random.Range(0f, thicknessRandomness) + wiggle);
-			vertices.Add(new Vector3(p.transform.localPosition.x, p.transform.localPosition.y, p.transform.localPosition.z) + triOffset[1] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);// + out1 * thickness + out1 * Random.Range(0f, thicknessRandomness) + wiggle);
-			vertices.Add(new Vector3(p.transform.localPosition.x, p.transform.localPosition.y, p.transform.localPosition.z) + triOffset[2] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);
+			vertices.Add(new Vector3(p.transform.position.x, p.transform.position.y, p.transform.position.z) + triOffset[0] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);// - out1 * thickness - out1 * Random.Range(0f, thicknessRandomness) + wiggle);
+			vertices.Add(new Vector3(p.transform.position.x, p.transform.position.y, p.transform.position.z) + triOffset[1] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);// + out1 * thickness + out1 * Random.Range(0f, thicknessRandomness) + wiggle);
+			vertices.Add(new Vector3(p.transform.position.x, p.transform.position.y, p.transform.position.z) + triOffset[2] * (thickness + Random.Range(0f, thicknessRandomness)) + wiggle);
 
 			iwiggle = new Vector3(Random.Range(-wiggleRandomness, wiggleRandomness), Random.Range(-wiggleRandomness, wiggleRandomness), Random.Range(-wiggleRandomness, wiggleRandomness));
 		}

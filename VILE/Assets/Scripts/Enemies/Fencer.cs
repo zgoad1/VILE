@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class Fencer : Enemy {
 	public Transform handL, handR;
-	public Transform connector0, connector1;
+	public Transform connectorF0, connectorF1;
+	public TransformBand connectorM0, connectorM1;
 
 	[HideInInspector] public Fencer partnerL, partnerR;
 
 	private float handOffset = 3;
 	private Vector3 iHandLPos, iHandRPos;
 	private Quaternion iHandLRot, iHandRRot;
-	private FencerState state = FencerState.WANDER;
+	private FencerState fencerState = FencerState.WANDER;
 	private float attackRadius = 30;
+	public Fencer partner;
+	[HideInInspector] public List<Fencer> partners = new List<Fencer>();
 
 	enum FencerState {
 		WANDER, FOLLOW, ATTACK
@@ -28,16 +31,18 @@ public class Fencer : Enemy {
 
 	protected override void AIUpdate() {
 		if(CanSeePlayer() && distanceFromPlayerSquared < attackRadius * attackRadius) {
-				state = FencerState.ATTACK;
+			fencerState = FencerState.ATTACK;
+			UpdatePartner();
 		} else if(CanSeePlayer() || Vector3.Distance(transform.position, tracker.playerPosition) > 8) {
-				state = FencerState.FOLLOW;
+			fencerState = FencerState.FOLLOW;
+			UpdatePartner();
 		} else {
-			state = FencerState.WANDER;
+			fencerState = FencerState.WANDER;
 		}
 
 		Vector3 dist = Vector3.zero;	// this is what velocity lerps to
 
-		switch(state) {
+		switch(fencerState) {
 			case FencerState.WANDER:
 				ResetHandPositions();
 				break;
@@ -58,6 +63,47 @@ public class Fencer : Enemy {
 		PlayerMove();
 	}
 
+	protected void OnTriggerEnter(Collider other) {
+		FencerPartnerFinder ff = other.gameObject.GetComponent<FencerPartnerFinder>();
+		if(ff != null) {
+			ff.parent.partners.Add(this);
+		}
+	}
+
+	protected void OnTriggerExit(Collider other) {
+		FencerPartnerFinder ff = other.gameObject.GetComponent<FencerPartnerFinder>();
+		if(ff != null) {
+			ff.parent.partners.Remove(this);
+		}
+	}
+
+	private void OnDrawGizmos() {
+		Gizmos.DrawSphere(partner != null ? partner.transform.position : Vector3.zero, 3);
+	}
+
+	// loop through 'partners' list to find nearest partner within a 45-degree angle
+	protected void UpdatePartner() {
+		partner = null;
+		if(partners.Count > 0) {
+			float nearestDistSquared = Mathf.Infinity;
+			foreach(Fencer f in partners) {
+				float distSquared = (f.transform.position - transform.position).sqrMagnitude;
+				float angle = Helper.AngleBetween(transform, f.transform);
+				if(distSquared < nearestDistSquared && angle < 202.5 && angle > 157.5) {
+					partner = f;
+					nearestDistSquared = distSquared;
+				}
+			}
+		}
+		if(partner != null) {
+			connectorM0.transform.SetParent(partner.connectorF0.transform);
+			connectorM0.transform.localPosition = Vector3.zero;
+			connectorM1.transform.SetParent(partner.connectorF1.transform);
+			connectorM1.transform.localPosition = Vector3.zero;
+		}
+	}
+
+	// double damage if player attacks from behind
 	public override void DeductHP(float damage) {
 		if(!Helper.IsInFrontOf(transform, GameController.player.transform)) {
 			hp -= damage * 2;

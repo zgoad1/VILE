@@ -7,8 +7,17 @@ using UnityEngine;
  */
 
 public class Helper {
+	public static float AngleBetween(Transform me, Transform other) {
+		return (
+			me.transform.localEulerAngles.y + Mathf.Atan2 (
+				me.transform.position.z - other.transform.position.z, 
+				me.transform.position.x - other.transform.position.x
+			) / Mathf.PI * 180 + 360
+		) % 360;
+	}
+
 	public static bool IsInFrontOf(Transform me, Transform inFront) {
-		float angle = (me.transform.localEulerAngles.y + Mathf.Atan2(me.transform.position.z - inFront.transform.position.z, me.transform.position.x - inFront.transform.position.x) / Mathf.PI * 180 + 360) % 360;
+		float angle = AngleBetween(me, inFront);
 		return angle > 180 && angle < 360;  // 270 is directly in front
 	}
 
@@ -30,6 +39,7 @@ public class Helper {
 		}
 	}
 
+	// look through both children and parents respectively to find the first Targetable component
 	public static Targetable GetRelatedTargetable(GameObject o) {
 		Targetable t;
 		t = o.GetComponent<Targetable>();
@@ -43,5 +53,14 @@ public class Helper {
 			p = p.parent;
 		}
 		return null;
+	}
+
+	// rotate a vector about the Y (up) axis
+	public static void RotateVectorY(Vector3 toRotate, out Vector3 output, float angle) {
+		Vector3 vec = toRotate;
+		float radAngle = angle * Mathf.PI / 180;
+		vec.x = Mathf.Cos(angle * toRotate.x) - Mathf.Sin(angle * toRotate.z);
+		vec.z = Mathf.Sin(angle * toRotate.x) + Mathf.Cos(angle * toRotate.z);
+		output = vec;
 	}
 }
