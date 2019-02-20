@@ -120,7 +120,7 @@ public class Player : Controllable {
 			yMove.y = 1;
 		}
 
-		PlayerMove();
+		CommonUpdate();
 		if(!attacking || anim.GetBool("attackComboing")) {
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 		}

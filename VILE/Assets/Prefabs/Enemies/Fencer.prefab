@@ -426,6 +426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1939345600}
   - component: {fileID: 1939345601}
+  - component: {fileID: 1948838332}
   m_Layer: 16
   m_Name: Fence_10
   m_TagString: Untagged
@@ -463,6 +464,28 @@ MonoBehaviour:
   root: 1
   next:
   - {fileID: 794080299}
+--- !u!114 &1948838332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1939345599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_GeneratorAsset: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 72202e5a4eb7cf440bc215147c42a100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 5b75d144668242c4c938a86a7ff218a2, type: 2}
+  clawShoulder: {fileID: 1939345601}
+  minThickness: 0
+  thicknessRandomness: 0.5
+  wiggleRandomness: 1.2
+  trails: []
+  armSegments: 4
+  fingerSegments: 0
+  numFingers: 0
 --- !u!1 &1966992948
 GameObject:
   m_ObjectHideFlags: 0
@@ -473,8 +496,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1966992949}
   - component: {fileID: 1966992950}
-  - component: {fileID: 6886141726096199004}
-  - component: {fileID: 3382839260641465608}
   - component: {fileID: 3666157248888126202}
   m_Layer: 16
   m_Name: Fence_00
@@ -513,51 +534,6 @@ MonoBehaviour:
   root: 1
   next:
   - {fileID: 1997197630}
---- !u!23 &6886141726096199004
-MeshRenderer:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1966992948}
-  m_Enabled: 1
-  m_CastShadows: 0
-  m_ReceiveShadows: 0
-  m_DynamicOccludee: 1
-  m_MotionVectors: 1
-  m_LightProbeUsage: 1
-  m_ReflectionProbeUsage: 1
-  m_RenderingLayerMask: 1
-  m_RendererPriority: 0
-  m_Materials:
-  - {fileID: 2100000, guid: 97bdf6fef1fdcbb4fab2a82f131f1e20, type: 2}
-  m_StaticBatchInfo:
-    firstSubMesh: 0
-    subMeshCount: 0
-  m_StaticBatchRoot: {fileID: 0}
-  m_ProbeAnchor: {fileID: 0}
-  m_LightProbeVolumeOverride: {fileID: 0}
-  m_ScaleInLightmap: 1
-  m_PreserveUVs: 0
-  m_IgnoreNormalsForChartDetection: 0
-  m_ImportantGI: 0
-  m_StitchLightmapSeams: 1
-  m_SelectedEditorRenderState: 3
-  m_MinimumChartSize: 4
-  m_AutoUVMaxDistance: 0.5
-  m_AutoUVMaxAngle: 89
-  m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 0
---- !u!33 &3382839260641465608
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1966992948}
-  m_Mesh: {fileID: 0}
 --- !u!114 &3666157248888126202
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -571,14 +547,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72202e5a4eb7cf440bc215147c42a100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 5b75d144668242c4c938a86a7ff218a2, type: 2}
   clawShoulder: {fileID: 1966992950}
   minThickness: 0
-  thicknessRandomness: 1
-  wiggleRandomness: 0.5
+  thicknessRandomness: 0.5
+  wiggleRandomness: 1.2
   trails: []
-  armSegments: 3
-  fingerSegments: 2
-  numFingers: 1
+  armSegments: 4
+  fingerSegments: 0
+  numFingers: 0
 --- !u!1 &1997197628
 GameObject:
   m_ObjectHideFlags: 0
@@ -1812,10 +1789,13 @@ MonoBehaviour:
   connectorF1: {fileID: 304043808}
   connectorM0: {fileID: 319423522}
   connectorM1: {fileID: 1896701900}
+  fence:
+  - {fileID: 3666157248888126202}
+  - {fileID: 1948838332}
   partnerL: {fileID: 0}
   partnerR: {fileID: 0}
-  partner: {fileID: 0}
   partners: []
+  partner: {fileID: 0}
 --- !u!1 &9072602598523482784
 GameObject:
   m_ObjectHideFlags: 0

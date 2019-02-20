@@ -180,15 +180,15 @@ public class Controllable : Targetable {
 			SetVelocity();
 			PlayerAttack();
 		}
-		PlayerMove();
+		CommonUpdate();
 		// (attacking can change in PlayerAttack())
 		if(attacking) {
 			PlayerDirection();
 		}
 	}
 
-	// Move player based on velocity; handle some additional physics
-	protected virtual void PlayerMove() {
+	// Move character based on velocity; handle some additional physics
+	protected virtual void CommonUpdate() {
 		ApplyGravity();
 
 		// sliding
@@ -237,7 +237,7 @@ public class Controllable : Targetable {
 
 	protected virtual void AIUpdate() {
 		// This is just here to apply gravity. Velocity will be whatever it's left at.
-		PlayerMove();
+		CommonUpdate();
 	}
 
 	protected virtual void PlayerFixedUpdate() {

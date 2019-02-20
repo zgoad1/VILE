@@ -5447,6 +5447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 72202e5a4eb7cf440bc215147c42a100, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 97bdf6fef1fdcbb4fab2a82f131f1e20, type: 2}
   clawShoulder: {fileID: 3321986855188853326}
   minThickness: 0
   thicknessRandomness: 0.5
@@ -5685,6 +5686,11 @@ PrefabInstance:
         type: 3}
       propertyPath: VelocityModule.z.scalar
       value: -2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7571261214196960295, guid: d8681eaaa1d9f8e48bc7e77a349f387d,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7571261214196960288, guid: d8681eaaa1d9f8e48bc7e77a349f387d,
         type: 3}
