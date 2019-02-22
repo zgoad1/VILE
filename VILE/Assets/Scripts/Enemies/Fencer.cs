@@ -2,6 +2,10 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+//	TODO:
+//	- Make attack animation look better
+//	- Add a second attack
+
 public class Fencer : Enemy {
 	public Transform handL, handR;
 	public Transform connectorF0, connectorF1;
@@ -18,9 +22,10 @@ public class Fencer : Enemy {
 	[HideInInspector] public Fencer partner;
 	private List<Fencer> leftPartners = new List<Fencer>();
 	private Vector3 desiredPosition;
+	private bool attackAnimating = false;
 
 	private static int attackingPlayer = 0;		// amount of Fencers currently attacking the player
-
+												// used for determining rotation offset of attacking arms
 	enum FencerState {
 		WANDER, FOLLOW, ATTACK
 	}
@@ -76,7 +81,7 @@ public class Fencer : Enemy {
 
 		switch(fencerState) {
 			case FencerState.WANDER:
-				ResetHandPositions();
+				StopAttack1();  // calls ResetHandPositions
 				partner = null;
 				break;
 
@@ -84,7 +89,7 @@ public class Fencer : Enemy {
 				/* If we have a partner, try to maximize the length of our fence;
 				 * else, move towards the player.
 				 */
-				ResetHandPositions();
+				StopAttack1();	// calls ResetHandPositions
 				UpdatePartner();
 				if(partner != null) {
 					// move towards desired position - separate us from partner such that the player is in the middle (or not)
@@ -101,6 +106,9 @@ public class Fencer : Enemy {
 				//SetHandPosition(handL, -1);
 				if(!attacking && CanAttack(atk1Cost)) {
 					Attack1();
+				} else if(attacking && !attackAnimating) {
+					// move our hands back if we're done attacking and still cooling down
+					ResetHandPositions();
 				}
 				UpdatePartner();
 				break;
@@ -197,22 +205,38 @@ public class Fencer : Enemy {
 	 * Start a coroutine for the attack animation
 	 */
 	protected override void Attack1() {
-		base.Attack1();
-		StartCoroutine("Attack1CR");
+		if(target != null) {
+			base.Attack1();
+			StartCoroutine("Attack1CR");
+		}
 	}
 
 	protected void StopAttack1() {
-		StopCoroutine("Attack1CR");
+		if(attackAnimating) {
+			StopCoroutine("Attack1CR");
+			cooldownTimer = 0;
+			stamina += atk1Cost;
+			attackAnimating = false;
+		}
 		ResetHandPositions();
 	}
 
 	protected IEnumerator Attack1CR() {
-		for(int i = 0; i < 125; i++) {
-			float newPosition = -Mathf.Pow((i - 60) / 30, 2) + 5;
+		attackAnimating = true;
+		for(int i = 0; i < 120; i++) {
+			float newPosition = (-Mathf.Pow((i - 60f) / 30f, 2) + 5f) / 2f;
+			SetHandPosition(handL, -newPosition);
+			SetHandPosition(handR, newPosition);
 			yield return new WaitForSeconds(1f / 60f);
 		}
 		if(target is Controllable) ((Controllable)target).Damage(attack1Power);
 		ResetHandPositions();
+		attackAnimating = false;
+	}
+
+	public override void Stun() {
+		base.Stun();
+		StopAttack1();
 	}
 
 	/* 
@@ -248,18 +272,26 @@ public class Fencer : Enemy {
 	/*
 	 * Move a hand to a specified position relative to the player
 	 */
-	protected void SetHandPosition(Transform hand, int position) {
-		hand.position = tracker.playerPosition + position * GameController.player.transform.right * handOffset;
-		hand.right = hand.position - tracker.playerPosition;
+	protected void SetHandPosition(Transform hand, float position) {
+		hand.position = Vector3.Lerp(
+			hand.position, 
+			tracker.playerPosition + position * GameController.player.transform.right * handOffset,
+			0.1f
+		);
+		hand.right = Vector3.Slerp(
+			hand.right,
+			hand.position - tracker.playerPosition,
+			0.15f
+		);
 	}
 
 	/*
 	 * Move hands back to resting positions
 	 */
 	protected void ResetHandPositions() {
-		handL.localPosition = iHandLPos;
-		handR.localPosition = iHandRPos;
-		handL.localRotation = iHandLRot;
-		handR.localRotation = iHandRRot;
+		handL.localPosition = Vector3.Lerp(handL.localPosition, iHandLPos, 0.1f);
+		handR.localPosition = Vector3.Lerp(handR.localPosition, iHandRPos, 0.1f);
+		handL.localRotation = Quaternion.Slerp(handL.localRotation, iHandLRot, 0.1f);
+		handR.localRotation = Quaternion.Slerp(handR.localRotation, iHandRRot, 0.1f);
 	}
 }

@@ -172,6 +172,7 @@ public class Player : Controllable {
 	/**Set the target to the closest targetable in the targets array
 	 */
 	protected override void SetTarget() {
+
 		/* NOTE: The below line disables the target's HPBar, and reenables it later if it's still the target.
 		 * However, UIBar.Update() is called at some point IN BETWEEN those two lines. As a fix, UIBar.Update() 
 		 * was moved to UIBar.LateUpdate().
@@ -205,6 +206,8 @@ public class Player : Controllable {
 							newTarget = t;
 						}
 						targetRayHitPoint = hit.point;
+					} else {
+						// If this linecast fails when it shouldn't, the enemy character's collider is probably too small
 					}
 				}
 			}
@@ -219,8 +222,8 @@ public class Player : Controllable {
 	//private void OnDrawGizmos() {
 	//	Gizmos.color = Color.red;
 	//	foreach(Targetable t in onScreen) {
-	//		if(t == target) Gizmos.color = Color.yellow;
-	//		else Gizmos.color = Color.red;
+	//		if(IsInRange(t)) Gizmos.color = Color.red;
+	//		else Gizmos.color = Color.green;
 	//		Gizmos.DrawLine(camLook.position, t.camLook.position);
 	//		//Gizmos.DrawWireSphere(t.camLook.position, t.radius);
 	//	}
@@ -229,6 +232,7 @@ public class Player : Controllable {
 	//}
 
 	public bool IsInRange(Targetable e) {
+
 		if(!e.canTarget) return false;
 		if(e.distanceFromPlayerSquared > sightLength * sightLength) return false;
 

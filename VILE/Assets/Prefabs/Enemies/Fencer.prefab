@@ -1714,13 +1714,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 7
+  m_Height: 10
   m_Radius: 3
   m_SlopeLimit: 45
   m_StepOffset: 0
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.01
-  m_Center: {x: 0, y: 3.5, z: 0}
+  m_Center: {x: 0, y: 5, z: 0}
 --- !u!114 &1895821827615790661
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1779,7 +1779,7 @@ MonoBehaviour:
   sightLength: 100
   control: 0
   target: {fileID: 0}
-  playerDamage: 0.2
+  playerDamage: 0.05
   deathObject: {fileID: 6609260197173739817, guid: c42e8101b10526944a7ded10d183ff77,
     type: 3}
   playerPoint: {x: 0, y: 0, z: 0}
@@ -1792,9 +1792,7 @@ MonoBehaviour:
   fence:
   - {fileID: 3666157248888126202}
   - {fileID: 1948838332}
-  partnerL: {fileID: 0}
-  partnerR: {fileID: 0}
-  partners: []
+  rightPartners: []
   partner: {fileID: 0}
 --- !u!1 &9072602598523482784
 GameObject:

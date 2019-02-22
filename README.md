@@ -35,8 +35,8 @@
 **- A -**
 
 **- B -**
-- you can attack while sprintinggggg
-- Target is reset to null when target dies and doesn't get set while attacking
+- you can attack while sprinting (turn into a feature)
+- Target is reset to null when target dies and doesn't get set while attacking (when W is pressed it should try to set a new target)
 - robots can get stuck on corner barrier posts
 - CR's animation places it at origin
 - sprinting into a corner can clip you through the wall
@@ -45,5 +45,6 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- 4-way intersection (tunnel) does not have floor backfaces or sides
+- Dead end (tunnel) does not have floor sides
 - Fencer arms do not calculate bounds (disappear when main body is off camera)
-- you can sometimes attack while falling from Attack1d and it sometimes triggers an extra landing animation (land is triggered during Attack1a)
