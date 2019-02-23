@@ -100,8 +100,6 @@ public class Fencer : Enemy {
 				break;
 
 			case FencerState.ATTACK:
-				//SetHandPosition(handR, 1);
-				//SetHandPosition(handL, -1);
 				if(!attacking && CanAttack(atk1Cost)) {
 					Attack1();
 				} else if(attacking && !anim.GetBool("attack1")) {
@@ -224,23 +222,14 @@ public class Fencer : Enemy {
 		ResetHandPositions();
 	}
 
-	//protected IEnumerator Attack1CR() {
-	//	attackAnimating = true;
-	//	for(int i = 0; i < 120; i++) {
-	//		//float newPosition = (-Mathf.Pow((i - 60f) / 30f, 2) + 5f) / 2f;
-	//		SetHandPosition(handL, -handOffset);
-	//		SetHandPosition(handR, handOffset);
-	//		yield return new WaitForSeconds(1f / 60f);
-	//	}
-	//	if(target is Controllable) ((Controllable)target).Damage(attack1Power);
-	//	ResetHandPositions();
-	//	attackAnimating = false;
-	//}
-
+	/*
+	 * For some extremely nebulous reason, only when called in an animation event,
+	 * Knockback does not permanently set the target's forward
+	 */
 	public void Attack1Damage() {
 		if(target is Controllable) {
 			((Controllable)target).Damage(attack1Power);
-			((Controllable)target).Knockback((target.transform.position - transform.position).normalized * 2);
+			((Controllable)target).AnimEventKnockback((target.transform.position - transform.position).normalized * 2);
 		}
 	}
 

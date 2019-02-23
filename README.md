@@ -47,6 +47,7 @@
 
 **- C -**
 - Tess doesn't face her attacker when knocked back
+- Tess's attack2 animation was interrupted by nothing???????
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides
 - Fencer arms do not calculate bounds (disappear when main body is off camera)

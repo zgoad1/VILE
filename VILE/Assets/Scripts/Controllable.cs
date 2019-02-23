@@ -106,7 +106,9 @@ public class Controllable : Targetable {
 	[Tooltip("How far this Controllable can see")]
 	public float sightLength = 200;
 	[HideInInspector] public state control = state.AI;
-	protected bool hurtAnimPlaying = false;	// used to determine where char should face during velocity change
+	protected bool hurtAnimPlaying = false; // used to determine where char should face during velocity change
+	protected bool toBeKnockedBack = false;
+	protected Vector3 knockbackForce = Vector3.zero;
 	/**Camera is not affected by the target.
 	 * The target only affects where you face when you're attacking.
 	 * target can only change when you're not attacking.
@@ -199,6 +201,12 @@ public class Controllable : Targetable {
 			velocity.z += -velocity.y * hitNormal.z * (1f - slideFriction);
 		}
 
+		// apply knockback if it was called from an animation event
+		if(toBeKnockedBack) {
+			toBeKnockedBack = false;
+			Knockback(knockbackForce);
+		}
+
 		// motion & velocity tracking
 		cc.Move((velocity + yMove) * 60 * Time.smoothDeltaTime);
 		calculatedVelocity = transform.position - prevPosition;
@@ -264,10 +272,16 @@ public class Controllable : Targetable {
 
 	// Accept all input
 	protected virtual void SetControls() {
-		if(readInput) {
+		if(readInput && !hurtAnimPlaying) {
 			SetMovementKeys();
 			SetAttackControls();
 		}
+	}
+
+	// Zero all input
+	protected virtual void ResetControls() {
+		motionInput.x = 0;
+		motionInput.z = 0;
 	}
 
 	// Accept movement input (rightKey, fwdKey)
@@ -370,11 +384,6 @@ public class Controllable : Targetable {
 	public virtual void Damage(float damage, float gracePeriod) {
 		if(!invincible) {
 			DeductHP(damage);
-			float powerFactor = damage / 120;
-			float deathFactor = dead ? 5 : 1;
-			if(powerFactor * deathFactor > 0.02f) {
-				GameController.HitStop(Mathf.Min(0.8f, powerFactor * deathFactor));
-			}
 			gracePeriodCR = GracePeriod(gracePeriod);
 			StartCoroutine(gracePeriodCR);
 		}
@@ -386,11 +395,23 @@ public class Controllable : Targetable {
 	}
 
 	public virtual void Knockback(Vector3 force) {
-		anim.SetTrigger("hurt");
-		hurtAnimPlaying = true;
-		velocity += force;
-		force.y = 0;
-		transform.forward = -force;
+		// stunned enemies stay still during knockback
+		if(control != state.STUNNED) {
+			anim.SetTrigger("hurt");
+			hurtAnimPlaying = true;		// this tells us not to update controls in SetControls()
+			ResetControls();			// zero out motionInput because we stop updating controls
+			velocity += force;			// add knockback force
+			force.y = 0;				// zero out force.y to update transform.forward
+			transform.forward = -force; // make us face our attacker
+			Debug.Log("cat");
+		}
+	}
+
+	// This version of Knockback must be used for animation events, as an object's rotation cannot
+	// be updated in an animation event while Apply Root Motion is enabled in its Animator
+	public virtual void AnimEventKnockback(Vector3 force) {
+		toBeKnockedBack = true;
+		knockbackForce = force;
 	}
 
 	protected virtual IEnumerator GracePeriod(float gracePeriod) {

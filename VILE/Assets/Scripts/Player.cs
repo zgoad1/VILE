@@ -26,6 +26,9 @@ public class Player : Controllable {
 	private float rechargeFactor = 0.05f;
 	protected bool sprintKey = false;
 	protected bool sprinting = false;
+	[HideInInspector] public bool stomping = false;
+	protected Vector3 stompVelocity = new Vector3(0, -5, 0);
+	protected bool disableSprint = false;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -156,6 +159,16 @@ public class Player : Controllable {
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);
+		// if we hit something under us
+		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && hit.point.y - transform.position.y < 0.5f) {
+			if(stomping) {
+				stomping = false;
+				// animation stuffs
+				//TurnIntoLightning(false);
+				GameController.camControl.ScreenShake(2);
+				disableSprint = true;
+			}
+		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			//Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
@@ -259,10 +272,13 @@ public class Player : Controllable {
 	// Accept sprint input (sprintKey)
 	protected virtual void SetSprintKey() {
 		sprintKey = Input.GetButton("Run");
+		if(Input.GetButtonUp("Run")) {
+			disableSprint = false;
+		}
 	}
 
 	protected override void SetVelocity() {
-		sprinting = stamina > 0 ? sprintKey : false;
+		sprinting = stamina > 0 && !disableSprint ? sprintKey : false;
 
 		anim.SetBool("input", motionInput.magnitude != 0);
 
@@ -270,13 +286,19 @@ public class Player : Controllable {
 		tempForward.y = 0f;
 		tempForward.Normalize();
 
-		// get movement direction vector
-		if(sprinting && !attacking && (calculatedVelocity.magnitude != 0 || !isLightning)) {
+		// get velocity
+		if(stomping) {
+			velocity = stompVelocity;
+		} else if(sprinting && !attacking && (calculatedVelocity.magnitude != 0 || !isLightning)) {
 			// sprinting
-			TurnIntoLightning(true);
-			velocity = Vector3.Lerp(velocity,
-				(tempForward + GameController.mainCam.transform.right.normalized * motionInput.x * 1.5f).normalized * runSpeed,
-				0.1f * 60 * Time.deltaTime);
+			if(motionInput.z < 0 && !onGround) {
+				stomping = true;
+			} else {
+				TurnIntoLightning(true);
+				velocity = Vector3.Lerp(velocity,
+					(tempForward + GameController.mainCam.transform.right.normalized * motionInput.x * 1.5f).normalized * runSpeed,
+					0.1f * 60 * Time.deltaTime);
+			}
 		} else {
 			// not sprinting
 			TurnIntoLightning(false);
@@ -421,6 +443,16 @@ public class Player : Controllable {
 	}
 
 	#endregion
+
+	public override void Damage(float damage, float gracePeriod) {
+		if(!invincible) {
+			GameController.camControl.ScreenShake(damage / 100 * 2);
+		}
+		base.Damage(damage, gracePeriod);
+		if(dead) {
+			GameController.HitStop(1);
+		}
+	}
 
 	public bool CanPossessTarget() {
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
