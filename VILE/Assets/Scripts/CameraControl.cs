@@ -71,7 +71,7 @@ public class CameraControl : MonoBehaviour {
 		} else {
 			RaycastHit hit;
 			Vector3 rayDir = transform.position - (lookAt.position + lookOffset);
-			if(Physics.Raycast(lookAt.position + lookOffset, rayDir, out hit, idistance, raymask)) {
+			if(Physics.SphereCast(lookAt.position + lookOffset, rad, rayDir, out hit, idistance, raymask)) { 
 				Vector3 newPos = hit.point + hit.normal * rad;
 				distance = Mathf.Min(idistance, Vector3.Distance(lookAt.position + lookOffset, newPos));
 				//Debug.Log("Camera raycasted upon a " + hit.transform.gameObject);

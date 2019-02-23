@@ -116,7 +116,7 @@ public class Player : Controllable {
 		}
 
 		// debug
-		if(Input.GetKeyDown(KeyCode.Space)) {
+		if(Input.GetButtonDown("Jump")) {
 			yMove.y = 1;
 		}
 
@@ -271,7 +271,7 @@ public class Player : Controllable {
 		tempForward.Normalize();
 
 		// get movement direction vector
-		if(sprinting && !attacking && (objectVelocity.magnitude != 0 || !isLightning)) {
+		if(sprinting && !attacking && (calculatedVelocity.magnitude != 0 || !isLightning)) {
 			// sprinting
 			TurnIntoLightning(true);
 			velocity = Vector3.Lerp(velocity,
@@ -286,6 +286,11 @@ public class Player : Controllable {
 				accel * (onGround ? 1 : 0.1f));
 		}
 	}
+
+	//public override void Damage(float damage, float gracePeriod) {
+	//	base.Damage(damage, gracePeriod);
+	//	anim.SetFloat("damageTaken", damage);
+	//}
 
 	#region Abilities
 
@@ -383,6 +388,10 @@ public class Player : Controllable {
 	// in case we somehow land while performing an attack, we don't want to transition to land
 	public void AnimFunc_UnsetLand() {
 		anim.ResetTrigger("land");
+	}
+
+	public void AnimFunc_OnHurtEnd() {
+		hurtAnimPlaying = false;
 	}
 
 	protected override void Attack2() {

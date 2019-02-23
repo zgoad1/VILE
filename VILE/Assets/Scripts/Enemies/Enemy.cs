@@ -109,6 +109,18 @@ public class Enemy : Controllable {
 		base.Damage(damage);
 	}
 
+	public override void Knockback(Vector3 force) {
+		base.Knockback(force);
+		// Most enemies won't have a hurt animation, so just change hurtAnimPlaying back to false
+		// after a couple seconds
+		StartCoroutine("FinishKnockback");
+	}
+
+	protected IEnumerator FinishKnockback() {
+		yield return new WaitForSeconds(2f);
+		hurtAnimPlaying = false;
+	}
+
 	protected IEnumerator ShowHP() {
 		hpBar.gameObject.SetActive(true);
 		yield return new WaitForSeconds(2f);

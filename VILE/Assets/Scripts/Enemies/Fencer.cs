@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //	TODO:
-//	- Make attack animation look better
 //	- Add a second attack
 
 public class Fencer : Enemy {
@@ -11,8 +10,8 @@ public class Fencer : Enemy {
 	public Transform connectorF0, connectorF1;
 	public TransformBand connectorM0, connectorM1;
 	public TessClaw[] fence;
+	public float handOffset;
 
-	private float handOffset = 3;
 	private Vector3 iHandLPos, iHandRPos;
 	private Quaternion iHandLRot, iHandRRot;
 	private FencerState fencerState = FencerState.WANDER;
@@ -22,7 +21,6 @@ public class Fencer : Enemy {
 	[HideInInspector] public Fencer partner;
 	private List<Fencer> leftPartners = new List<Fencer>();
 	private Vector3 desiredPosition;
-	private bool attackAnimating = false;
 
 	private static int attackingPlayer = 0;		// amount of Fencers currently attacking the player
 												// used for determining rotation offset of attacking arms
@@ -33,7 +31,7 @@ public class Fencer : Enemy {
 
 	protected override void Reset() {
 		base.Reset();
-		TessClaw[] fence = GetComponentsInChildren<TessClaw>();
+		fence = GetComponentsInChildren<TessClaw>();
 	}
 
 	protected override void Start() {
@@ -106,9 +104,13 @@ public class Fencer : Enemy {
 				//SetHandPosition(handL, -1);
 				if(!attacking && CanAttack(atk1Cost)) {
 					Attack1();
-				} else if(attacking && !attackAnimating) {
+				} else if(attacking && !anim.GetBool("attack1")) {
 					// move our hands back if we're done attacking and still cooling down
 					ResetHandPositions();
+				} else {
+					// we're in the process of attacking
+					SetHandPosition(handL, -handOffset);
+					SetHandPosition(handR, handOffset);
 				}
 				UpdatePartner();
 				break;
@@ -207,36 +209,52 @@ public class Fencer : Enemy {
 	protected override void Attack1() {
 		if(target != null) {
 			base.Attack1();
-			StartCoroutine("Attack1CR");
+			anim.SetBool("attack1", true);
+			//StartCoroutine("Attack1CR");
 		}
 	}
 
 	protected void StopAttack1() {
-		if(attackAnimating) {
-			StopCoroutine("Attack1CR");
+		if(anim.GetBool("attack1")) {
+			anim.SetBool("attack1", false);
+			//StopCoroutine("Attack1CR");
 			cooldownTimer = 0;
 			stamina += atk1Cost;
-			attackAnimating = false;
 		}
 		ResetHandPositions();
 	}
 
-	protected IEnumerator Attack1CR() {
-		attackAnimating = true;
-		for(int i = 0; i < 120; i++) {
-			float newPosition = (-Mathf.Pow((i - 60f) / 30f, 2) + 5f) / 2f;
-			SetHandPosition(handL, -newPosition);
-			SetHandPosition(handR, newPosition);
-			yield return new WaitForSeconds(1f / 60f);
+	//protected IEnumerator Attack1CR() {
+	//	attackAnimating = true;
+	//	for(int i = 0; i < 120; i++) {
+	//		//float newPosition = (-Mathf.Pow((i - 60f) / 30f, 2) + 5f) / 2f;
+	//		SetHandPosition(handL, -handOffset);
+	//		SetHandPosition(handR, handOffset);
+	//		yield return new WaitForSeconds(1f / 60f);
+	//	}
+	//	if(target is Controllable) ((Controllable)target).Damage(attack1Power);
+	//	ResetHandPositions();
+	//	attackAnimating = false;
+	//}
+
+	public void Attack1Damage() {
+		if(target is Controllable) {
+			((Controllable)target).Damage(attack1Power);
+			((Controllable)target).Knockback((target.transform.position - transform.position).normalized * 2);
 		}
-		if(target is Controllable) ((Controllable)target).Damage(attack1Power);
-		ResetHandPositions();
-		attackAnimating = false;
+	}
+
+	public void OnAttack1Finish() {
+		anim.SetBool("attack1", false);
 	}
 
 	public override void Stun() {
 		base.Stun();
 		StopAttack1();
+	}
+
+	public override void Knockback(Vector3 force) {
+		base.Knockback(force / 2f);	// we're really slidey so decrease the knockback a bit
 	}
 
 	/* 
@@ -275,13 +293,13 @@ public class Fencer : Enemy {
 	protected void SetHandPosition(Transform hand, float position) {
 		hand.position = Vector3.Lerp(
 			hand.position, 
-			tracker.playerPosition + position * GameController.player.transform.right * handOffset,
-			0.1f
+			tracker.playerPosition + position * transform.right,
+			0.2f
 		);
 		hand.right = Vector3.Slerp(
 			hand.right,
 			hand.position - tracker.playerPosition,
-			0.15f
+			0.2f
 		);
 	}
 

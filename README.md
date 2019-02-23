@@ -35,6 +35,7 @@
 **- A -**
 
 **- B -**
+- Tess sometimes does a land animation that seems to interrupt her hurt animation; this causes her hurt boolean never to get reset
 - you can attack while sprinting (turn into a feature)
 - Target is reset to null when target dies and doesn't get set while attacking (when W is pressed it should try to set a new target)
 - robots can get stuck on corner barrier posts
@@ -45,6 +46,7 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- Tess doesn't face her attacker when knocked back
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides
 - Fencer arms do not calculate bounds (disappear when main body is off camera)

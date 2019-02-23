@@ -80,7 +80,7 @@ public class Controllable : Targetable {
 	[HideInInspector]
 	public bool onGround = false;	// defaults to always true for characters without GroundTests
 	[HideInInspector] public Vector3 velocity = Vector3.zero;	// direction and speed of attempted movement
-	protected Vector3 objectVelocity = Vector3.zero;			// actual tracked velocity of the object
+	protected Vector3 calculatedVelocity = Vector3.zero;			// actual tracked velocity of the object
 	protected bool onSlope = false;
 	protected Vector3 prevPosition;
 	protected Vector3 hitNormal = Vector3.zero;
@@ -106,6 +106,7 @@ public class Controllable : Targetable {
 	[Tooltip("How far this Controllable can see")]
 	public float sightLength = 200;
 	[HideInInspector] public state control = state.AI;
+	protected bool hurtAnimPlaying = false;	// used to determine where char should face during velocity change
 	/**Camera is not affected by the target.
 	 * The target only affects where you face when you're attacking.
 	 * target can only change when you're not attacking.
@@ -200,11 +201,16 @@ public class Controllable : Targetable {
 
 		// motion & velocity tracking
 		cc.Move((velocity + yMove) * 60 * Time.smoothDeltaTime);
-		objectVelocity = transform.position - prevPosition;
-		anim.SetFloat("speed", objectVelocity.magnitude);
-		Vector3 tempForward = objectVelocity.magnitude <= 0.01f ? transform.forward : objectVelocity;
-		tempForward.y = 0;
-		tempForward.Normalize();
+		calculatedVelocity = transform.position - prevPosition;
+		anim.SetFloat("speed", calculatedVelocity.magnitude);
+		Vector3 tempForward;// = calculatedVelocity.magnitude <= 0.01f ? transform.forward : calculatedVelocity;
+		if(hurtAnimPlaying || calculatedVelocity.magnitude <= 0.01f) {
+			tempForward = transform.forward;
+		} else {
+			tempForward = calculatedVelocity;
+			tempForward.y = 0;
+			tempForward.Normalize();
+		}
 		transform.forward = Vector3.Slerp(transform.forward, tempForward, 0.2f);
 		prevPosition = transform.position;
 	}
@@ -381,6 +387,10 @@ public class Controllable : Targetable {
 
 	public virtual void Knockback(Vector3 force) {
 		anim.SetTrigger("hurt");
+		hurtAnimPlaying = true;
+		velocity += force;
+		force.y = 0;
+		transform.forward = -force;
 	}
 
 	protected virtual IEnumerator GracePeriod(float gracePeriod) {
