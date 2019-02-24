@@ -103,6 +103,7 @@ public class Enemy : Controllable {
 
 	public override void Damage(float damage, float gracePeriod) {
 		if(!invincible) {
+			base.Damage(damage, gracePeriod);
 			StopCoroutine("ShowHP");
 			StartCoroutine("ShowHP");
 			float powerFactor = damage / 120;
@@ -111,7 +112,6 @@ public class Enemy : Controllable {
 				GameController.HitStop(Mathf.Min(0.8f, powerFactor * deathFactor));
 			}
 		}
-		base.Damage(damage, gracePeriod);
 	}
 
 	public override void Knockback(Vector3 force) {

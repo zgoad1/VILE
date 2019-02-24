@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 //	TODO:
+//	- Add fence damage
 //	- Add a second attack
 
 public class Fencer : Enemy {

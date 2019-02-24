@@ -44,6 +44,7 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- If Tess's attack2 animation starts when her idle is about to loop, it will be interrupted by idle
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides
 - Fencer arms do not calculate bounds (disappear when main body is off camera)

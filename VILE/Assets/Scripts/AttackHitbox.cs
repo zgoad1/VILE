@@ -5,19 +5,19 @@ using UnityEngine;
 /**Continuously exerts damage on everything that's not invincible (e.g. due to grace period)
  */
 
-[RequireComponent(typeof(BoxCollider))]
+[RequireComponent(typeof(Collider))]
 public class AttackHitbox : MonoBehaviour {
 
-	[SerializeField] protected new BoxCollider collider;
+	[SerializeField] protected new Collider collider;
 	public float power = 5;
 	public Controllable parent;
-	[Tooltip("Which of the Controllable's 2 attacks this applies to.")]
-	[Range(1, 2)] public int index;
+	[Tooltip("Which of the Controllable's 2 attacks this applies to. (0 for neither; set power manually)")]
+	[Range(0, 2)] public int index;
 	public float knockbackPower = 0;
 	public float gracePeriod = 0.5f;
 
 	private void Reset() {
-		collider = GetComponent<BoxCollider>();
+		collider = GetComponent<Collider>();
 		collider.isTrigger = true;
 	}
 
@@ -39,7 +39,7 @@ public class AttackHitbox : MonoBehaviour {
 	protected void OnEnable() {
 		if(index == 1) {
 			power = parent.attack1Power;
-		} else {
+		} else if(index == 2) {
 			power = parent.attack2Power;
 		}
 	}

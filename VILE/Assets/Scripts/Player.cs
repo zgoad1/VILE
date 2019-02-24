@@ -29,13 +29,14 @@ public class Player : Controllable {
 	[HideInInspector] public bool stomping = false;
 	protected Vector3 stompVelocity = new Vector3(0, -5, 0);
 	protected bool disableSprint = false;
+	protected bool stompEnabled = false;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
 
 	// debug
-	public Vector3 targetRayHitPoint, targetRayStart, targetRayEnd;
+	//public Vector3 targetRayHitPoint, targetRayStart, targetRayEnd;
 
 	public static List<Targetable> targets = new List<Targetable>();
 
@@ -121,6 +122,7 @@ public class Player : Controllable {
 		// debug
 		if(Input.GetButtonDown("Jump")) {
 			yMove.y = 1;
+			StartCoroutine("EnableStomp");
 		}
 
 		CommonUpdate();
@@ -163,10 +165,9 @@ public class Player : Controllable {
 		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && hit.point.y - transform.position.y < 0.5f) {
 			if(stomping) {
 				stomping = false;
-				// animation stuffs
-				//TurnIntoLightning(false);
+				stamina -= 15;
 				GameController.camControl.ScreenShake(2);
-				disableSprint = true;
+				anim.SetTrigger("stomp");
 			}
 		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
@@ -181,6 +182,8 @@ public class Player : Controllable {
 		// make a "checkpoint" to keep from falling off map
 		if(onGround && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
 	}
+
+	#region Targeting
 
 	/**Set the target to the closest targetable in the targets array
 	 */
@@ -218,7 +221,7 @@ public class Player : Controllable {
 							minDist = distScore;
 							newTarget = t;
 						}
-						targetRayHitPoint = hit.point;
+						//targetRayHitPoint = hit.point;
 					} else {
 						// If this linecast fails when it shouldn't, the enemy character's collider is probably too small
 					}
@@ -264,6 +267,10 @@ public class Player : Controllable {
 		return false;
 	}
 
+	#endregion
+
+	#region Controls & velocity
+
 	protected override void SetControls() {
 		base.SetControls();
 		SetSprintKey();
@@ -291,8 +298,14 @@ public class Player : Controllable {
 			velocity = stompVelocity;
 		} else if(sprinting && !attacking && (calculatedVelocity.magnitude != 0 || !isLightning)) {
 			// sprinting
-			if(motionInput.z < 0 && !onGround) {
+
+			// stomp check
+			if(motionInput.z < 0 && !onGround && stompEnabled && stamina > 15) {
 				stomping = true;
+				disableSprint = true;	// to keep us from instantly sprinting again when we hit the ground in
+										//		the case that we're still holding the sprint key
+				readInput = false;      // to keep us from moving for a bit while the stomp animation finishes
+				ResetControls();		// to keep leftover input from making us move while reading input is disabled
 			} else {
 				TurnIntoLightning(true);
 				velocity = Vector3.Lerp(velocity,
@@ -309,10 +322,7 @@ public class Player : Controllable {
 		}
 	}
 
-	//public override void Damage(float damage, float gracePeriod) {
-	//	base.Damage(damage, gracePeriod);
-	//	anim.SetFloat("damageTaken", damage);
-	//}
+	#endregion
 
 	#region Abilities
 
@@ -338,6 +348,8 @@ public class Player : Controllable {
 			GameController.camControl.SetZoomTransform(null);
 			burst.Play();
 			invincible = false;
+			StopCoroutine("EnableStomp");
+			stompEnabled = false;
 			//anim.speed = 1;
 			//flasher.FlashStop();
 			if(motionInput.magnitude < 0.1f && onGround) {
@@ -416,6 +428,10 @@ public class Player : Controllable {
 		hurtAnimPlaying = false;
 	}
 
+	public void AnimFunc_OnStompEnd() {
+		readInput = true;
+	}
+
 	protected override void Attack2() {
 		base.Attack2();
 		velocity = Vector3.zero;
@@ -458,4 +474,10 @@ public class Player : Controllable {
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 
+	private IEnumerator EnableStomp() {
+		Debug.Log("Enabling stomp");
+		yield return new WaitForSeconds(0.5f);
+		Debug.Log("Stomp enabled");
+		stompEnabled = true;
+	}
 }
