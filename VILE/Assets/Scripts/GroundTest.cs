@@ -13,6 +13,7 @@ public class GroundTest : MonoBehaviour {
 	protected Controllable parent;
 	protected List<Collider> grounds = new List<Collider>();
 	public bool onGround = false;
+	private bool aboutToLeave = false;
 
 	private void Reset() {
 		parent = GetComponentInParent<Controllable>();
@@ -33,7 +34,12 @@ public class GroundTest : MonoBehaviour {
 		if(LayerIsGround(other.gameObject.layer)) {
 			grounds.Add(other);
 			if(grounds.Count == 1 && !onGround) {
-				Land();
+				if(aboutToLeave) {
+					StopCoroutine("WaitToLeave");
+					aboutToLeave = false;
+				} else {
+					Land();
+				}
 			} else {
 				//Debug.Log("grounds: " + grounds.Count + "\ny-velocity: " + parent.velocity.y);
 			}
@@ -51,7 +57,8 @@ public class GroundTest : MonoBehaviour {
 			grounds.Remove(other);
 			if(grounds.Count == 0) {
 				if(onGround) {
-					Leave();
+					StartCoroutine("WaitToLeave");
+					//Leave();
 				}
 				onGround = false;
 			}
@@ -68,5 +75,14 @@ public class GroundTest : MonoBehaviour {
 	}
 	protected virtual void Leave() {
 		parent.onGround = false;
+	}
+
+	/* Wait a bit to avoid triggering extra land animations, which can break things
+	 */
+	private IEnumerator WaitToLeave() {
+		aboutToLeave = true;
+		yield return new WaitForSeconds(0.1f);
+		Leave();
+		aboutToLeave = false;
 	}
 }

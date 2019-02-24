@@ -21,9 +21,8 @@ public class Fencer : Enemy {
 	[HideInInspector] public Fencer partner;
 	private List<Fencer> leftPartners = new List<Fencer>();
 	private Vector3 desiredPosition;
+	private SkinnedMeshRenderer[] movingParts = new SkinnedMeshRenderer[4];
 
-	private static int attackingPlayer = 0;		// amount of Fencers currently attacking the player
-												// used for determining rotation offset of attacking arms
 	enum FencerState {
 		WANDER, FOLLOW, ATTACK
 	}
@@ -45,6 +44,10 @@ public class Fencer : Enemy {
 			f.thicknessRandomness = 0;
 			f.enabled = false;
 		}
+		movingParts[0] = transform.Find("Hand_L").GetComponent<SkinnedMeshRenderer>();
+		movingParts[1] = transform.Find("Hand_R").GetComponent<SkinnedMeshRenderer>();
+		movingParts[2] = transform.Find("Joint_L").GetComponent<SkinnedMeshRenderer>();
+		movingParts[3] = transform.Find("Joint_R").GetComponent<SkinnedMeshRenderer>();
 	}
 
 	/**
@@ -97,6 +100,7 @@ public class Fencer : Enemy {
 				}
 				newVelocity = desiredPosition - transform.position;
 				newVelocity.y = 0;
+				RecalculateBounds(false);
 				break;
 
 			case FencerState.ATTACK:
@@ -109,6 +113,7 @@ public class Fencer : Enemy {
 					// we're in the process of attacking
 					SetHandPosition(handL, -handOffset);
 					SetHandPosition(handR, handOffset);
+					RecalculateBounds(true);
 				}
 				UpdatePartner();
 				break;
@@ -300,5 +305,16 @@ public class Fencer : Enemy {
 		handR.localPosition = Vector3.Lerp(handR.localPosition, iHandRPos, 0.1f);
 		handL.localRotation = Quaternion.Slerp(handL.localRotation, iHandLRot, 0.1f);
 		handR.localRotation = Quaternion.Slerp(handR.localRotation, iHandRRot, 0.1f);
+	}
+
+	/*
+	 * These SkinnedMeshRenderers do not update the bounds on their own at all, so
+	 * we call this method to enable updating when offscreen when the fencer is
+	 * close enough
+	 */
+	protected void RecalculateBounds(bool b) {
+		foreach(SkinnedMeshRenderer m in movingParts) {
+			m.updateWhenOffscreen = b;
+		}
 	}
 }

@@ -80,7 +80,7 @@ public class Controllable : Targetable {
 	[HideInInspector]
 	public bool onGround = false;	// defaults to always true for characters without GroundTests
 	[HideInInspector] public Vector3 velocity = Vector3.zero;	// direction and speed of attempted movement
-	protected Vector3 calculatedVelocity = Vector3.zero;			// actual tracked velocity of the object
+	[HideInInspector] public Vector3 calculatedVelocity = Vector3.zero;			// actual tracked velocity of the object
 	protected bool onSlope = false;
 	protected Vector3 prevPosition;
 	protected Vector3 hitNormal = Vector3.zero;
@@ -403,7 +403,6 @@ public class Controllable : Targetable {
 			velocity += force;			// add knockback force
 			force.y = 0;				// zero out force.y to update transform.forward
 			transform.forward = -force; // make us face our attacker
-			Debug.Log("cat");
 		}
 	}
 
