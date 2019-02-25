@@ -54,6 +54,8 @@ public class CameraControl : MonoBehaviour {
 			currentX += sensitivityX * Input.GetAxis("Mouse X") * 60 * Time.deltaTime;
 			currentY = Mathf.Clamp(currentY - sensitivityY * inverted * Input.GetAxis("Mouse Y") * 60 * Time.deltaTime, -60f, 75f);
 		}
+
+		// TODO: Make this an actual Input axis
 		if(Input.GetKeyDown(KeyCode.I)) {
 			inverted = -inverted;
 		}

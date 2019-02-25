@@ -2,23 +2,17 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(TessClaw))]
 public class Recharger : MonoBehaviour {
-	//public ParticleSystem electricityParticles;
-	public float radius = 25;
 
-	private TransformChain root;
+	public float radius = 25;
+	public float thicknessMultiplier = 1;
+	
 	private TransformChain leaf;
 	private TessClaw vfx;
 
 	private void Start() {
 		vfx = GetComponent<TessClaw>();
-		TransformChain[] children = GetComponentsInChildren<TransformChain>();
-		foreach(TransformChain tc in children) {
-			if(tc.root) {
-				root = tc;
-				break;
-			}
-		}
 		leaf = GetComponentInChildren<TransformChain>();
 		while(leaf.next.Length > 0) {
 			leaf = leaf.next[0];
@@ -29,40 +23,15 @@ public class Recharger : MonoBehaviour {
 		float dist = Vector3.Distance(transform.position, GameController.player.transform.position);
 		if(dist < radius) {
 			vfx.enabled = true;
-			vfx.thicknessRandomness = (radius - dist) / radius;
+			vfx.thicknessRandomness = thicknessMultiplier * (radius - dist) / radius;
 			leaf.transform.position = GameController.playerTarget.position;
-			GameController.player.stamina += Time.deltaTime * 60;
+			GiveStamina(1);
 		} else {
 			vfx.enabled = false;
 		}
 	}
 
-	//private Vector3 newScale = Vector3.one;
-
-	//private void Reset() {
-	//	electricityParticles = GetComponent<ParticleSystem>();
-	//}
-
-	//// Start is called before the first frame update
-	//void Start() {
-	//	Reset();
-	//}
-
-	//// Update is called once per frame
-	//void Update() {
-	//	float dist = Vector3.Distance(transform.position, GameController.player.transform.position);
-	//	if(dist <= radius) {
-	//		GameController.player.stamina += Time.deltaTime * 60;
-	//		// make stamina bar flash
-	//		// sound effect
-	//		transform.LookAt(GameController.player.camLook);
-	//		if(!electricityParticles.isPlaying) {
-	//			electricityParticles.Play();
-	//		}
-	//		newScale.z = dist / radius / 3f;
-	//		transform.localScale = newScale;
-	//	} else {
-	//		electricityParticles.Stop();
-	//	}
-	//}
+	protected virtual void GiveStamina(float st) {
+		GameController.player.stamina += st * Time.deltaTime * 60;
+	}
 }

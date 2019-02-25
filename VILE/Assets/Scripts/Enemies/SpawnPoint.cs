@@ -31,7 +31,7 @@ public class SpawnPoint : MonoBehaviour {
 		float currentSum = 0;
 		for(int i = 0; i < spawnables.Count; i++) {
 			if(rand >= currentSum && rand < currentSum + spawnables[i].likelihood) {
-				if(spawnables[i] != null) {
+				if(spawnables[i].toSpawn != null) {
 					GameObject g = Instantiate(spawnables[i].toSpawn);
 					g.transform.position = transform.position;
 				}
@@ -44,25 +44,29 @@ public class SpawnPoint : MonoBehaviour {
 		GetComponent<BillboardRenderer>().enabled = false;
 	}
 
+	/* Draw the SpawnPoint graphic
+	 */
 	private void OnDrawGizmos() {
 		Gizmos.color = color;
 		Gizmos.DrawMesh(gfx, transform.position);
 	}
 
+	/* Draw all the meshes and child meshes of each of the Spawnables
+	 */
 	private void OnDrawGizmosSelected() {
 		Transform cam = SceneView.GetAllSceneCameras()[0].transform;
 		Gizmos.color = Color.white;
 		float spacing = 10;
-
+		
 		for(int i = 0; i < spawnables.Count; i++) {
-			SkinnedMeshRenderer[] mrs;
-			MeshFilter[] mfs;
+			SkinnedMeshRenderer[] mrs;	// to contain the MeshRenderer of this spawnable and all MRs in its children
+			MeshFilter[] mfs;					// ~ MeshFilters
 			if(spawnables[i].toSpawn != null) {
 				mrs = spawnables[i].toSpawn.GetComponentsInChildren<SkinnedMeshRenderer>();
 				mfs = spawnables[i].toSpawn.GetComponentsInChildren<MeshFilter>();
 			} else {
-				mrs = null;
-				mfs = null;
+				mrs = new SkinnedMeshRenderer[0];
+				mfs = new MeshFilter[0];
 			}
 			List<Mesh> meshes = new List<Mesh>();
 			foreach(SkinnedMeshRenderer r in mrs) {
@@ -72,10 +76,12 @@ public class SpawnPoint : MonoBehaviour {
 				meshes.Add(f.sharedMesh);
 			}
 			if(meshes.Count > 0) {
+				// Draw the actual meshes if the Spawnable has them
 				foreach(Mesh m in meshes) {
 					Gizmos.DrawWireMesh(m, transform.position + cam.up * 5 - spacing * cam.right * (spawnables.Count - 1) / 2f + cam.right * spacing * i);
 				}
 			} else {
+				// Draw the SpawnPoint's mesh if the Spawnable is null or has no meshes
 				Gizmos.DrawWireMesh(gfx, transform.position + cam.up * 5 - spacing * cam.right * (spawnables.Count - 1) / 2f + cam.right * spacing * i);
 			}
 		}

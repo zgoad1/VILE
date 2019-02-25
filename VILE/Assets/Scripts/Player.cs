@@ -126,6 +126,7 @@ public class Player : Controllable {
 		}
 
 		CommonUpdate();
+		anim.SetFloat("yVelocity", calculatedVelocity.y);
 		if(!attacking || anim.GetBool("attackComboing")) {
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 		}
@@ -162,12 +163,17 @@ public class Player : Controllable {
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);
 		// if we hit something under us
-		if(hit.gameObject.layer == LayerMask.NameToLayer("Solid") && hit.point.y - transform.position.y < 0.5f) {
+		if(hit.gameObject.layer == solidLayer && hit.point.y - transform.position.y < 0.5f) {
 			if(stomping) {
 				stomping = false;
 				stamina -= 15;
 				GameController.camControl.ScreenShake(2);
 				anim.SetTrigger("stomp");
+
+				// our forward can get messed up when we start stomping; this should always fix it
+				Vector3 newForward = transform.forward;
+				newForward.y = 0;
+				transform.forward = newForward;
 			}
 		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
@@ -175,7 +181,7 @@ public class Player : Controllable {
 			Possess((Enemy)target);
 		} else if(hit.gameObject.GetComponent<Conductor>() == target && control == state.AI) {
 			TurnIntoLightning(false);
-			renderer.enabled = false;
+			DisableRenderer();
 			GameController.mainCam.ScreenShake(1);
 			GameController.camControl.lookAt = target.transform;
 		}
@@ -284,6 +290,7 @@ public class Player : Controllable {
 		}
 	}
 
+	// Check for sprinting and stomping
 	protected override void SetVelocity() {
 		sprinting = stamina > 0 && !disableSprint ? sprintKey : false;
 
@@ -301,6 +308,8 @@ public class Player : Controllable {
 
 			// stomp check
 			if(motionInput.z < 0 && !onGround && stompEnabled && stamina > 15) {
+				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
+															//    we press the run key
 				stomping = true;
 				disableSprint = true;	// to keep us from instantly sprinting again when we hit the ground in
 										//		the case that we're still holding the sprint key
@@ -328,13 +337,13 @@ public class Player : Controllable {
 
 	private void TurnIntoLightning(bool enable) {
 		if(enable && !isLightning) {
-			lightning.SetParticles(new ParticleSystem.Particle[0], 0);  // destroy any active particles
-			renderer.enabled = false;   // make player disappear
+			//lightning.SetParticles(new ParticleSystem.Particle[0], 0);  // destroy any active particles
+			DisableRenderer();   // make player disappear
 			lightning.Play();       // start particles
 			head.Play();
+			burst.Play();
 			transform.rotation = GameController.mainCam.transform.rotation;
 			GameController.camControl.SetZoomTransform(sprintCam, 0.1f);
-			burst.Play();
 			GameController.camControl.ScreenShake(1.5f);
 			if(gracePeriodCR != null) StopCoroutine(gracePeriodCR);
 			invincible = true;
@@ -345,11 +354,13 @@ public class Player : Controllable {
 			renderer.enabled = true;    // make player reappear
 			lightning.Stop();       // stop particles
 			head.Stop();
-			GameController.camControl.SetZoomTransform(null);
 			burst.Play();
+			GameController.camControl.SetZoomTransform(null);
 			invincible = false;
-			StopCoroutine("EnableStomp");
-			stompEnabled = false;
+			if(onGround) {
+				StopCoroutine("EnableStomp");
+				stompEnabled = false;
+			}
 			//anim.speed = 1;
 			//flasher.FlashStop();
 			if(motionInput.magnitude < 0.1f && onGround) {
@@ -362,7 +373,7 @@ public class Player : Controllable {
 	private void Possess(Enemy e) {
 		e.SetPlayer();
 		TurnIntoLightning(false);
-		renderer.enabled = false;
+		DisableRenderer();
 		possessing = true;
 		gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");
 		targets.Remove(e);
@@ -403,35 +414,6 @@ public class Player : Controllable {
 		anim.SetTrigger("attack1");
 	}
 
-	public void AnimFunc_DrainStamina() {
-		stamina -= atk1Cost;
-	}
-
-	public void AnimFunc_UnsetComboing() {
-		anim.SetBool("attackComboing", false);
-		attacking = false;
-		suspendTimer = false;
-	}
-
-	public void AnimFunc_SetComboing() {
-		anim.SetBool("attackComboing", true);
-		attacking = true;
-		suspendTimer = true;
-	}
-
-	// in case we somehow land while performing an attack, we don't want to transition to land
-	public void AnimFunc_UnsetLand() {
-		anim.ResetTrigger("land");
-	}
-
-	public void AnimFunc_OnHurtEnd() {
-		hurtAnimPlaying = false;
-	}
-
-	public void AnimFunc_OnStompEnd() {
-		readInput = true;
-	}
-
 	protected override void Attack2() {
 		base.Attack2();
 		velocity = Vector3.zero;
@@ -460,6 +442,39 @@ public class Player : Controllable {
 
 	#endregion
 
+	#region Animation event functions
+
+	public void AnimFunc_DrainStamina() {
+		stamina -= atk1Cost;
+	}
+
+	public void AnimFunc_UnsetComboing() {
+		anim.SetBool("attackComboing", false);
+		//attacking = false;	// this caused animation bugs
+		suspendTimer = false;
+	}
+
+	public void AnimFunc_SetComboing() {
+		anim.SetBool("attackComboing", true);
+		attacking = true;
+		suspendTimer = true;
+	}
+
+	// in case we somehow land while performing an attack, we don't want to transition to land
+	public void AnimFunc_UnsetLand() {
+		anim.ResetTrigger("land");
+	}
+
+	public void AnimFunc_OnHurtEnd() {
+		hurtAnimPlaying = false;
+	}
+
+	public void AnimFunc_OnStompEnd() {
+		readInput = true;
+	}
+
+	#endregion
+
 	public override void Damage(float damage, float gracePeriod) {
 		if(!invincible) {
 			GameController.camControl.ScreenShake(damage / 100 * 2);
@@ -470,14 +485,30 @@ public class Player : Controllable {
 		}
 	}
 
+	protected override IEnumerator GracePeriod(float gracePeriod) {
+		invincible = true;
+		for(float i = 0; i < gracePeriod; i += 0.02f) {
+			renderer.enabled = !renderer.enabled;
+			yield return new WaitForSeconds(0.02f);
+		}
+		invincible = false;
+		renderer.enabled = true;
+	}
+
+	/* Necessary to keep the GracePeriod coroutine from interfering.
+	 * So this should be used everywhere except in GracePeriod.
+	 */
+	private void DisableRenderer() {
+		if(gracePeriodCR != null) StopCoroutine(gracePeriodCR);
+		renderer.enabled = false;
+	}
+
 	public bool CanPossessTarget() {
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 
 	private IEnumerator EnableStomp() {
-		Debug.Log("Enabling stomp");
 		yield return new WaitForSeconds(0.5f);
-		Debug.Log("Stomp enabled");
 		stompEnabled = true;
 	}
 }

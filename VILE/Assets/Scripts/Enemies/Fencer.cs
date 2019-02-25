@@ -4,6 +4,7 @@ using UnityEngine;
 
 //	TODO:
 //	- Add fence damage
+//	- Implement attacking while possessed
 //	- Add a second attack
 
 public class Fencer : Enemy {
@@ -249,7 +250,7 @@ public class Fencer : Enemy {
 	}
 
 	public override void Knockback(Vector3 force) {
-		base.Knockback(force / 2f);	// we're really slidey so decrease the knockback a bit
+		base.Knockback(force / 4f);	// we're really slidey so decrease the knockback a bit
 	}
 
 	/* 
@@ -261,7 +262,11 @@ public class Fencer : Enemy {
 		foreach(Fencer f in leftPartners) {
 			f.rightPartners.Remove(this);
 		}
-		// if we get errors, loop through rightPartners as well like above
+		foreach(Fencer f in rightPartners) {
+			// This may or may not be necessary.
+			// If a Fencer is seen with no rightPartner but has visible fence, remove it
+			f.leftPartners.Remove(this);
+		}
 
 		// Un-parent any male connectors from our female connectors so they're not destroyed with us
 		List<Transform> toUnparent = new List<Transform>();

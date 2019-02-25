@@ -25,8 +25,6 @@ public class DyingEnemy : PooledObject {
 		// Set initial variables so we can revert to this upon Restart
 		foreach(Transform t in pieces) {
 			if(t.GetComponent<ParticleSystem>() == null) {
-				MeshCollider mc = t.gameObject.AddComponent<MeshCollider>();
-				mc.convex = true;
 				if(t.gameObject.layer == LayerMask.NameToLayer("Default")) {
 					t.gameObject.layer = LayerMask.NameToLayer("SmallParts");
 				}
@@ -43,6 +41,7 @@ public class DyingEnemy : PooledObject {
 		for(int i = 0; i < initialPositions.Count; i++) {
 			Transform t = pieces.GetChild(i);
 			Destroy(t.GetComponent<Rigidbody>());
+			Destroy(t.GetComponent<MeshCollider>());
 			t.position = initialPositions[i];
 			t.rotation = initialRotations[i];
 		}
@@ -67,7 +66,10 @@ public class DyingEnemy : PooledObject {
 		// Blow off the pieces at regular time intervals until the particle effect is done
 		int uh = 0;
 		for(float i = 0; i < particles.main.duration; i += particles.main.duration / initialPositions.Count, uh++) {
-			Rigidbody rb = pieces.GetChild(sequence[uh]).gameObject.AddComponent<Rigidbody>();
+			GameObject ob = pieces.GetChild(sequence[uh]).gameObject;
+			MeshCollider mc = ob.AddComponent<MeshCollider>();
+			mc.convex = true;
+			Rigidbody rb = ob.AddComponent<Rigidbody>();
 			float minRange = -5;
 			float maxRange = 5;
 			Vector3 randomOffset = new Vector3(Random.Range(minRange, maxRange), Random.Range(minRange, maxRange), Random.Range(minRange, maxRange));

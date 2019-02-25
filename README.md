@@ -15,6 +15,7 @@
 
 **Optimization**
 - replace some spotlights with decals
+- remove objects that have fallen off the edge
 
 **Post-release**
 - minimap
@@ -33,8 +34,15 @@
 ## Bugs
 
 **- A -**
+- Tess can sometimes get frozen when knocked back? (might be tied to one of the B bugs)
 
 **- B -**
+- Landing on enemies when stomping has unexpected results
+	- Conclusion: GroundTest only tests for solid layer
+- Tess can get knocked back too far sometimes
+	- Observed when being attacked while attacking
+		- Conclusion: velocity is not updated when attacking
+		- Fix: knockback should break Tess from attack state
 - you can attack while sprinting (turn into a feature)
 - Target is reset to null when target dies and doesn't get set while attacking (when W is pressed it should try to set a new target)
 - robots can get stuck on corner barrier posts
@@ -44,7 +52,8 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- If Tess's attack2 animation starts when her idle is about to loop, it will be interrupted by idle
+- Enemy HP bars sometimes get stuck on the screen
+- Fencer fences do not always disappear when their partner dies?
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides
-- Fencer arms do not calculate bounds (disappear when main body is off camera)
+- Tess Claws show up for one frame at their previous position when enabled

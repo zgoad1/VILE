@@ -29,11 +29,11 @@ public class Controllable : Targetable {
 	// hp-related
 	[SerializeField] protected float maxHP = 100;
 	protected float h = 100;
-	protected float hp {
+	public float hp {
 		get {
 			return h;
 		}
-		set {
+		protected set {
 			h = Mathf.Clamp(value, 0, maxHP);
 			hpBar.value = h;
 			if(h == 0 && !dead) Die();
@@ -384,8 +384,10 @@ public class Controllable : Targetable {
 	public virtual void Damage(float damage, float gracePeriod) {
 		if(!invincible) {
 			DeductHP(damage);
-			gracePeriodCR = GracePeriod(gracePeriod);
-			StartCoroutine(gracePeriodCR);
+			if(!dead) {
+				gracePeriodCR = GracePeriod(gracePeriod);
+				StartCoroutine(gracePeriodCR);
+			}
 		}
 	}
 
@@ -400,7 +402,7 @@ public class Controllable : Targetable {
 			anim.SetTrigger("hurt");
 			hurtAnimPlaying = true;		// this tells us not to update controls in SetControls()
 			ResetControls();			// zero out motionInput because we stop updating controls
-			velocity += force;			// add knockback force
+			velocity = force;			// add knockback force
 			force.y = 0;				// zero out force.y to update transform.forward
 			transform.forward = -force; // make us face our attacker
 		}
