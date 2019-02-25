@@ -48,11 +48,18 @@ public class GameController : MonoBehaviour {
 	private static List<GameObject> objectPool = new List<GameObject>();
 
 	private static float ifov;
+	private static bool isLevel = false;	// whether we're currently in the playable level
 
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
+		if(player != null) {
+			playerTarget = player.transform.Find("Target Transform");
+		}
 		mainCam = FindObjectOfType<MainCamera>();
-		if(mainCam != null) mainCamCam = mainCam.GetComponent<Camera>();
+		if(mainCam != null) {
+			mainCamCam = mainCam.GetComponent<Camera>();
+			ifov = mainCamCam.fieldOfView;
+		}
 		camControl = FindObjectOfType<CameraControl>();
 	}
 
@@ -64,9 +71,7 @@ public class GameController : MonoBehaviour {
 		blackfade = GameObject.Find("Blackfade").GetComponent<Animator>();
 		enemyHpBarObject = Resources.Load<GameObject>("Enemy HP");
 		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
-		playerTarget = FindObjectOfType<Player>().transform.Find("Target Transform");
 		defaultLayerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Default");
-		ifov = mainCamCam.fieldOfView;
 	}
 
 	// Use this for initialization
@@ -80,49 +85,68 @@ public class GameController : MonoBehaviour {
 		}
 		number++;
 
-		if(SceneManager.GetActiveScene().name == "Level") {
-			CreateObjectPool();
-		}
-
-		Time.timeScale = 1;	// Suddenly became necessary on 1-27-19. All other references to Time.timeScale were checked; none happen.
+		Time.timeScale = 1; // Suddenly became necessary on 1-27-19. All other references to Time.timeScale were checked; none happen.
+							// Found the problem: the game had been stopped when the timescale was at 0. It does not get reset on exiting
+							// play mode. (Unity bug)
+		OnLevelWasLoaded(-1);
 	}
-	
+
+	// Instantly change scene to nextScene
+	public static void LoadNextScene() {
+		SceneManager.LoadScene(nextScene);
+	}
+
+	private void OnLevelWasLoaded(int level) {
+		FindPlayer();
+		if(SceneManager.GetActiveScene().name == "Level") {
+			instance.CreateObjectPool();
+			isLevel = true;
+		} else {
+			isLevel = false;
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
-		#region Material animations
-		// wall glow
-		newColorWG.r = 0.5f * Mathf.Sin(2 * Mathf.PI / 4 * Time.time) + 0.5f;
-		wallGlow.SetColor("_EmissionColor", newColorWG);
+		if(isLevel) {
+			#region Material animations
 
-		// tunnel wall lights
-		tunnelGlowOffset.y = 1 * Mathf.Sin(2 * Mathf.PI / 6.5f * Time.time);
-		tunnelGlow.mainTextureOffset = tunnelGlowOffset;
+			// wall glow
+			newColorWG.r = 0.5f * Mathf.Sin(2 * Mathf.PI / 4 * Time.time) + 0.5f;
+			wallGlow.SetColor("_EmissionColor", newColorWG);
 
-		// laser barrier
-		newColorLB.a = 0.1f * Mathf.Sin(2 * Mathf.PI / 0.12f * Time.time) + .9f;
-		laserBarrier.color = newColorLB;
+			// tunnel wall lights
+			tunnelGlowOffset.y = 1 * Mathf.Sin(2 * Mathf.PI / 6.5f * Time.time);
+			tunnelGlow.mainTextureOffset = tunnelGlowOffset;
 
-		// arc stones
-		arcStoneOffset.y = 0.12f * Mathf.Sin(2 * Mathf.PI / 8 * Time.time);
-		arcStone.mainTextureOffset = arcStoneOffset;
-		float newColorASColor = 1.5f + 0.5f * Mathf.Sin(2 * Mathf.PI / 5 * Time.time);
-		newColorAS.r = newColorAS.g = newColorAS.b = newColorASColor;
-		arcStone.SetColor("_EmissionColor", newColorAS);
+			// laser barrier
+			newColorLB.a = 0.1f * Mathf.Sin(2 * Mathf.PI / 0.12f * Time.time) + .9f;
+			laserBarrier.color = newColorLB;
 
-		// conductor
-		conductor.mainTextureOffset += conductorScrollSpeed;
-		#endregion
+			// arc stones
+			arcStoneOffset.y = 0.12f * Mathf.Sin(2 * Mathf.PI / 8 * Time.time);
+			arcStone.mainTextureOffset = arcStoneOffset;
+			float newColorASColor = 1.5f + 0.5f * Mathf.Sin(2 * Mathf.PI / 5 * Time.time);
+			newColorAS.r = newColorAS.g = newColorAS.b = newColorASColor;
+			arcStone.SetColor("_EmissionColor", newColorAS);
 
-		#region Pause
-		if(Input.GetButtonDown("Pause")) {
-			if(!paused) Pause();
-			else Unpause();
+			// conductor
+			conductor.mainTextureOffset += conductorScrollSpeed;
+
+			#endregion
+
+			#region Pause
+
+			if(Input.GetButtonDown("Pause")) {
+				if(!paused) Pause();
+				else Unpause();
+			}
+
+			#endregion
+
+			mainCamCam.fieldOfView = Mathf.Lerp(mainCamCam.fieldOfView, ifov, 0.2f * 60 * Time.deltaTime);
+			frames++;
 		}
-		#endregion
-
-		mainCamCam.fieldOfView = Mathf.Lerp(mainCamCam.fieldOfView, ifov, 0.2f * 60 * Time.deltaTime);
-
-		frames++;
 	}
 
 	private void OnDestroy() {
@@ -137,14 +161,6 @@ public class GameController : MonoBehaviour {
 	public static void SceneChange(string newScene) {
 		nextScene = newScene;
 		blackfade.SetTrigger("fadeOut");
-	}
-
-	// Instantly change scene to nextScene
-	public static void LoadNextScene() {
-		SceneManager.LoadScene(nextScene);
-		if(nextScene.ToString() == "Level") {
-			instance.CreateObjectPool();
-		}
 	}
 
 	public static void Pause() {

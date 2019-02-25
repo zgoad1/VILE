@@ -46,6 +46,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   laserBarrier: {fileID: 2100000, guid: af53a24d9e8035340ab2b18312aa6f42, type: 2}
   wallGlow: {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
+  arcStone: {fileID: 2100000, guid: 04bf23ae499fe82469a01e1d920604f7, type: 2}
+  conductor: {fileID: 2100000, guid: 41c2232ab26f06547a40024f1760d0a9, type: 2}
+  tunnelGlow: {fileID: 2100000, guid: b0272dd2824f7514b8deb626bdc18fc4, type: 2}
   numPremadeObjects: 10
   objectList:
   - {fileID: 7414752342150661629, guid: 283bda1992a956446ba1aa99a826cfce, type: 3}
+  - {fileID: 6609260197173739817, guid: c42e8101b10526944a7ded10d183ff77, type: 3}
+  - {fileID: 4957065820185104361, guid: cea32a2c9d0509541ae7eb8d4af358c0, type: 3}
+  - {fileID: 3837719870320198566, guid: f38c5404fbbd86c429c4d715a7348c2e, type: 3}

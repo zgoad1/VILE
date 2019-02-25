@@ -3,6 +3,9 @@
 ![alt text](https://github.com/zgoad1/VILE/blob/master/Images/room.png)
 ![alt text](https://github.com/zgoad1/VILE/blob/master/Images/attack.png)
 
+**NOTES**
+- On dying enemy parts models, read/write must be enabled or collisions will not work in builds
+
 ## To Do
 - average, everyday room designs
 - advanced room designs
@@ -52,6 +55,7 @@
 - sprinting out of an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- small parts of enemy deaths break when trying to add their colliders (only observed in builds)
 - Enemy HP bars sometimes get stuck on the screen
 - Fencer fences do not always disappear when their partner dies?
 - 4-way intersection (tunnel) does not have floor backfaces or sides

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿#if UNITY_EDITOR
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(MapGenerator))]
@@ -17,3 +18,4 @@ class MapGenEditor : Editor {
 		DrawDefaultInspector();
 	}
 }
+#endif

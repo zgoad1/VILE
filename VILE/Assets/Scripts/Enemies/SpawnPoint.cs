@@ -1,6 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 
 [RequireComponent(typeof(BillboardRenderer))]	// only used for access to OnBecameVisible()
@@ -53,8 +52,9 @@ public class SpawnPoint : MonoBehaviour {
 
 	/* Draw all the meshes and child meshes of each of the Spawnables
 	 */
+#if UNITY_EDITOR
 	private void OnDrawGizmosSelected() {
-		Transform cam = SceneView.GetAllSceneCameras()[0].transform;
+		Transform cam = UnityEditor.SceneView.GetAllSceneCameras()[0].transform;
 		Gizmos.color = Color.white;
 		float spacing = 10;
 		
@@ -86,6 +86,7 @@ public class SpawnPoint : MonoBehaviour {
 			}
 		}
 	}
+#endif
 }
 
 class SpawnableComparer : IComparer<Spawnable> {
