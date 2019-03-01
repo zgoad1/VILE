@@ -37,7 +37,7 @@ public class DyingEnemy : PooledObject {
 
 	// Relocate all the pieces and remove their physics
 	public override void Restart() {
-		gameObject.SetActive(true);
+		base.Restart();
 		for(int i = 0; i < initialPositions.Count; i++) {
 			Transform t = pieces.GetChild(i);
 			Destroy(t.GetComponent<Rigidbody>());

@@ -123,7 +123,7 @@ public class Fencer : Enemy {
 
 		#endregion
 
-		velocity = Vector3.Lerp(velocity, newVelocity.normalized * speed, accel);
+		velocity = Vector3.Lerp(velocity, newVelocity.normalized * speed, accel * 60 * Time.deltaTime);
 		CommonUpdate();
 	}
 
@@ -161,7 +161,7 @@ public class Fencer : Enemy {
 		if(rightPartners.Count > 0) {
 			float nearestDistSquared = Mathf.Infinity;
 			foreach(Fencer f in rightPartners) {
-				float distSquared = (f.transform.position - transform.position).sqrMagnitude;
+				float distSquared = (f.transform.position - transform.position).sqrMagnitude;	// f may reference a destroyed object, which should be impossible
 				float angle = Helper.AngleBetween(transform, f.transform);
 				if(distSquared < nearestDistSquared && angle < 225 && angle > 135) {
 					partner = f;

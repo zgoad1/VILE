@@ -20,6 +20,8 @@ public class GameController : MonoBehaviour {
 	// The exact point on the player at which enemies should attack. Needed for precise raycasting.
 	public static Transform playerTarget;
 	public static int defaultLayerMask;
+	public static int solidLayer;
+	public static int enemyLayer;
 
 	// laser barriers
 	[SerializeField] private Material laserBarrier;
@@ -48,7 +50,8 @@ public class GameController : MonoBehaviour {
 	private static List<GameObject> objectPool = new List<GameObject>();
 
 	private static float ifov;
-	private static bool isLevel = false;	// whether we're currently in the playable level
+	private static bool isLevel = false;    // whether we're currently in the playable level
+	[HideInInspector] public static GameObject stunSparksPrefab;
 
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
@@ -72,6 +75,9 @@ public class GameController : MonoBehaviour {
 		enemyHpBarObject = Resources.Load<GameObject>("Enemy HP");
 		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
 		defaultLayerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Default");
+		stunSparksPrefab = objectList.Find(g => g.name == "StunSparks");
+		enemyLayer = LayerMask.NameToLayer("Enemies");
+		solidLayer = LayerMask.NameToLayer("Solid");
 	}
 
 	// Use this for initialization
@@ -171,7 +177,6 @@ public class GameController : MonoBehaviour {
 			if(c.anim != null) c.anim.speed = 0;
 		}
 		player.readInput = false;
-		player.velocity = Vector3.zero;
 		Cursor.lockState = CursorLockMode.None;
 		Cursor.visible = true;
 		Time.timeScale = 0;
@@ -203,7 +208,7 @@ public class GameController : MonoBehaviour {
 		}
 	}
 
-	public static void InstantiateFromPool(GameObject ob, Transform transform) {
+	public static GameObject InstantiateFromPool(GameObject ob, Transform transform) {
 		if(instance.objectList.Contains(ob)) {
 			foreach(GameObject o in objectPool) {
 				// Pretend to instantiate the first matching object in the pool
@@ -211,20 +216,22 @@ public class GameController : MonoBehaviour {
 					o.GetComponent<PooledObject>().Restart();
 
 					// copy transform of original object
-					o.transform.SetParent(transform.parent);
-					o.transform.localPosition = transform.localPosition;
-					o.transform.localRotation = transform.localRotation;
+					o.transform.position = transform.position;
+					o.transform.rotation = transform.rotation;
 					o.transform.localScale = transform.localScale;
 
 					// move to back of list
 					objectPool.Remove(o);
 					objectPool.Add(o);
 
-					return;
+					return o;
 				}
 			}
+			Debug.LogError("You somehow just tried to instantiate an object that both is and is not pooled.");
+			return null;
 		} else {
-			Debug.LogError("Tried to instantiate pooled object that isn't pooled");
+			Debug.LogError("Tried to InstantiateFromPool object that isn't pooled");
+			return null;
 		}
 	}
 

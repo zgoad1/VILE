@@ -20,7 +20,6 @@ public class Player : Controllable {
 	private ParticleSystem a2fx;
 	private bool canPossess = true;
 	private LayerMask rayMask;
-	private LayerMask solidLayer;
 	private AttackHitbox ahbL, ahbR;
 	public UIBar stBar;
 	private float rechargeFactor = 0.05f;
@@ -48,7 +47,6 @@ public class Player : Controllable {
 		sprintCam = GameObject.Find("SprintCam").transform;
 		flasher = FindObjectOfType<EpilepsyController>();
 		a2fx = GetComponentsInChildren<ParticleSystem>()[3];
-		solidLayer = LayerMask.NameToLayer("Solid");
 		rayMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Enemies") | 1 << LayerMask.NameToLayer("FlyingCharacters") | 1 << LayerMask.NameToLayer("Default");
 		hpBar = GameObject.Find("Tess HP").GetComponent<UIBar>();
 		hpBar.character = this;
@@ -114,10 +112,12 @@ public class Player : Controllable {
 		// Set the target normally if we're not attacking.
 		// If we're attacking, only set the target when we try to move forward.
 		if(!attacking) {
-			SetVelocity();
 			SetTarget();
 			if(atk2Key && CanAttack(atk2Cost)) Attack2();
+		} else {
+			ResetControls();
 		}
+		SetVelocity();
 
 		// debug
 		if(Input.GetButtonDown("Jump")) {
@@ -162,8 +162,8 @@ public class Player : Controllable {
 
 	protected override void OnControllerColliderHit(ControllerColliderHit hit) {
 		base.OnControllerColliderHit(hit);
-		// if we hit something under us
-		if(hit.gameObject.layer == solidLayer && hit.point.y - transform.position.y < 0.5f) {
+		// if we land on the ground
+		if(hit.gameObject.layer == GameController.solidLayer && hit.point.y - transform.position.y < 0.5f) {
 			if(stomping) {
 				stomping = false;
 				stamina -= 15;
@@ -175,6 +175,15 @@ public class Player : Controllable {
 				newForward.y = 0;
 				transform.forward = newForward;
 			}
+		// if we land on an enemy, slide off
+		} else if(hit.gameObject.layer == GameController.enemyLayer && hit.point.y - transform.position.y < 0.5f) {
+			// if the normal points outward (and not just upward), slide out that way
+			if(hit.normal.x != 0 || hit.normal.z != 0) {
+				velocity.x = hit.normal.x;
+				velocity.z = hit.normal.z;
+				velocity = velocity.normalized * 3;
+			}
+			// else just go somewhere idc
 		}
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			//Debug.Log("Possessing " + target);
@@ -302,7 +311,8 @@ public class Player : Controllable {
 
 		// get velocity
 		if(stomping) {
-			velocity = stompVelocity;
+			// Don't update velocity, but set our vertical movement to a constant
+			yMove = stompVelocity;
 		} else if(sprinting && !attacking && (calculatedVelocity.magnitude != 0 || !isLightning)) {
 			// sprinting
 
@@ -314,7 +324,8 @@ public class Player : Controllable {
 				disableSprint = true;	// to keep us from instantly sprinting again when we hit the ground in
 										//		the case that we're still holding the sprint key
 				readInput = false;      // to keep us from moving for a bit while the stomp animation finishes
-				ResetControls();		// to keep leftover input from making us move while reading input is disabled
+				ResetControls();        // to keep leftover input from making us move while reading input is disabled
+				velocity = Vector3.zero;
 			} else {
 				TurnIntoLightning(true);
 				velocity = Vector3.Lerp(velocity,
@@ -327,7 +338,7 @@ public class Player : Controllable {
 			velocity = Vector3.Lerp(
 				velocity,
 				(tempForward * motionInput.normalized.z + GameController.mainCam.transform.right * motionInput.normalized.x) * speed,
-				accel * (onGround ? 1 : 0.1f));
+				accel * (onGround ? 1 : 0.1f) * 60 * Time.deltaTime);
 		}
 	}
 
@@ -377,6 +388,7 @@ public class Player : Controllable {
 		possessing = true;
 		gameObject.layer = LayerMask.NameToLayer("IgnoreCollision");
 		targets.Remove(e);
+		InterruptStomp();
 		possessed = e;
 		//fwdMov = 0;     // instantly decelerate these so momentum doesn't carry
 		//rightMov = 0;	// over when we Unpossess
@@ -448,6 +460,11 @@ public class Player : Controllable {
 		stamina -= atk1Cost;
 	}
 
+	/*
+	 * Sets attacking booleans to false. Must be called as soon as we come out of an
+	 * attack, i.e. in every state that any attack state could transition to (excluding
+	 * other attack states)
+	 */
 	public void AnimFunc_UnsetComboing() {
 		anim.SetBool("attackComboing", false);
 		//attacking = false;	// this caused animation bugs
@@ -510,5 +527,14 @@ public class Player : Controllable {
 	private IEnumerator EnableStomp() {
 		yield return new WaitForSeconds(0.5f);
 		stompEnabled = true;
+	}
+
+	/* Reset stomping booleans in case we were stopped mid-stomp, i.e. by somehow
+	 * possessing an enemy while stomping
+	 */
+	private void InterruptStomp() {
+		stomping = false;
+		disableSprint = false;
+		readInput = true;
 	}
 }

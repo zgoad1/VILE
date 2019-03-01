@@ -178,11 +178,13 @@ public class Controllable : Targetable {
 	#region Update methods
 
 	protected virtual void PlayerUpdate() {
+		SetControls();
 		if(!attacking) {
-			SetControls();
-			SetVelocity();
 			PlayerAttack();
+		} else {
+			ResetControls();
 		}
+		SetVelocity();
 		CommonUpdate();
 		// (attacking can change in PlayerAttack())
 		if(attacking) {
@@ -314,7 +316,7 @@ public class Controllable : Targetable {
 		velocity = Vector3.Lerp(
 			velocity, 
 			(tempForward * motionInput.normalized.z + GameController.mainCam.transform.right * motionInput.normalized.x) * speed, 
-			accel * (onGround ? 1 : 0.1f));
+			accel * (onGround ? 1 : 0.1f) * 60 * Time.deltaTime);
 	}
 
 	// Make this object the player

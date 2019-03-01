@@ -15,7 +15,6 @@ public class FlashEye : Enemy {
 	private Vector3 rotateTowards = Vector3.zero;
 	private Vector3 velocityPerSec = Vector3.zero;
 	private LaserFX laser;
-	private LayerMask solidLayer;
 	private Vector3 desiredPosition = Vector3.zero; // desired position based on desiredDistance
 	private float distanceFromDistance = 30;		// max distance from desiredDistance in which we may attack
 
@@ -25,14 +24,13 @@ public class FlashEye : Enemy {
 		base.Reset();
 		ball = GetComponentInChildren<FlashEyeBall>();
 		laser = GetComponentInChildren<LaserFX>();
-		solidLayer = LayerMask.NameToLayer("Solid");
 		camDistance = 25;
 	}
 
 	protected override void Update() {
 		base.Update();
 
-		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.5f);   // done in PlayerMove()
+		transform.forward = Vector3.Slerp(transform.forward, velocity, 0.5f * 60 * Time.deltaTime);   // done in PlayerMove()
 		RotateWithVelocity();
 	}
 
@@ -64,7 +62,7 @@ public class FlashEye : Enemy {
 				Attack1();
 			}
 		} else {
-			velocity = Vector3.Lerp(velocity, Vector3.zero, accel);
+			velocity = Vector3.Lerp(velocity, Vector3.zero, accel * 60 * Time.deltaTime);
 			velocityPerSec = velocity * 60;
 		}
 
@@ -81,11 +79,11 @@ public class FlashEye : Enemy {
 
 	protected override void SetVelocity() {
 		base.SetVelocity();
-		//velocity = Vector3.ClampMagnitude(velocity, maxVel / 60);
-		// whoops that function didn't do what I thought it did
 
-		if(velocity.magnitude > maxVel) {
-			velocity /= (velocity.magnitude / maxVel);
+
+		// Limit velocity
+		if(velocity.sqrMagnitude > maxVel * maxVel) {
+			velocity /= (velocity.sqrMagnitude / (maxVel * maxVel));
 		}
 	}
 

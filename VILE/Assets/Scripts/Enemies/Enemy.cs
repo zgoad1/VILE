@@ -4,7 +4,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerTracker))]
 public class Enemy : Controllable {
-	
+
 	protected static Player player;
 	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
 	[Tooltip("Damage to apply every frame in which the player is possessing this enemy.")]
@@ -14,6 +14,7 @@ public class Enemy : Controllable {
 	protected PlayerTracker tracker;
 	protected bool checkedForPlayer = false;    // whether we've called CanSeePlayer() this frame (saves a raycast when calling CanSeePlayer() twice in a frame)
 	protected bool sawPlayer = false;
+	protected ParticleSystem stunSparks;    // needed to stop the effect if we're possessed
 
 	// debug
 	public Vector3 playerPoint;
@@ -53,7 +54,7 @@ public class Enemy : Controllable {
 		player = FindObjectOfType<Player>();
 		tracker = GetComponent<PlayerTracker>();
 
-		defaultGracePeriod = 0f;	// no invincibility period
+		defaultGracePeriod = 0f;    // no invincibility period
 	}
 
 	protected override void PlayerUpdate() {
@@ -114,6 +115,11 @@ public class Enemy : Controllable {
 		}
 	}
 
+	public override void Stun() {
+		base.Stun();
+		stunSparks = GameController.InstantiateFromPool(GameController.stunSparksPrefab, camLook).GetComponent<ParticleSystem>();
+	}
+
 	public override void Knockback(Vector3 force) {
 		base.Knockback(force);
 		// Most enemies won't have a hurt animation, so just change hurtAnimPlaying back to false
@@ -132,11 +138,21 @@ public class Enemy : Controllable {
 		if(this != GameController.player.target) hpBar.gameObject.SetActive(false);
 	}
 
+	public override void SetPlayer() {
+		base.SetPlayer();
+		StopStunSparks();
+	}
+
 	protected override void Die() {
 		if(this == GameController.player.possessed && player.possessing) GameController.player.Unpossess(false);
 		// Create the death VFX
 		GameController.InstantiateFromPool(deathObject, transform);
 		base.Die();
+		StopStunSparks();
 		Destroy(gameObject);
+	}
+
+	private void StopStunSparks() {
+		if(stunSparks != null && control == state.STUNNED) stunSparks.Stop();
 	}
 }
