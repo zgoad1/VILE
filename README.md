@@ -38,15 +38,13 @@
 ## Bugs
 
 **- A -**
-- For unknown reasons, Tess may start using attack1 forever (potentially fixed)
-- Fencer death VFX may fail to add components when the object pool loops
-	-It fails to add a Rigidbody because there already is one, then breaks when it can't find its Rigidbody.
-- Tess can sometimes get frozen when knocked back? (potentially fixed)
 
 **- B -**
-- Fencers don't always remove themselves from partner lists when dying
+- Fencer partner lists do not get set properly when possessed
+- Knockback should cancel attacks for weaker enemies
+- When you quickly tap the jump button and the run button at the same time, you won't be able to stomp and sometimes controls will get stuck
+- Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
-- Landing on enemies when stomping has unexpected results (potentially fixed; need to test)
 - you can attack while sprinting (turn into a feature)
 - Target is reset to null when target dies and doesn't get set while attacking (when W is pressed it should try to set a new target)
 - robots can get stuck on corner barrier posts
@@ -56,9 +54,7 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- Possessing an enemy does not stop its stun sparks
-- Fencer arms don't get reset when you possess them
-- When you quickly tap the jump button and the run button at the same time, you won't be able to stomp and sometimes controls will get stuck
+- SetHandPosition() in Fencer uses tracker.playerPosition as reference when it should use target
 - Enemy HP bars sometimes get stuck on the screen
 - Fencer fences do not always disappear when their partner dies?
 - 4-way intersection (tunnel) does not have floor backfaces or sides

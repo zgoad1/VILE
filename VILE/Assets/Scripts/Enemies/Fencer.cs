@@ -128,6 +128,28 @@ public class Fencer : Enemy {
 	}
 
 	/*
+	 * Normal player update method + moving our hands when we attack
+	 */
+	protected override void PlayerUpdate() {
+
+		switch(fencerState) {
+
+			case FencerState.ATTACK:
+				// we're in the process of attacking
+				SetHandPosition(handL, -handOffset);
+				SetHandPosition(handR, handOffset);
+				RecalculateBounds(true);
+				break;
+
+			default:
+				base.PlayerUpdate();
+				ResetHandPositions();
+				break;
+
+		}
+	}
+
+	/*
 	 * Add ourselves to other Fencers' partner lists when we enter their trigger area
 	 */
 	protected void OnTriggerEnter(Collider other) {
@@ -206,6 +228,7 @@ public class Fencer : Enemy {
 	public override void SetPlayer() {
 		base.SetPlayer();
 		ResetHandPositions();
+		fencerState = FencerState.WANDER;
 	}
 
 	/*
@@ -215,6 +238,7 @@ public class Fencer : Enemy {
 		if(target != null) {
 			base.Attack1();
 			anim.SetBool("attack1", true);
+			if(control == state.PLAYER) fencerState = FencerState.ATTACK;
 			//StartCoroutine("Attack1CR");
 		}
 	}
@@ -222,6 +246,7 @@ public class Fencer : Enemy {
 	protected void StopAttack1() {
 		if(anim.GetBool("attack1")) {
 			anim.SetBool("attack1", false);
+			if(control == state.PLAYER) fencerState = FencerState.WANDER;
 			//StopCoroutine("Attack1CR");
 			cooldownTimer = 0;
 			stamina += atk1Cost;
@@ -242,6 +267,7 @@ public class Fencer : Enemy {
 
 	public void OnAttack1Finish() {
 		anim.SetBool("attack1", false);
+		if(control == state.PLAYER) fencerState = FencerState.WANDER;
 	}
 
 	public override void Stun() {

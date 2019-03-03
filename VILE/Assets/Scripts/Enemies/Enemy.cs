@@ -15,6 +15,7 @@ public class Enemy : Controllable {
 	protected bool checkedForPlayer = false;    // whether we've called CanSeePlayer() this frame (saves a raycast when calling CanSeePlayer() twice in a frame)
 	protected bool sawPlayer = false;
 	protected ParticleSystem stunSparks;    // needed to stop the effect if we're possessed
+	protected bool haveStoppedStunSparks = true;
 
 	// debug
 	public Vector3 playerPoint;
@@ -118,6 +119,7 @@ public class Enemy : Controllable {
 	public override void Stun() {
 		base.Stun();
 		stunSparks = GameController.InstantiateFromPool(GameController.stunSparksPrefab, camLook).GetComponent<ParticleSystem>();
+		haveStoppedStunSparks = false;
 	}
 
 	public override void Knockback(Vector3 force) {
@@ -153,6 +155,9 @@ public class Enemy : Controllable {
 	}
 
 	private void StopStunSparks() {
-		if(stunSparks != null && control == state.STUNNED) stunSparks.Stop();
+		if(stunSparks != null && !haveStoppedStunSparks) {
+			stunSparks.Stop();
+			haveStoppedStunSparks = true;
+		}
 	}
 }

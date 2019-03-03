@@ -228,7 +228,8 @@ public class Player : Controllable {
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
 			foreach(Targetable t in targets) {
-				float distScore = t.distanceFromPlayerSquared + Mathf.Pow(t.distanceFromCenter * 100, 2);
+				float centerInfluence = 3f;	// Make this higher for more centered enemies to be targeted more often as opposed to closer ones
+				float distScore = t.distanceFromPlayerSquared + Mathf.Pow(centerInfluence * t.distanceFromCenter * 100, 2);
 				if(distScore < minDist) {
 					RaycastHit hit;
 					if(Physics.Linecast(camLook.position, t.camLook.position, out hit, rayMask)) {
@@ -317,7 +318,7 @@ public class Player : Controllable {
 			// sprinting
 
 			// stomp check
-			if(motionInput.z < 0 && !onGround && stompEnabled && stamina > 15) {
+			if(motionInput.z < -0.95f && !onGround && stompEnabled && stamina > 15) {
 				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
 															//    we press the run key
 				stomping = true;
@@ -525,7 +526,7 @@ public class Player : Controllable {
 	}
 
 	private IEnumerator EnableStomp() {
-		yield return new WaitForSeconds(0.5f);
+		yield return new WaitForSeconds(0.25f);
 		stompEnabled = true;
 	}
 

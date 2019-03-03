@@ -21,29 +21,30 @@ public class DyingEnemy : PooledObject {
 	}
 
 	// Start is called before the first frame update
-	void Start() {
+	void Awake() {
+		Reset();
 		// Set initial variables so we can revert to this upon Restart
 		foreach(Transform t in pieces) {
 			if(t.GetComponent<ParticleSystem>() == null) {
 				if(t.gameObject.layer == LayerMask.NameToLayer("Default")) {
 					t.gameObject.layer = LayerMask.NameToLayer("SmallParts");
 				}
-				initialPositions.Add(t.position);
-				initialRotations.Add(t.rotation);
+				initialPositions.Add(t.localPosition);
+				initialRotations.Add(t.localRotation);
 			}
 		}
-		PlayEffects();
 	}
 
 	// Relocate all the pieces and remove their physics
 	public override void Restart() {
+		StopCoroutine("Effects");
 		base.Restart();
 		for(int i = 0; i < initialPositions.Count; i++) {
 			Transform t = pieces.GetChild(i);
 			Destroy(t.GetComponent<Rigidbody>());
 			Destroy(t.GetComponent<MeshCollider>());
-			t.position = initialPositions[i];
-			t.rotation = initialRotations[i];
+			t.localPosition = initialPositions[i];
+			t.localRotation = initialRotations[i];
 		}
 		PlayEffects();
 	}
@@ -57,6 +58,9 @@ public class DyingEnemy : PooledObject {
 
 	// Blow off pieces gradually as particles play
 	private IEnumerator Effects() {
+		float interval = particles.main.duration / (initialPositions.Count + 1);
+		yield return new WaitForSeconds(interval);
+
 		// Generate an order to blow off the parts (no numbers can be repeated)
 		List<int> sequence = new List<int>();
 		for(int i = 0; i < initialPositions.Count; i++) {
@@ -65,7 +69,7 @@ public class DyingEnemy : PooledObject {
 
 		// Blow off the pieces at regular time intervals until the particle effect is done
 		int uh = 0;
-		for(float i = 0; i < particles.main.duration; i += particles.main.duration / initialPositions.Count, uh++) {
+		for(float i = interval; i < particles.main.duration; i += interval, uh++) {
 			GameObject ob = pieces.GetChild(sequence[uh]).gameObject;
 			MeshCollider mc = ob.AddComponent<MeshCollider>();
 			mc.convex = true;
@@ -74,7 +78,7 @@ public class DyingEnemy : PooledObject {
 			float maxRange = 5;
 			Vector3 randomOffset = new Vector3(Random.Range(minRange, maxRange), Random.Range(minRange, maxRange), Random.Range(minRange, maxRange));
 			rb.AddExplosionForce(Random.Range(2000, 3000), transform.position + randomOffset, 100);
-			yield return new WaitForSeconds(particles.main.duration / initialPositions.Count);
+			yield return new WaitForSeconds(interval);
 		}
 	}
 }
