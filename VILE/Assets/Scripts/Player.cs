@@ -120,7 +120,7 @@ public class Player : Controllable {
 		SetVelocity();
 
 		// debug
-		if(Input.GetButtonDown("Jump")) {
+		if(Input.GetButtonDown("Jump") && sprinting) {
 			yMove.y = 1;
 			StartCoroutine("EnableStomp");
 		}
@@ -318,6 +318,7 @@ public class Player : Controllable {
 			// sprinting
 
 			// stomp check
+			Debug.Log("Stomp enabled: " + stompEnabled);
 			if(motionInput.z < -0.95f && !onGround && stompEnabled && stamina > 15) {
 				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
 															//    we press the run key
@@ -369,8 +370,10 @@ public class Player : Controllable {
 			burst.Play();
 			GameController.camControl.SetZoomTransform(null);
 			invincible = false;
-			if(onGround) {
+			if(onGround && yMove.y < 0.1f) {
+				// We're on the ground and not rising; disable stomp
 				StopCoroutine("EnableStomp");
+				Debug.Log("STONPAWO DISIALBEDLED");
 				stompEnabled = false;
 			}
 			//anim.speed = 1;

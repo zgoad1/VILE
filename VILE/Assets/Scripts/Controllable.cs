@@ -123,6 +123,7 @@ public class Controllable : Targetable {
 	};
 	#endregion
 
+
 	protected override void Reset() {
 		base.Reset();
 
@@ -197,10 +198,10 @@ public class Controllable : Targetable {
 		ApplyGravity();
 
 		// sliding
-		float slideFriction = 0.5f;
+		float slideFriction = 0.95f;
 		if(onSlope) {
-			velocity.x += -velocity.y * hitNormal.x * (1f - slideFriction);
-			velocity.z += -velocity.y * hitNormal.z * (1f - slideFriction);
+			velocity.x += -yMove.y * hitNormal.x * (1f - slideFriction);
+			velocity.z += -yMove.y * hitNormal.z * (1f - slideFriction);
 		}
 
 		// apply knockback if it was called from an animation event

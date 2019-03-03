@@ -40,9 +40,6 @@
 **- A -**
 
 **- B -**
-- Fencer partner lists do not get set properly when possessed
-- Knockback should cancel attacks for weaker enemies
-- When you quickly tap the jump button and the run button at the same time, you won't be able to stomp and sometimes controls will get stuck
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
 - you can attack while sprinting (turn into a feature)
@@ -56,7 +53,6 @@
 **- C -**
 - SetHandPosition() in Fencer uses tracker.playerPosition as reference when it should use target
 - Enemy HP bars sometimes get stuck on the screen
-- Fencer fences do not always disappear when their partner dies?
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides
 - Tess Claws show up for one frame at their previous position when enabled

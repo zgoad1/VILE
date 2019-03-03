@@ -132,6 +132,7 @@ public class Fencer : Enemy {
 	 */
 	protected override void PlayerUpdate() {
 
+		UpdatePartner();
 		switch(fencerState) {
 
 			case FencerState.ATTACK:
@@ -145,7 +146,6 @@ public class Fencer : Enemy {
 				base.PlayerUpdate();
 				ResetHandPositions();
 				break;
-
 		}
 	}
 
@@ -235,7 +235,7 @@ public class Fencer : Enemy {
 	 * Start a coroutine for the attack animation
 	 */
 	protected override void Attack1() {
-		if(target != null) {
+		if(target != null && !hurtAnimPlaying) {
 			base.Attack1();
 			anim.SetBool("attack1", true);
 			if(control == state.PLAYER) fencerState = FencerState.ATTACK;
@@ -276,6 +276,8 @@ public class Fencer : Enemy {
 	}
 
 	public override void Knockback(Vector3 force) {
+		StopAttack1();
+		fencerState = FencerState.WANDER;
 		base.Knockback(force / 4f);	// we're really slidey so decrease the knockback a bit
 	}
 

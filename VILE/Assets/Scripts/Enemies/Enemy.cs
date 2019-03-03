@@ -117,9 +117,11 @@ public class Enemy : Controllable {
 	}
 
 	public override void Stun() {
-		base.Stun();
-		stunSparks = GameController.InstantiateFromPool(GameController.stunSparksPrefab, camLook).GetComponent<ParticleSystem>();
-		haveStoppedStunSparks = false;
+		if(!dead) {
+			base.Stun();
+			stunSparks = GameController.InstantiateFromPool(GameController.stunSparksPrefab, camLook).GetComponent<ParticleSystem>();
+			haveStoppedStunSparks = false;
+		}
 	}
 
 	public override void Knockback(Vector3 force) {
