@@ -4,8 +4,7 @@ using UnityEngine;
 
 //	TODO:
 //	- Add fence damage
-//	- Implement attacking while possessed
-//	- Add a second attack
+//	- Add a second attack (arm thrusts)
 
 public class Fencer : Enemy {
 	public Transform handL, handR;
@@ -13,6 +12,7 @@ public class Fencer : Enemy {
 	public TransformBand connectorM0, connectorM1;
 	public TessClaw[] fence;
 	public float handOffset;
+	[SerializeField] private Transform fenceHitbox;
 
 	private Vector3 iHandLPos, iHandRPos;
 	private Quaternion iHandLRot, iHandRRot;
@@ -24,6 +24,8 @@ public class Fencer : Enemy {
 	private List<Fencer> leftPartners = new List<Fencer>();
 	private Vector3 desiredPosition;
 	private SkinnedMeshRenderer[] movingParts = new SkinnedMeshRenderer[4];
+	private Vector3 newHitboxScale = Vector3.one;
+	private readonly Vector3 connectorMidpointOffset = new Vector3(0, 1.35f, 0);
 
 	enum FencerState {
 		WANDER, FOLLOW, ATTACK
@@ -202,11 +204,22 @@ public class Fencer : Enemy {
 				f.thicknessRandomness = Mathf.Clamp(f.thicknessRandomness + 0.05f, 0, ithickness);
 				f.enabled = true;
 			}
+			fenceHitbox.gameObject.SetActive(true);
+			Vector2 distVec = new Vector2(
+				connectorM0.transform.position.x - connectorF0.transform.position.x,
+				connectorM0.transform.position.z - connectorF0.transform.position.z
+			);
+			newHitboxScale.z = Mathf.Max(1, distVec.magnitude - 4);
+			fenceHitbox.localScale = newHitboxScale;
+			fenceHitbox.LookAt(partner.connectorF1.position + connectorMidpointOffset);
 		} else {
 			// decrease fence thickness
 			foreach(TessClaw f in fence) {
 				f.thicknessRandomness = Mathf.Clamp(f.thicknessRandomness - 0.05f, 0, ithickness);
-				if(f.thicknessRandomness == 0) f.enabled = false;
+				if(f.thicknessRandomness == 0) {
+					f.enabled = false;
+					fenceHitbox.gameObject.SetActive(false);
+				}
 			}
 		}
 	}
@@ -321,12 +334,12 @@ public class Fencer : Enemy {
 	protected void SetHandPosition(Transform hand, float position) {
 		hand.position = Vector3.Lerp(
 			hand.position, 
-			tracker.playerPosition + position * transform.right,
+			target.camLook.transform.position + position * transform.right,
 			0.2f
 		);
 		hand.right = Vector3.Slerp(
 			hand.right,
-			hand.position - tracker.playerPosition,
+			hand.position - target.camLook.transform.position,
 			0.2f
 		);
 	}

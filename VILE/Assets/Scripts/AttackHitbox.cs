@@ -15,6 +15,8 @@ public class AttackHitbox : MonoBehaviour {
 	[Range(0, 2)] public int index;
 	public float knockbackPower = 0;
 	public float gracePeriod = 0.5f;
+	public bool friendlyFire = true;
+	public bool affectSprintingPlayer = false;
 
 	private void Reset() {
 		collider = GetComponent<Collider>();
@@ -22,17 +24,32 @@ public class AttackHitbox : MonoBehaviour {
 	}
 
 	protected void OnTriggerEnter(Collider other) {
+
 		Controllable character = other.gameObject.GetComponent<Controllable>();
-		if(character != null && character != parent && !character.invincible) {
-			character.Damage(power, gracePeriod);
-			if(knockbackPower > 0) {
-				character.Knockback(knockbackPower * (character.transform.position - parent.transform.position).normalized);
+		if(!friendlyFire) {
+			// If friendlyFire is off and we hit something of the same type as us, do nothing
+			if(parent is Player && character is Player || parent is Enemy && character is Enemy) return;
+		}
+
+		// Check that we're damaging a valid character
+		if(character != null && character != parent) {
+			// Check that the character is not invincible and for special circumstances
+			if(!character.invincible || affectSprintingPlayer && character is Player && ((Player)character).isLightning) {
+				ApplyEffects(character);
 			}
 		}
 	}
 
 	protected void OnTriggerStay(Collider other) {
 		OnTriggerEnter(other);
+	}
+
+	// Apply hitbox effects such as damage and knockback
+	protected virtual void ApplyEffects(Controllable character) {
+		character.Damage(power, gracePeriod);
+		if(knockbackPower > 0) {
+			character.Knockback(knockbackPower * (character.transform.position - parent.transform.position).normalized);
+		}
 	}
 
 	// Update power, in case it's changed for some reason.

@@ -97,7 +97,7 @@ public class Enemy : Controllable {
 		hpBar.transform.SetParent(GameController.UICanvas.transform);
 	}
 
-	protected override void SetTarget() {
+	public override void SetTarget() {
 		base.SetTarget();
 		if(control == state.AI) target = FindObjectOfType<Player>();
 		else target = player.target;
@@ -148,7 +148,19 @@ public class Enemy : Controllable {
 	}
 
 	protected override void Die() {
-		if(this == GameController.player.possessed && player.possessing) GameController.player.Unpossess(false);
+
+		// Tell player.SetTarget() to ignore us
+		canTarget = false;
+		gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+
+		if(this == GameController.player.possessed && player.possessing) {
+			// Kick the player out if they had us possessed
+			GameController.player.Unpossess(false);
+		} else if(this == GameController.player.target) {
+			// Find a new target if the player was targeting us
+			GameController.player.SetTarget();
+		}
+
 		// Create the death VFX
 		GameController.InstantiateFromPool(deathObject, transform);
 		base.Die();

@@ -43,7 +43,6 @@
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
 - you can attack while sprinting (turn into a feature)
-- Target is reset to null when target dies and doesn't get set while attacking (when W is pressed it should try to set a new target)
 - robots can get stuck on corner barrier posts
 - CR's animation places it at origin
 - camera turning uses too much deltatime
@@ -51,7 +50,6 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- SetHandPosition() in Fencer uses tracker.playerPosition as reference when it should use target
 - Enemy HP bars sometimes get stuck on the screen
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides

@@ -202,7 +202,7 @@ public class Player : Controllable {
 
 	/**Set the target to the closest targetable in the targets array
 	 */
-	protected override void SetTarget() {
+	public override void SetTarget() {
 
 		/* NOTE: The below line disables the target's HPBar, and reenables it later if it's still the target.
 		 * However, UIBar.Update() is called at some point IN BETWEEN those two lines. As a fix, UIBar.Update() 
@@ -224,17 +224,20 @@ public class Player : Controllable {
 			}
 		}
 		// find the closest targetable in the targets array that isn't blocked by a wall
-		float minDist = Mathf.Infinity;
+		float minScore = Mathf.Infinity;
 		if(targets.Count > 0) {
 			Targetable newTarget = null;
 			foreach(Targetable t in targets) {
-				float centerInfluence = 3f;	// Make this higher for more centered enemies to be targeted more often as opposed to closer ones
-				float distScore = t.distanceFromPlayerSquared + Mathf.Pow(centerInfluence * t.distanceFromCenter * 100, 2);
-				if(distScore < minDist) {
+				float centerInfluence = 3f; // Make this higher for more centered enemies to be targeted more often as opposed to closer ones
+				float proxScore = 2 * Mathf.Log(t.distanceFromPlayerSquared + 0.5f, 2f) + 1f;
+				float centerScore = Mathf.Pow(centerInfluence * t.distanceFromCenter * 10, 2);
+				float compositeScore = proxScore + centerScore;
+				//Debug.Log("Name: " + t.gameObject.name + "\nproxScore: " + proxScore + "\ncenterScore: " + centerScore + "\ncompositeScore: " + compositeScore);
+				if(compositeScore < minScore) {
 					RaycastHit hit;
 					if(Physics.Linecast(camLook.position, t.camLook.position, out hit, rayMask)) {
 						if(Helper.GetRelatedTargetable(hit.collider.gameObject) == t) {
-							minDist = distScore;
+							minScore = compositeScore;
 							newTarget = t;
 						}
 						//targetRayHitPoint = hit.point;
@@ -318,7 +321,6 @@ public class Player : Controllable {
 			// sprinting
 
 			// stomp check
-			Debug.Log("Stomp enabled: " + stompEnabled);
 			if(motionInput.z < -0.95f && !onGround && stompEnabled && stamina > 15) {
 				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
 															//    we press the run key
@@ -373,7 +375,6 @@ public class Player : Controllable {
 			if(onGround && yMove.y < 0.1f) {
 				// We're on the ground and not rising; disable stomp
 				StopCoroutine("EnableStomp");
-				Debug.Log("STONPAWO DISIALBEDLED");
 				stompEnabled = false;
 			}
 			//anim.speed = 1;
@@ -446,8 +447,8 @@ public class Player : Controllable {
 		yield return new WaitForSeconds(0.4f);
 		// exert hitbox, don't stun enemies (only target)
 		if(target is Enemy) {
-			((Enemy)target).Damage(attack2Power);
 			((Enemy)target).Stun();
+			((Enemy)target).Damage(attack2Power);
 		} else if(target is Door) {
 			((Door)target).Open(true);
 			((Door)target).Spark();
@@ -540,5 +541,13 @@ public class Player : Controllable {
 		stomping = false;
 		disableSprint = false;
 		readInput = true;
+	}
+
+	/* Method to be called when player runs into an electric fence while sprinting
+	 */
+	 public void OnHitElectricFence() {
+		TurnIntoLightning(false);
+		disableSprint = true;
+		anim.ResetTrigger("land");
 	}
 }

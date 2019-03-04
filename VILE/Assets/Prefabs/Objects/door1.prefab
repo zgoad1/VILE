@@ -444,10 +444,10 @@ MonoBehaviour:
   camLook: {fileID: 0}
   screenCoords: {x: 0, y: 0, z: 0}
   isTarget: 0
-  distanceFromPlayer: 0
+  distanceFromPlayerSquared: 0
+  distanceFromCenter: 0
   isOnScreen: 0
   canTarget: 1
-  radius: 5
   open: 0
 --- !u!1 &6975887133058936667
 GameObject:
@@ -550,27 +550,32 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
         type: 3}
-      propertyPath: ShapeModule.type
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
-        type: 3}
       propertyPath: ShapeModule.m_Scale.x
-      value: 15
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
         type: 3}
       propertyPath: ShapeModule.m_Scale.y
-      value: 12
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
         type: 3}
-      propertyPath: looping
-      value: 0
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[1].value
+      value: -0.42168617
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
         type: 3}
-      propertyPath: ShapeModule.radiusThickness
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[1].inSlope
+      value: -0.32530022
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[1].outSlope
+      value: -0.32530022
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[1].time
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
@@ -580,8 +585,93 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
         type: 3}
+      propertyPath: ShapeModule.type
+      value: 17
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: ShapeModule.radius.value
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: ShapeModule.donutRadius
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: InitialModule.startSpeed.minScalar
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: InitialModule.startSpeed.scalar
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: lengthInSec
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].value
+      value: -0.096385956
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].inSlope
+      value: -0.32530022
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].outSlope
+      value: -0.32530022
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].tangentMode
+      value: 34
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].outWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[1].inWeight
+      value: 0.33333334
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: VelocityModule.radial.maxCurve.m_Curve.Array.data[0].time
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: NoiseModule.strength.scalar
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: TrailModule.minVertexDistance
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
       propertyPath: EmissionModule.rateOverTime.scalar
-      value: 10
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 198900368442110154, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11,
+        type: 3}
+      propertyPath: ShapeModule.radiusThickness
+      value: 1.0000
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 668eee4ebe4ddbb45808b8e9dbf3ea11, type: 3}

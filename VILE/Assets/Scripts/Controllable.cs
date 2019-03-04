@@ -267,7 +267,7 @@ public class Controllable : Targetable {
 
 	#endregion
 
-	protected virtual void SetTarget() {
+	public virtual void SetTarget() {
 
 	}
 
@@ -380,6 +380,9 @@ public class Controllable : Targetable {
 		return onGround && stamina >= atkCost && cooldownTimer <= 0;
 	}
 
+	/**	NOTE: this method may destroy the object it's called on.
+	 *  Check if the object is null if it must be accessed after using this.
+	 */
 	public virtual void Damage(float damage) {
 		Damage(damage, defaultGracePeriod);
 	}
