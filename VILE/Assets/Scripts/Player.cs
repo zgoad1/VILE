@@ -28,7 +28,7 @@ public class Player : Controllable {
 	[HideInInspector] public bool stomping = false;
 	protected Vector3 stompVelocity = new Vector3(0, -5, 0);
 	protected bool disableSprint = false;
-	protected bool stompEnabled = false;
+	protected bool airAttacksEnabled = false;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -119,17 +119,20 @@ public class Player : Controllable {
 		}
 		SetVelocity();
 
-		// debug
+		// Jumping
 		if(Input.GetButtonDown("Jump") && sprinting) {
 			yMove.y = 1;
-			StartCoroutine("EnableStomp");
+			StartCoroutine("EnableAirAttacks");
 		}
 
 		CommonUpdate();
+
 		anim.SetFloat("yVelocity", calculatedVelocity.y);
+
 		if(!attacking || anim.GetBool("attackComboing")) {
 			if(atk1Key && CanAttack(atk1Cost)) Attack1();
 		}
+
 		if(attacking) {
 			PlayerDirection();
 			if(target != null) {
@@ -321,7 +324,7 @@ public class Player : Controllable {
 			// sprinting
 
 			// stomp check
-			if(motionInput.z < -0.95f && !onGround && stompEnabled && stamina > 15) {
+			if(motionInput.z < -0.95f && !onGround && airAttacksEnabled && stamina > 15) {
 				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
 															//    we press the run key
 				stomping = true;
@@ -346,9 +349,20 @@ public class Player : Controllable {
 		}
 	}
 
+	protected override void ApplyGravity() {
+		// Freeze in midair if we start attacking
+		if(!attacking) {
+			base.ApplyGravity();
+		}
+	}
+
 	#endregion
 
 	#region Abilities
+
+	protected override bool CanAttack(float atkCost) {
+		return stamina >= atkCost && cooldownTimer <= 0;
+	}
 
 	private void TurnIntoLightning(bool enable) {
 		if(enable && !isLightning) {
@@ -362,7 +376,6 @@ public class Player : Controllable {
 			GameController.camControl.ScreenShake(1.5f);
 			if(gracePeriodCR != null) StopCoroutine(gracePeriodCR);
 			invincible = true;
-			//anim.speed = 0;
 			//flasher.FlashStart(Color.red, Color.white, -1);
 			isLightning = true;     // protect this part from repeated calls
 		} else if(!enable && isLightning) {
@@ -374,10 +387,9 @@ public class Player : Controllable {
 			invincible = false;
 			if(onGround && yMove.y < 0.1f) {
 				// We're on the ground and not rising; disable stomp
-				StopCoroutine("EnableStomp");
-				stompEnabled = false;
+				StopCoroutine("EnableAirAttacks");
+				airAttacksEnabled = false;
 			}
-			//anim.speed = 1;
 			//flasher.FlashStop();
 			if(motionInput.magnitude < 0.1f && onGround) {
 				anim.SetTrigger("land");
@@ -428,6 +440,7 @@ public class Player : Controllable {
 
 	protected override void Attack1() {
 		velocity = Vector3.zero;
+		yMove = Vector3.zero;
 		anim.SetTrigger("attack1");
 	}
 
@@ -529,13 +542,13 @@ public class Player : Controllable {
 		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
 	}
 
-	private IEnumerator EnableStomp() {
+	private IEnumerator EnableAirAttacks() {
 		yield return new WaitForSeconds(0.25f);
-		stompEnabled = true;
+		airAttacksEnabled = true;
 	}
 
 	/* Reset stomping booleans in case we were stopped mid-stomp, i.e. by somehow
-	 * possessing an enemy while stomping
+	 * possessing an enemy while stomping, which can apparently happen
 	 */
 	private void InterruptStomp() {
 		stomping = false;

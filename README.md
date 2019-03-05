@@ -50,6 +50,7 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- Quickly tapping sprint and then trying to move straight backward will cause Tess to rotate incorrectly
 - Enemy HP bars sometimes get stuck on the screen
 - 4-way intersection (tunnel) does not have floor backfaces or sides
 - Dead end (tunnel) does not have floor sides

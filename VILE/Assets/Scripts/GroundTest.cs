@@ -71,10 +71,12 @@ public class GroundTest : MonoBehaviour {
 
 	protected virtual void Land() {
 		parent.onGround = true;
+		parent.anim.SetBool("isOnGround", true);
 		parent.yMove.y = 0;
 	}
 	protected virtual void Leave() {
 		parent.onGround = false;
+		parent.anim.SetBool("isOnGround", false);
 	}
 
 	/* Wait a bit to avoid triggering extra land animations, which can break things

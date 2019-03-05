@@ -1108,6 +1108,8 @@ MonoBehaviour:
   index: 0
   knockbackPower: 5
   gracePeriod: 0.5
+  friendlyFire: 1
+  affectSprintingPlayer: 0
 --- !u!1 &1619347598
 GameObject:
   m_ObjectHideFlags: 0
@@ -7586,7 +7588,7 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.5
+      scalar: 0.25
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -11260,7 +11262,7 @@ ParticleSystem:
     widthOverTrail:
       serializedVersion: 2
       minMaxState: 1
-      scalar: 0.25
+      scalar: 0.1
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -17438,11 +17440,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4985323384670246}
     m_Modifications:
-    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
-        type: 3}
-      propertyPath: m_Name
-      value: GroundTest
-      objectReference: {fileID: 0}
     - target: {fileID: 7337019073217755933, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -17497,6 +17494,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
+        type: 3}
+      propertyPath: m_Name
+      value: GroundTest
       objectReference: {fileID: 0}
     - target: {fileID: 7337019073217756003, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}

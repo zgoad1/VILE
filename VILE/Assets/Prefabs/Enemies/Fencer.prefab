@@ -1082,7 +1082,7 @@ MonoBehaviour:
   power: 5
   parent: {fileID: 2146306553429924726}
   index: 2
-  knockbackPower: 5
+  knockbackPower: 3
   gracePeriod: 0.25
   friendlyFire: 0
   affectSprintingPlayer: 1
@@ -2027,16 +2027,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5026389917147755035}
     m_Modifications:
-    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
-        type: 3}
-      propertyPath: m_Name
-      value: GroundTest
-      objectReference: {fileID: 0}
-    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
-        type: 3}
-      propertyPath: m_Layer
-      value: 16
-      objectReference: {fileID: 0}
     - target: {fileID: 7337019073217755933, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -2091,6 +2081,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
+        type: 3}
+      propertyPath: m_Name
+      value: GroundTest
+      objectReference: {fileID: 0}
+    - target: {fileID: 7337019073217755934, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 7337019073217755932, guid: 29d29d9ec79f6e04880a16cfe9edfc4d,
         type: 3}
