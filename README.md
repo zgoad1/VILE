@@ -7,7 +7,7 @@
 - On dying enemy parts models, read/write must be enabled or collisions will not work in builds
 
 ## To Do
-- midair versions of both of Tess's attacks
+- close-up version of attack2 if the target is close enough
 - average, everyday room designs
 - advanced room designs
 - reticle distance limit visualization
@@ -40,6 +40,7 @@
 **- A -**
 
 **- B -**
+- You can sometimes jump while air attacking
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
 - you can attack while sprinting (turn into a feature)

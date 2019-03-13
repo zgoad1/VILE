@@ -7,6 +7,8 @@ using System;
  * If provided, use specified information.
  * 
  * NOTE: Starting room MUST be tagged "StartRoom", and ending room MUST be tagged "EndRoom"
+ * 
+ * TODO: Replace all area intersections with 1 conductor with dead ends
  */
 public class MapGenerator : MonoBehaviour {
 
@@ -14,7 +16,7 @@ public class MapGenerator : MonoBehaviour {
 	public int roomsToExit = 80;						// how many rooms away the exit will be
 	public int minRooms = 400;							// minimum amount of rooms to generate
 	public string seed = "random";						// seed to use for RNG
-	public float roomSize = 100;                        // size of standard room in units
+	public static float roomSize = 100;                 // size of standard room in units
 
 	public GameObject[] rooms;							// list of all room prefabs
 	[HideInInspector] public int[] amounts;             // how many of each room we've placed
@@ -27,12 +29,13 @@ public class MapGenerator : MonoBehaviour {
 	private Dictionary<int, List<Room>> distLists;      // lists of rooms at a certain distance from the start
 	private int roomsMade = 0;                          // number of rooms generated so far
 	private Vector3 tileOffset;                         // how to offset the grid to put the start room at the origin
+	private List<AreaIntersection> intersections = new List<AreaIntersection>();	// run PlaceConductors() on each of these at end of GenerateMap()
 
 	// stuff to move to a subclass that's specific to this game
 	private GameObject flyingPlane;
 	[SerializeField] private float flyingHeight = 24;
 
-	private readonly Vector2[] directions = {new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1)};
+	public static readonly Vector2[] directions = {new Vector2(1, 0), new Vector2(0, -1), new Vector2(-1, 0), new Vector2(0, 1)};
 
 	enum dIndex {
 		RIGHT = 0, UP = 1, LEFT = 2, DOWN = 3
@@ -84,6 +87,7 @@ public class MapGenerator : MonoBehaviour {
 		Reset();
 		DestroyMap();
 		SetMapSeed(seed);
+		intersections.Clear();
 
 		// place start room and GameController.player
 		Vector2 startCoords = new Vector2(Mathf.Floor(gridSize.x / 2), Mathf.Floor(9 * gridSize.y / 10));
@@ -164,6 +168,13 @@ public class MapGenerator : MonoBehaviour {
 					continue;
 				}
 			}
+
+			// TODO: Replace AIs with one conductor with dead ends
+
+			// Spawn Conductors for AreaIntersections
+			foreach(AreaIntersection a in intersections) {
+				a.PlaceConductors();
+			}
 		}
 	}
 
@@ -182,7 +193,7 @@ public class MapGenerator : MonoBehaviour {
 		UnityEngine.Random.InitState(seedInt);
 	}
 
-	/**Randomly pick a room from a list that satisfies:
+	/* Randomly pick a room from a list that satisfies:
 	 * - frequency > 0
 	 * - independent == true
 	 * - haven't already placed the max amount
@@ -255,7 +266,7 @@ public class MapGenerator : MonoBehaviour {
 		return true;
 	}
 
-	/**A room can fit at a position if:
+	/* A room can fit at a position if:
 	 * - the position is in bounds of the map
 	 * - there's not a room there already
 	 * - all the room's doorways connect either to other doorways or empty spots on the map
@@ -342,6 +353,10 @@ public class MapGenerator : MonoBehaviour {
 		thisRoom.coords = new Vector2(x, y);
 		map[y, x].transform.position = new Vector3(thisRoom.coords.x, 0, -thisRoom.coords.y) * roomSize + tileOffset;
 		map[y, x].transform.SetParent(transform);
+		if(thisRoom is AreaIntersection) {
+			intersections.Add((AreaIntersection)thisRoom);
+			((AreaIntersection)thisRoom).conductors.Add(Room.GetOppositeDirection(DirectionTo(open[0], thisRoom)));
+		}
 
 		// remove any adjacent rooms from open list if they've been closed by placing this room
 		// (we've already done logic to confirm we're fitting this room to other doorways)
@@ -357,26 +372,14 @@ public class MapGenerator : MonoBehaviour {
 					// there is a room here
 
 					// handle adjacent room being area intersection
-					if(adj.type == Room.area.INTERSECTION) {
-						adj.doors.Remove(Room.GetOppositeDirection(d));
-					}
-
-					// handle thisRoom being area intersection
-					if(thisRoom.type == Room.area.INTERSECTION) {
-						thisRoom.doors.Remove(d);
+					if(adj is AreaIntersection) {
+						((AreaIntersection)adj).conductors.Add(Room.GetOppositeDirection(d));
 					}
 
 					// if adjacent room was closed by this, remove it from open list
 					if(!IsOpenStill(adj)) {
 						open.Remove(adj);
 					}
-				}
-			} else {
-				// that way is out of bounds
-
-				// handle thisRoom being area intersection
-				if(thisRoom.type == Room.area.INTERSECTION) {
-					thisRoom.doors.Remove(d);
 				}
 			}
 		}
@@ -446,7 +449,7 @@ public class MapGenerator : MonoBehaviour {
 		if(r.type == Room.area.INTERSECTION) {
 			// area intersections are considered open when they are connected to less than 2 rooms
 			// (i.e., there are still at least 2 rooms left in its doors array)
-			return r.doors.Count > 2;
+			return ((AreaIntersection)r).conductors.Count >= 2;
 		}
 		return GetOpenDirection(r) != (Room.direction)(-1);
 	}
@@ -504,6 +507,17 @@ public class MapGenerator : MonoBehaviour {
 	}
 	List<GameObject> GetFittingRooms(Vector2 pos, List<GameObject> list) {
 		return GetFittingRooms((int)pos.x, (int)pos.y, list);
+	}
+
+	// get a direction that points from r1 to r2
+	Room.direction DirectionTo(Room r1, Room r2) {
+		Vector2 d = r2.coords - r1.coords;
+		if(Mathf.Abs(d.x) > Mathf.Abs(d.y)) {
+			if(d.x < 0) return Room.direction.LEFT;
+			return Room.direction.RIGHT;
+		}
+		if(d.y < 0) return Room.direction.UP;
+		return Room.direction.DOWN;
 	}
 	#endregion
 }

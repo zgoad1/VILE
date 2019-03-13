@@ -89,7 +89,7 @@ public class Enemy : Controllable {
 	protected override void Start() {
 		base.Start();
 		SetTarget();
-		hpBar = Instantiate(GameController.enemyHpBarObject).GetComponent<UIBar>();
+		hpBar = Instantiate(GameController.enemyHpBarPrefab).GetComponent<UIBar>();
 		hpBar.character = this;
 		hpBar.value = hp;
 		hpBar.maxValue = maxHP;

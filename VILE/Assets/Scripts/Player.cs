@@ -89,6 +89,7 @@ public class Player : Controllable {
 				Unpossess(true);
 			}
 		}
+
 		#region claw animations
 		clawL.gameObject.SetActive(clawLVisible);
 		if(clawLVisible) {
@@ -120,7 +121,7 @@ public class Player : Controllable {
 		SetVelocity();
 
 		// Jumping
-		if(Input.GetButtonDown("Jump") && sprinting) {
+		if(Input.GetButtonDown("Jump") && sprinting && !attacking) {
 			yMove.y = 1;
 			StartCoroutine("EnableAirAttacks");
 		}
@@ -353,6 +354,8 @@ public class Player : Controllable {
 		// Freeze in midair if we start attacking
 		if(!attacking) {
 			base.ApplyGravity();
+		} else {
+			yMove.y = 0;
 		}
 	}
 

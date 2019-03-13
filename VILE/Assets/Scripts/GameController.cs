@@ -5,12 +5,38 @@ using UnityEngine.SceneManagement;
 
 public class GameController : MonoBehaviour {
 
+	#region Static
+	// Singleton objects
 	public static GameController instance;
 	public static Player player;
 	public static MainCamera mainCam;
 	public static Camera mainCamCam;
 	public static CameraControl camControl;
-	public static GameObject enemyHpBarObject;
+
+	// Global GameObjects
+	public static GameObject enemyHpBarPrefab {
+		get {
+			if(instance == null) {
+				instance = GameObject.Find("Game Controller").GetComponent<GameController>();
+			}
+			return instance._enemyHpBarPrefab;
+		}
+	}
+	public static GameObject conductorPrefab {
+		get {
+			if(instance == null) {
+				instance = GameObject.Find("Game Controller").GetComponent<GameController>();
+			}
+			return instance._conductorPrefab;
+		}
+	}
+
+	// Folders
+	public static Transform enemyParent;
+	public static Transform objectPoolParent;
+	public static Transform clawRendererParent;
+
+	// Misc.
 	public static RectTransform UICanvas;
 	private static Animator blackfade;
 	public static int frames = 0;
@@ -22,7 +48,10 @@ public class GameController : MonoBehaviour {
 	public static int defaultLayerMask;
 	public static int solidLayer;
 	public static int enemyLayer;
+	#endregion
 
+	#region Materials
+	[Header("Materials")]
 	// laser barriers
 	[SerializeField] private Material laserBarrier;
 	private Color newColorLB;
@@ -38,13 +67,21 @@ public class GameController : MonoBehaviour {
 	private Color newColorAS = Color.gray;
 
 	// conductor animation
-	[SerializeField] private Material conductor;
+	[SerializeField] private Material conductorMaterial;
 	private Vector2 conductorScrollSpeed = new Vector2(0, 0.02f);
 
 	// tunnel lights
 	[SerializeField] private Material tunnelGlow;
 	private Vector2 tunnelGlowOffset = Vector2.zero;
+	#endregion
 
+	#region Singleton objects
+	[Header("Singleton objects")]
+	public GameObject _enemyHpBarPrefab;
+	public GameObject _conductorPrefab;
+	#endregion
+	
+	[Header("Object pool")]
 	[SerializeField] private int numPremadeObjects = 10;    // how many of each object to pool
 	[SerializeField] private List<GameObject> objectList;   // said objects
 	private static List<GameObject> objectPool = new List<GameObject>();
@@ -72,12 +109,14 @@ public class GameController : MonoBehaviour {
 		newColorLB = laserBarrier.color;
 		initialAlphaLB = newColorLB.a;
 		blackfade = GameObject.Find("Blackfade").GetComponent<Animator>();
-		enemyHpBarObject = Resources.Load<GameObject>("Enemy HP");
 		UICanvas = FindObjectOfType<Canvas>().GetComponent<RectTransform>();
 		defaultLayerMask = 1 << LayerMask.NameToLayer("Solid") | 1 << LayerMask.NameToLayer("Characters") | 1 << LayerMask.NameToLayer("Default");
 		stunSparksPrefab = objectList.Find(g => g.name == "StunSparks");
 		enemyLayer = LayerMask.NameToLayer("Enemies");
 		solidLayer = LayerMask.NameToLayer("Solid");
+		enemyParent = GameObject.Find("Enemies").transform;
+		objectPoolParent = GameObject.Find("Object Pool").transform;
+		clawRendererParent = GameObject.Find("Claw Renderers").transform;
 	}
 
 	// Use this for initialization
@@ -137,7 +176,7 @@ public class GameController : MonoBehaviour {
 			arcStone.SetColor("_EmissionColor", newColorAS);
 
 			// conductor
-			conductor.mainTextureOffset += conductorScrollSpeed;
+			conductorMaterial.mainTextureOffset += conductorScrollSpeed;
 
 			#endregion
 
@@ -203,6 +242,7 @@ public class GameController : MonoBehaviour {
 			foreach(GameObject ob in objectList) {
 				GameObject newOb = Instantiate(ob);
 				objectPool.Add(newOb);
+				newOb.transform.SetParent(objectPoolParent);
 				newOb.SetActive(false);
 			}
 		}

@@ -2,6 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/**Transports the player through area intersections.
+ * The player enters and then exits through one of four sides.
+ * Upon touching the Conductor, the player is disabled and a camera animation plays:
+ *    - The screen does a fade transition to a tunnel (the inside of a big wire 
+ *      connected to the conductor) and plays an animation in which it traverses
+ *      the tunnel.
+ *    - The player is prompted for input: left, right, forward, or backward.
+ *    - Another animation plays in which the camera exits through the chosen tunnel.
+ * When the animation is finished, the camera transitions back to the overworld and
+ * the player reappears outside the conductor they exited through.
+ */
+
 public class Conductor : Targetable {
 
 }

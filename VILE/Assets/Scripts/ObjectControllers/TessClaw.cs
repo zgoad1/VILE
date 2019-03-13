@@ -37,6 +37,7 @@ public class TessClaw : MonoBehaviour {
 	private void Start() {
 		// create empty object for mesh renderer
 		clawRenderer = new GameObject("Claw Renderer (" + gameObject.name + ")");
+		clawRenderer.transform.SetParent(GameController.clawRendererParent);
 		MeshFilter mf = clawRenderer.AddComponent<MeshFilter>();
 		mesh = new Mesh();
 		mf.mesh = mesh;

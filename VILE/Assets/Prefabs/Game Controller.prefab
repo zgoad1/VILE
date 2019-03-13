@@ -40,15 +40,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 1918211930950684}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_GeneratorAsset: {fileID: 0}
   m_Script: {fileID: 11500000, guid: 6de23534ef938994cacec0316a1ab091, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   laserBarrier: {fileID: 2100000, guid: af53a24d9e8035340ab2b18312aa6f42, type: 2}
   wallGlow: {fileID: 2100000, guid: 0a2d7138b9e2a8f4c9a0a6538d4c5979, type: 2}
   arcStone: {fileID: 2100000, guid: 04bf23ae499fe82469a01e1d920604f7, type: 2}
-  conductor: {fileID: 2100000, guid: 41c2232ab26f06547a40024f1760d0a9, type: 2}
+  conductorMaterial: {fileID: 2100000, guid: 41c2232ab26f06547a40024f1760d0a9, type: 2}
   tunnelGlow: {fileID: 2100000, guid: b0272dd2824f7514b8deb626bdc18fc4, type: 2}
+  _enemyHpBarPrefab: {fileID: 6860118453048391802, guid: 89fbb79d4ab9f0f4eac4299a19c59a78,
+    type: 3}
+  _conductorPrefab: {fileID: 8794810632622809546, guid: 609d4d606fd2b99429e0046c9652344d,
+    type: 3}
   numPremadeObjects: 5
   objectList:
   - {fileID: 7414752342150661629, guid: 283bda1992a956446ba1aa99a826cfce, type: 3}
