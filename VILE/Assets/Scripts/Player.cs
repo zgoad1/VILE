@@ -7,7 +7,7 @@ public class Player : Controllable {
 	// claws are needed for animations
 	[SerializeField] private float clawLThickness = 0, clawRThickness = 0;
 	[SerializeField] private bool clawLVisible = false, clawRVisible = false;
-	[SerializeField] private TessClaw clawL, clawR;	// these are used
+	[SerializeField] private TessClaw clawL, clawR; // these are used
 
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
@@ -58,7 +58,7 @@ public class Player : Controllable {
 
 	protected override void Start() {
 		base.Start();
-		
+
 		prevPosition = transform.position;
 		GameController.mainCam.transform.position = transform.position;
 
@@ -179,7 +179,7 @@ public class Player : Controllable {
 				newForward.y = 0;
 				transform.forward = newForward;
 			}
-		// if we land on an enemy, slide off
+			// if we land on an enemy, slide off
 		} else if(hit.gameObject.layer == GameController.enemyLayer && hit.point.y - transform.position.y < 0.5f) {
 			// if the normal points outward (and not just upward), slide out that way
 			if(hit.normal.x != 0 || hit.normal.z != 0) {
@@ -189,14 +189,18 @@ public class Player : Controllable {
 			}
 			// else just go somewhere idc
 		}
+
+		// Possessing enemies and hitting conductors
+		Conductor conductor = hit.gameObject.GetComponentInParent<Conductor>();
 		if(hit.gameObject.GetComponent<Enemy>() == target && control == state.AI) {
 			//Debug.Log("Possessing " + target);
 			Possess((Enemy)target);
-		} else if(hit.gameObject.GetComponent<Conductor>() == target && control == state.AI) {
+		} else if(conductor == target && control == state.AI) {
 			TurnIntoLightning(false);
-			DisableRenderer();
+			GameController.camControl.EnterConductor(conductor);
 			GameController.mainCam.ScreenShake(1);
-			GameController.camControl.lookAt = target.transform;
+			DisableRenderer();
+			enabled = false;
 		}
 		// make a "checkpoint" to keep from falling off map
 		if(onGround && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
@@ -326,10 +330,10 @@ public class Player : Controllable {
 
 			// stomp check
 			if(motionInput.z < -0.95f && !onGround && airAttacksEnabled && stamina > 15) {
-				if(!isLightning) TurnIntoLightning(true);	// covers the case where we're holding the down key before
+				if(!isLightning) TurnIntoLightning(true);   // covers the case where we're holding the down key before
 															//    we press the run key
 				stomping = true;
-				disableSprint = true;	// to keep us from instantly sprinting again when we hit the ground in
+				disableSprint = true;   // to keep us from instantly sprinting again when we hit the ground in
 										//		the case that we're still holding the sprint key
 				readInput = false;      // to keep us from moving for a bit while the stomp animation finishes
 				ResetControls();        // to keep leftover input from making us move while reading input is disabled
@@ -429,13 +433,13 @@ public class Player : Controllable {
 			possessed = null;
 			SetPlayer();
 			TurnIntoLightning(true);
-			if(target != null) {	// don't use CanPossessTarget() here because you can freely jump to other enemies once you've possessed one
+			if(target != null) {    // don't use CanPossessTarget() here because you can freely jump to other enemies once you've possessed one
 				control = state.AI;
 			} else {
 				control = state.PLAYER;
 			}
 		} else {
-			isLightning = true;	// cheat to make TurnIntoLightning(false) work
+			isLightning = true; // cheat to make TurnIntoLightning(false) work
 			TurnIntoLightning(false);
 			SetPlayer();
 		}
@@ -561,7 +565,7 @@ public class Player : Controllable {
 
 	/* Method to be called when player runs into an electric fence while sprinting
 	 */
-	 public void OnHitElectricFence() {
+	public void OnHitElectricFence() {
 		TurnIntoLightning(false);
 		disableSprint = true;
 		anim.ResetTrigger("land");

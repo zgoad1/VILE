@@ -169,7 +169,9 @@ public class MapGenerator : MonoBehaviour {
 				}
 			}
 
-			// TODO: Replace AIs with one conductor with dead ends
+			// TODO:	- Replace AIs with one conductor with dead ends
+			//			- Replace AIs that are only connected to one area type with the applicable intersection,
+			//			  if possible (need all types of interseciton, e.g. not necessarily tunnels)
 
 			// Spawn Conductors for AreaIntersections
 			foreach(AreaIntersection a in intersections) {

@@ -28,6 +28,7 @@ public class AreaIntersection : Room {
 			newLocalPos.x += MapGenerator.directions[(int)d].x * MapGenerator.roomSize / 2;
 			newLocalPos.z += -MapGenerator.directions[(int)d].y * MapGenerator.roomSize / 2;
 			Conductor c = Instantiate(GameController.conductorPrefab).GetComponent<Conductor>();
+			c.direction = d;
 			Vector3 newForward = new Vector3(MapGenerator.directions[(int)d].x, 0, -MapGenerator.directions[(int)d].y);
 			c.transform.position = transform.position + newLocalPos;
 			c.transform.up = newForward;

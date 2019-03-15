@@ -8,11 +8,13 @@ public class CameraControl : MonoBehaviour {
 	public Transform camTransform;      // camera position (lerps towards adjusted position)
 	public float rad = 0.5f;            // distance from solid to stop at
 	[SerializeField] private float height = 4f;
-	[HideInInspector] public float lerpFac;
-	public float iLerpFac = 0.2f;
+	[HideInInspector] public float tightness;
+	public float iTightness = 0.2f;
 	public float camSensitivity = 1f;
 	public float idistance = 14;
 	[HideInInspector] public float distance;
+	[HideInInspector] public bool conducting = false;
+	[HideInInspector] public Animator mainCamAnim;
 
 	private Vector3 dir;
 	private Quaternion rot;
@@ -29,7 +31,7 @@ public class CameraControl : MonoBehaviour {
 	private float shakeStart;
 	private Transform zoomTransform = null;
 	private float zoomLerpFac = 0.1f;
-	private Vector3 zOff = Vector3.zero;	// used for zooming
+	private Vector3 zOff = Vector3.zero;    // used for zooming
 
 	// Use this for initialization
 	void Start() {
@@ -38,11 +40,12 @@ public class CameraControl : MonoBehaviour {
 		dir = new Vector3(0, 0, -distance);
 		lookOffset = new Vector3(0f, height, 0f);
 
-		lerpFac = iLerpFac;
+		tightness = iTightness;
 		sensitivityX *= camSensitivity;
 		sensitivityY *= camSensitivity;
 		// layers to raycast upon
 		raymask = 1 << LayerMask.NameToLayer("Default") | 1 << LayerMask.NameToLayer("IgnoreCollision") | 1 << LayerMask.NameToLayer("Solid");
+		mainCamAnim = GameController.mainCam.GetComponent<Animator>();
 	}
 
 	private void Update() {
@@ -64,16 +67,27 @@ public class CameraControl : MonoBehaviour {
 	void LateUpdate() {
 		// keep the camera from going through solid colliders
 		if(zoomTransform != null) {
-			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);	// smoothly move and rotate the
-			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);		// main camera
+			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);   // smoothly move and rotate the
+			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);      // main camera
 			currentX = lookAt.rotation.eulerAngles.y;   // keep the camera behind the player when it goes back to normal tracking mode
 														// (mouse movements shouldn't affect where the camera is when we come out of
 														// lightning bolt mode)
 			ScreenShakeUpdate();
+
+			// possible bug: screenshake may interfere with conductor traversal. Might want to prevent screenshake while conducting
+			if(conducting) {
+				// If we're close enough to the start point of the conductor, start the traversal animation
+				if((zoomTransform.position - camTransform.position).sqrMagnitude < 0.05f) {
+					mainCamAnim.SetTrigger("conductor");
+					zoomTransform = null;
+				}
+			}
 		} else {
+			if(!conducting) {
+			// Normal camera update method
 			RaycastHit hit;
 			Vector3 rayDir = transform.position - (lookAt.position + lookOffset);
-			if(Physics.SphereCast(lookAt.position + lookOffset, rad, rayDir, out hit, idistance, raymask)) { 
+			if(Physics.SphereCast(lookAt.position + lookOffset, rad, rayDir, out hit, idistance, raymask)) {
 				Vector3 newPos = hit.point + hit.normal * rad;
 				distance = Mathf.Min(idistance, Vector3.Distance(lookAt.position + lookOffset, newPos));
 				//Debug.Log("Camera raycasted upon a " + hit.transform.gameObject);
@@ -84,11 +98,16 @@ public class CameraControl : MonoBehaviour {
 				SetCam(distance);
 			}
 			camTransform.localPosition -= zOff;
-			camTransform.position = Vector3.Slerp(camTransform.position, adjTransform.position, lerpFac * 60 * Time.smoothDeltaTime);
+			camTransform.position = Vector3.Slerp(camTransform.position, adjTransform.position, tightness * 60 * Time.smoothDeltaTime);
 			zOff.z = Mathf.Lerp(zOff.z, 0, 0.1f);
 			camTransform.localPosition += zOff;
 			ScreenShakeUpdate();
 			camTransform.LookAt(lookAt);
+			} else {
+			// do nothing and let the conductor traversal animation move us
+			}
+
+			//			conducting = false;
 		}
 	}
 
@@ -99,7 +118,7 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void SetCam(float distance) {
-		if(zoomTransform == null) {	// only allow for camera movement via mouse if we're not sprinting
+		if(zoomTransform == null) { // only allow for camera movement via mouse if we're not sprinting
 			dir.z = -distance;
 			rot = Quaternion.Euler(currentY, currentX, 0);
 
@@ -143,5 +162,12 @@ public class CameraControl : MonoBehaviour {
 	public void SetZoomTransform(Transform t) {
 		zoomTransform = t;
 		zoomLerpFac = 0.1f;
+	}
+
+	public void EnterConductor(Conductor conductor) {
+		conducting = true;
+		SetZoomTransform(conductor.zoomTransform_in);
+		mainCamAnim.SetBool("out", false);
+		mainCamAnim.SetInteger("direction", (int)conductor.direction);
 	}
 }

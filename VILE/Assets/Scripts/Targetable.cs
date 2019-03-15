@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// Doors and Controllables.
+// Anything that can be targeted by the player.
 
 public class Targetable : MonoBehaviour {
 	[HideInInspector] public Transform camLook; // where the reticle should move to
