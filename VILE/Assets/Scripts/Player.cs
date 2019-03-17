@@ -29,6 +29,7 @@ public class Player : Controllable {
 	protected Vector3 stompVelocity = new Vector3(0, -5, 0);
 	protected bool disableSprint = false;
 	protected bool airAttacksEnabled = false;
+	private PlayerReticle reticle;
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -54,6 +55,7 @@ public class Player : Controllable {
 		stBar = GameObject.Find("Tess St").GetComponent<UIBar>();
 		stBar.character = this;
 		stBar.maxValue = 100;
+		reticle = FindObjectOfType<PlayerReticle>();
 	}
 
 	protected override void Start() {
@@ -204,6 +206,13 @@ public class Player : Controllable {
 		}
 		// make a "checkpoint" to keep from falling off map
 		if(onGround && Mathf.Floor(Time.time) % 2 == 0) iPos = transform.position;
+	}
+
+	private void OnEnable() {
+		if(reticle != null) reticle.gameObject.SetActive(true);
+	}
+	private void OnDisable() {
+		if(reticle != null) reticle.gameObject.SetActive(false);
 	}
 
 	#region Targeting

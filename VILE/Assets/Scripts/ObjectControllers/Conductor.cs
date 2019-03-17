@@ -18,15 +18,14 @@ public class Conductor : Targetable {
 
 	[HideInInspector] public Room.direction direction;
 	public Transform zoomTransform_in, zoomTransform_out;
+	public AreaIntersection room;
 
 	private void Start() {
 		zoomTransform_in.SetParent(null);
 		zoomTransform_in.LookAt(transform);
-		zoomTransform_in.up = Vector3.up;
 		zoomTransform_in.SetParent(transform);
 		zoomTransform_out.SetParent(null);
 		zoomTransform_out.LookAt(transform);
-		zoomTransform_out.up = Vector3.up;
 		zoomTransform_out.SetParent(transform);
 	}
 }

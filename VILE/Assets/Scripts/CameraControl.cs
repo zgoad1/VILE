@@ -6,6 +6,7 @@ public class CameraControl : MonoBehaviour {
 	public Transform lookAt;
 	public Transform adjTransform;      // adjusted position
 	public Transform camTransform;      // camera position (lerps towards adjusted position)
+	[SerializeField] private Transform mainCamParent;
 	public float rad = 0.5f;            // distance from solid to stop at
 	[SerializeField] private float height = 4f;
 	[HideInInspector] public float tightness;
@@ -15,6 +16,7 @@ public class CameraControl : MonoBehaviour {
 	[HideInInspector] public float distance;
 	[HideInInspector] public bool conducting = false;
 	[HideInInspector] public Animator mainCamAnim;
+	[SerializeField] private GameObject[] arrows;
 
 	private Vector3 dir;
 	private Quaternion rot;
@@ -32,6 +34,8 @@ public class CameraControl : MonoBehaviour {
 	private Transform zoomTransform = null;
 	private float zoomLerpFac = 0.1f;
 	private Vector3 zOff = Vector3.zero;    // used for zooming
+	private Conductor conductor;
+	private bool goingOut = false;			// in reference to conductors
 
 	// Use this for initialization
 	void Start() {
@@ -65,21 +69,28 @@ public class CameraControl : MonoBehaviour {
 	}
 
 	void LateUpdate() {
-		// keep the camera from going through solid colliders
+			// keep the camera from going through solid colliders
 		if(zoomTransform != null) {
-			camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);   // smoothly move and rotate the
-			camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);      // main camera
-			currentX = lookAt.rotation.eulerAngles.y;   // keep the camera behind the player when it goes back to normal tracking mode
-														// (mouse movements shouldn't affect where the camera is when we come out of
-														// lightning bolt mode)
-			ScreenShakeUpdate();
-
-			// possible bug: screenshake may interfere with conductor traversal. Might want to prevent screenshake while conducting
-			if(conducting) {
-				// If we're close enough to the start point of the conductor, start the traversal animation
-				if((zoomTransform.position - camTransform.position).sqrMagnitude < 0.05f) {
+			if(!conducting) {
+				camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);   // smoothly move and rotate the
+				camTransform.rotation = Quaternion.Slerp(camTransform.rotation, lookAt.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);      // main camera
+				currentX = lookAt.rotation.eulerAngles.y;   // keep the camera behind the player when it goes back to normal tracking mode
+															// (mouse movements shouldn't affect where the camera is when we come out of
+															// lightning bolt mode)
+				ScreenShakeUpdate();
+			} else {
+				if((zoomTransform.position - camTransform.position).sqrMagnitude < 0.01f) {
+					// If we're close enough to the start point of the conductor, start the traversal animation
+					mainCamAnim.enabled = true;
+					SetAnimPos(zoomTransform);
 					mainCamAnim.SetTrigger("conductor");
+					mainCamAnim.SetBool("out", goingOut);
+					mainCamAnim.SetInteger("direction", (int)conductor.direction);
 					zoomTransform = null;
+				} else {
+					// Else approach the conductor
+					camTransform.position = Vector3.Lerp(camTransform.position, zoomTransform.position, zoomLerpFac * 60 * Time.smoothDeltaTime);   // smoothly move and rotate the
+					camTransform.rotation = Quaternion.Slerp(camTransform.rotation, zoomTransform.rotation, zoomLerpFac * 60 * Time.smoothDeltaTime);
 				}
 			}
 		} else {
@@ -104,10 +115,8 @@ public class CameraControl : MonoBehaviour {
 			ScreenShakeUpdate();
 			camTransform.LookAt(lookAt);
 			} else {
-			// do nothing and let the conductor traversal animation move us
+				// do nothing and let the conductor traversal animation move us
 			}
-
-			//			conducting = false;
 		}
 	}
 
@@ -166,8 +175,80 @@ public class CameraControl : MonoBehaviour {
 
 	public void EnterConductor(Conductor conductor) {
 		conducting = true;
+		goingOut = false;
 		SetZoomTransform(conductor.zoomTransform_in);
-		mainCamAnim.SetBool("out", false);
-		mainCamAnim.SetInteger("direction", (int)conductor.direction);
+		this.conductor = conductor;
+	}
+
+	// Make animations work
+	private void SetAnimPos(Transform t) {
+		mainCamParent.position = t.position;
+		mainCamParent.rotation = t.rotation;
+		camTransform.position = t.position;
+		camTransform.rotation = t.rotation;
+		camTransform.SetParent(mainCamParent);
+	}
+
+	// Display arrows that point towards the exits of a conductor intersection
+	public void ShowArrows() {
+		int offset = 3 - (int)conductor.direction;
+		foreach(Room.direction d in conductor.room.conductors) {
+			arrows[((int)d + offset) % 4].SetActive(true);
+		}
+		StartCoroutine("ListenForConductorInput");
+	}
+
+	private IEnumerator ListenForConductorInput() {
+		int direction;
+		while(true) {
+			float hInput = Input.GetAxis("Horizontal");
+			float vInput = Input.GetAxis("Vertical");
+			if(hInput < 0) {
+				// if the intersection has an exit in this direction, go there
+				direction = ((int)conductor.direction + 3) % 4;
+				if(conductor.room.conductors.Contains((Room.direction)direction)) {
+					break;
+				}
+			}
+			if(hInput > 0) {
+				// if the intersection has an exit in this direction, go there
+				direction = ((int)conductor.direction + 1) % 4;
+				if(conductor.room.conductors.Contains((Room.direction)direction)) {
+					break;
+				}
+			}
+			if(vInput < 0) {
+				// if the intersection has an exit in this direction, go there
+				direction = ((int)conductor.direction) % 4;
+				if(conductor.room.conductors.Contains((Room.direction)direction)) {
+					break;
+				}
+			}
+			if(vInput > 0) {
+				// if the intersection has an exit in this direction, go there
+				direction = ((int)conductor.direction + 2) % 4;
+				if(conductor.room.conductors.Contains((Room.direction)direction)) {
+					break;
+				}
+			}
+			yield return null;
+		}
+
+		conductor = conductor.room.conductorObjects[direction];
+		zoomTransform = conductor.zoomTransform_out;
+		goingOut = true;
+
+		foreach(GameObject o in arrows) {
+			o.SetActive(false);
+		}
+	}
+
+	public void FinishConducting() {
+		GameController.player.enabled = true;
+		GameController.player.transform.position = conductor.zoomTransform_in.position;
+		GameController.player.transform.forward = -conductor.zoomTransform_in.forward;
+		GameController.player.velocity = -conductor.zoomTransform_in.forward * 2;
+		GameController.player.Unpossess(false);
+		conducting = false;
 	}
 }

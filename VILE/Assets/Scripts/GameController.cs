@@ -66,13 +66,12 @@ public class GameController : MonoBehaviour {
 	private Vector2 arcStoneOffset = Vector2.zero;
 	private Color newColorAS = Color.gray;
 
-	// conductor animation
-	[SerializeField] private Material conductorMaterial;
-	private Vector2 conductorScrollSpeed = new Vector2(0, 0.02f);
-
 	// tunnel lights
 	[SerializeField] private Material tunnelGlow;
 	private Vector2 tunnelGlowOffset = Vector2.zero;
+
+	// any animated material that just scrolls vertically
+	[SerializeField] private ScrollingMaterial[] scrolling;
 	#endregion
 
 	#region Singleton objects
@@ -89,6 +88,8 @@ public class GameController : MonoBehaviour {
 	private static float ifov;
 	private static bool isLevel = false;    // whether we're currently in the playable level
 	[HideInInspector] public static GameObject stunSparksPrefab;
+
+
 
 	public void FindPlayer() {
 		player = FindObjectOfType<Player>();
@@ -176,7 +177,10 @@ public class GameController : MonoBehaviour {
 			arcStone.SetColor("_EmissionColor", newColorAS);
 
 			// conductor
-			conductorMaterial.mainTextureOffset += conductorScrollSpeed;
+			foreach(ScrollingMaterial m in scrolling) {
+				m.material.mainTextureOffset += m.scrollSpeed * 60 * Time.deltaTime;
+			}
+			//conductorMaterial.mainTextureOffset += verticalScrollSpeed;
 
 			#endregion
 

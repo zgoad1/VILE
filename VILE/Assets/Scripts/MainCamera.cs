@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class MainCamera : MonoBehaviour {
 
+	private Animator anim;
+
+	private void Start() {
+		anim = GetComponent<Animator>();
+	}
+
 	private void OnTriggerEnter(Collider collision) {
 		//Debug.Log("Camera hit a " + collision.gameObject);
 		FadeWhenClose fader = collision.gameObject.GetComponent<FadeWhenClose>();
@@ -21,5 +27,20 @@ public class MainCamera : MonoBehaviour {
 
 	public void ScreenShake(float intensity) {
 		GameController.camControl.ScreenShake(intensity);
+	}
+
+	// Disable the animator and preserve our transform
+	private void AnimFunc_OnConductorInFinish() {
+		Vector3 newPos = transform.position;
+		Quaternion newRot = transform.rotation;
+		anim.enabled = false;
+		transform.position = newPos;
+		transform.rotation = newRot;
+		GameController.camControl.ShowArrows();
+	}
+
+	private void AnimFunc_OnConductorOutFinish() {
+		GameController.camControl.FinishConducting();
+		anim.enabled = false;
 	}
 }

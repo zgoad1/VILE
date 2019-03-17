@@ -42,6 +42,21 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: Metal__tex_conductor
     second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: black__tex_conductor_png
+    second: {fileID: 2100000, guid: 41c2232ab26f06547a40024f1760d0a9, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: flashy__tex_conductor_png
+    second: {fileID: 2100000, guid: c1646b4de84bb5f4abbb5d78fbd1e959, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: red__tex_conductor_png
+    second: {fileID: 2100000, guid: 41c2232ab26f06547a40024f1760d0a9, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -125,8 +140,6 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 1
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -139,7 +152,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -149,6 +162,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 2
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1

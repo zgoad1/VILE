@@ -38,8 +38,13 @@
 ## Bugs
 
 **- A -**
+- Traversing a conductor will sometimes permanently disable the reticle
+	- Observed again except the reticle was enabled but targeting didn't work
+- Seed 1786: An area intersection only connects to 2 of its doors
+- The tunnel environment never spawns
 
 **- B -**
+- Pausing while going through a conductor resets the animation
 - You can sometimes jump while air attacking
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
@@ -51,6 +56,8 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- Reticle fades in when targeting even when it's already faded in
+- After the first conductor animation, the first frame of each conductor animation will place the camera in the wrong spot
 - Quickly tapping sprint and then trying to move straight backward will cause Tess to rotate incorrectly
 - Enemy HP bars sometimes get stuck on the screen
 - 4-way intersection (tunnel) does not have floor backfaces or sides
