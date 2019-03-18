@@ -8,6 +8,7 @@ public class Player : Controllable {
 	[SerializeField] private float clawLThickness = 0, clawRThickness = 0;
 	[SerializeField] private bool clawLVisible = false, clawRVisible = false;
 	[SerializeField] private TessClaw clawL, clawR; // these are used
+	[SerializeField] private GameObject footprintPrefabL, footprintPrefabR;
 
 	private ParticleSystem lightning;
 	private ParticleSystem burst;
@@ -21,7 +22,7 @@ public class Player : Controllable {
 	private bool canPossess = true;
 	private LayerMask rayMask;
 	private AttackHitbox ahbL, ahbR;
-	public UIBar stBar;
+	[HideInInspector] public UIBar stBar;
 	private float rechargeFactor = 0.05f;
 	protected bool sprintKey = false;
 	protected bool sprinting = false;
@@ -522,6 +523,13 @@ public class Player : Controllable {
 
 	public void AnimFunc_OnStompEnd() {
 		readInput = true;
+	}
+
+	private void AnimFunc_FootstepL() {
+		if(GetRoomType() == Room.area.HALLS) GameController.InstantiateFromPool(footprintPrefabL, transform);
+	}
+	private void AnimFunc_FootstepR() {
+		if(GetRoomType() == Room.area.HALLS) GameController.InstantiateFromPool(footprintPrefabR, transform);
 	}
 
 	#endregion

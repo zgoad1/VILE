@@ -25,13 +25,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: metal
+    second: {fileID: 2100000, guid: 443d20f8b2188024a8151b5c18fa5869, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: metal__tex_floor_glass
-    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+    second: {fileID: 2100000, guid: 443d20f8b2188024a8151b5c18fa5869, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: pipe__tex_floor_glass
+    second: {fileID: 2100000, guid: 432135a7797d3654ea0373621dd95f0d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: space
+    second: {fileID: 2100000, guid: db904cc59225713488ac75e31225e216, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: space__tex_space_anim
     second: {fileID: 2100000, guid: db904cc59225713488ac75e31225e216, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: turquoise
+    second: {fileID: 2100000, guid: af53a24d9e8035340ab2b18312aa6f42, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -93,7 +113,7 @@ ModelImporter:
       maskType: 3
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
-    isReadable: 0
+    isReadable: 1
   meshes:
     lODScreenPercentages: []
     globalScale: 10

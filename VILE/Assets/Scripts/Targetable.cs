@@ -51,4 +51,16 @@ public class Targetable : MonoBehaviour {
 	public bool IsInFrontOf(Targetable t) {
 		return Helper.IsInFrontOf(t.transform, transform);
 	}
+
+	public Vector2Int GetRoomCoords() {
+		return new Vector2Int(
+			Mathf.FloorToInt((transform.position.x + (MapGenerator.map.GetLength(1) + 1) * MapGenerator.roomSize / 2) / MapGenerator.roomSize),
+			Mathf.FloorToInt((-transform.position.z + (MapGenerator.map.GetLength(0) + 1) * MapGenerator.roomSize / 2) / MapGenerator.roomSize)
+		);
+	}
+
+	public Room.area GetRoomType() {
+		Vector2Int coords = GetRoomCoords();
+		return MapGenerator.map[coords.y, coords.x].GetComponent<Room>().type;
+	}
 }

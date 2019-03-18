@@ -40,7 +40,7 @@ public class Controllable : Targetable {
 		}
 	}
 	[HideInInspector] public bool dead = false;
-	public UIBar hpBar;
+	[HideInInspector] public UIBar hpBar;
 
 	// stamina and attacking
 	protected bool attacking = false;

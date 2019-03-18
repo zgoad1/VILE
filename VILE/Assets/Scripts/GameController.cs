@@ -262,7 +262,7 @@ public class GameController : MonoBehaviour {
 					// copy transform of original object
 					o.transform.position = transform.position;
 					o.transform.rotation = transform.rotation;
-					o.transform.localScale = transform.localScale;
+					//o.transform.localScale = transform.localScale;
 
 					// move to back of list
 					objectPool.Remove(o);

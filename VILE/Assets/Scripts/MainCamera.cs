@@ -5,9 +5,11 @@ using UnityEngine;
 public class MainCamera : MonoBehaviour {
 
 	private Animator anim;
+	private Transform iParent;
 
 	private void Start() {
 		anim = GetComponent<Animator>();
+		iParent = transform.parent;
 	}
 
 	private void OnTriggerEnter(Collider collision) {
@@ -37,10 +39,16 @@ public class MainCamera : MonoBehaviour {
 		transform.position = newPos;
 		transform.rotation = newRot;
 		GameController.camControl.ShowArrows();
+		//ResetParent();
 	}
 
 	private void AnimFunc_OnConductorOutFinish() {
 		GameController.camControl.FinishConducting();
 		anim.enabled = false;
+		//ResetParent();
+	}
+
+	public void ResetParent() {
+		transform.SetParent(iParent);
 	}
 }

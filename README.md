@@ -40,10 +40,11 @@
 **- A -**
 - Traversing a conductor will sometimes permanently disable the reticle
 	- Observed again except the reticle was enabled but targeting didn't work
-- Seed 1786: An area intersection only connects to 2 of its doors
-- The tunnel environment never spawns
+- Seed 7824: Several area intersections do not connect to all their doors
 
 **- B -**
+- Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
+- Sliding and then flying will continue your slide when you start falling again
 - Pausing while going through a conductor resets the animation
 - You can sometimes jump while air attacking
 - Sprinting can sometimes fuse you with a wall
@@ -57,7 +58,6 @@
 
 **- C -**
 - Reticle fades in when targeting even when it's already faded in
-- After the first conductor animation, the first frame of each conductor animation will place the camera in the wrong spot
 - Quickly tapping sprint and then trying to move straight backward will cause Tess to rotate incorrectly
 - Enemy HP bars sometimes get stuck on the screen
 - 4-way intersection (tunnel) does not have floor backfaces or sides

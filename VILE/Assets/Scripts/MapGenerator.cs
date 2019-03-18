@@ -17,13 +17,19 @@ public class MapGenerator : MonoBehaviour {
 	public int minRooms = 400;							// minimum amount of rooms to generate
 	public string seed = "random";						// seed to use for RNG
 	public static float roomSize = 100;                 // size of standard room in units
+	public static MapGenerator instance;				// Singleton instance
 
 	public GameObject[] rooms;							// list of all room prefabs
 	[HideInInspector] public int[] amounts;             // how many of each room we've placed
 	[HideInInspector] public List<Room> roomInstances;  // list of all room instances placed on the map
 
 	private List<GameObject> roomsList;					// a list data structure that's otherwise exactly the same as the rooms array
-	private GameObject[,] map;							// the map to be generated
+	public GameObject[,] _map;							// the map to be generated
+	public static GameObject[,] map {
+		get {
+			return instance._map;
+		}
+	}
 	private List<Room> open;							// rooms that still need to be closed with end rooms
 	private List<Room> necessary = new List<Room>();	// rooms that have to be spawned at least once
 	private Dictionary<int, List<Room>> distLists;      // lists of rooms at a certain distance from the start
@@ -48,7 +54,7 @@ public class MapGenerator : MonoBehaviour {
 		roomsList = new List<GameObject>(rooms);
 		amounts = new int[rooms.Length];
 		roomInstances = new List<Room>();
-		map = new GameObject[(int)gridSize.y, (int)gridSize.x];
+		_map = new GameObject[(int)gridSize.y, (int)gridSize.x];
 		open = new List<Room>();
 		necessary = new List<Room>();
 		foreach(GameObject o in rooms) {
@@ -66,6 +72,11 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	void Start () {
+		if(instance == null) instance = this;
+		else {
+			Debug.LogError("There are multiple MapGenerators in the scene.");
+			Destroy(this);
+		}
 		GenerateMap(seed);
 	}
 	
@@ -107,15 +118,17 @@ public class MapGenerator : MonoBehaviour {
 			// choose a random room to place out of all the rooms that could fit there
 			List<GameObject> canFit = GetFittingRooms(newCoords, roomsList);
 			if(canFit.Count == 0) {
-				Debug.LogError("No fitting room to attach to " + open[0] + " in the direction " + GetOpenDirection(open[0]) +
+				Debug.LogError("No fitting room to attach to " + open[0] + " at " + open[0].coords + " in the direction " + GetOpenDirection(open[0]) +
 					"\nIncoming ArgumentOutOfRangeException.");
+				// repeat for debug
+				canFit = GetFittingRooms(newCoords, roomsList);
 			}
 			do {
 				success = TryPlaceRoom(newCoords, GetRandomRoom(canFit));
 			} while(!success);
 
 			// set distFromStart to that of the previous room plus one
-			Room thisRoom = map[(int)newCoords.y, (int)newCoords.x].GetComponent<Room>();
+			Room thisRoom = _map[(int)newCoords.y, (int)newCoords.x].GetComponent<Room>();
 			// if we wanted to make this actually accurate we'd add 1 to the minimum distance
 			// of the existing rooms in each direction that we have a door
 			thisRoom.distFromStart = prevRoom.distFromStart + 1;
@@ -180,7 +193,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 
-	#region RNG stuff
+#region RNG stuff
 	// set RNG to use specified seed (if it's been changed from "random")
 	void SetMapSeed(string seed) {
 		UnityEngine.Random.InitState((int)(Time.realtimeSinceStartup * 1000 + Time.time * 1000));
@@ -230,9 +243,9 @@ public class MapGenerator : MonoBehaviour {
 		} while(choice == null);
 		return choice;
 	}
-	#endregion
+#endregion
 
-	#region Room placement and related checks
+#region Room placement and related checks
 	// return true and place the room if it can fit; return false if not
 	bool TryPlaceRoom(int x, int y, GameObject r) {
 		Room thisRoom = r.GetComponent<Room>();
@@ -277,14 +290,14 @@ public class MapGenerator : MonoBehaviour {
 	 */
 	bool CanFitAt(int x, int y, Room r, bool ignoreRoomHere = false) {
 		if(!IsInBounds(x, y)) return false;						// this position is out of map bounds
-		if(!ignoreRoomHere && map[y, x] != null) return false;  // there's already a room here (and it matters in this context)
+		if(!ignoreRoomHere && _map[y, x] != null) return false;  // there's already a room here (and it matters in this context)
 		if(r.type != Room.area.INTERSECTION) {					// since intersections have variable numbers of doors, this doesn't matter
 			foreach(Room.direction d in r.doors) {
 				Vector2 newCoords = new Vector2(x, y);
 				if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
 			}
 		}
-		#region check constraints of surrounding rooms
+#region check constraints of surrounding rooms
 		Room left = RoomAt(x - 1, y);
 		if(left != null) {
 			if(!left.CanHave(r, Room.direction.RIGHT)) {
@@ -309,7 +322,7 @@ public class MapGenerator : MonoBehaviour {
 				return false;
 			}
 		}
-		#endregion
+#endregion
 		// if this room takes up more than one space, check if it can fit where we're trying to put it
 		if(r.IsBig()) {
 			// check each coordinate we're about to place a room, and if they all work then continue
@@ -349,12 +362,12 @@ public class MapGenerator : MonoBehaviour {
 	// Set the specified map position to the given room and check if it's open after placing it.
 	// To be used with individual rooms or big room parts; only places a single room at a single position.
 	void PlaceRoom(int x, int y, GameObject r) {
-		map[y, x] = Instantiate(r);
+		_map[y, x] = Instantiate(r);
 		amounts[GetIndex(r)]++;
-		Room thisRoom = map[y, x].GetComponent<Room>();
+		Room thisRoom = _map[y, x].GetComponent<Room>();
 		thisRoom.coords = new Vector2(x, y);
-		map[y, x].transform.position = new Vector3(thisRoom.coords.x, 0, -thisRoom.coords.y) * roomSize + tileOffset;
-		map[y, x].transform.SetParent(transform);
+		_map[y, x].transform.position = new Vector3(thisRoom.coords.x, 0, -thisRoom.coords.y) * roomSize + tileOffset;
+		_map[y, x].transform.SetParent(transform);
 		if(thisRoom is AreaIntersection) {
 			intersections.Add((AreaIntersection)thisRoom);
 			((AreaIntersection)thisRoom).conductors.Add(Room.GetOppositeDirection(DirectionTo(open[0], thisRoom)));
@@ -414,8 +427,8 @@ public class MapGenerator : MonoBehaviour {
 
 	// return a Room if there's a Room at this position on the map; null if there isn't
 	Room RoomAt(int x, int y) {
-		if(IsInBounds(x, y) && map[y, x] != null) {
-			return map[y, x].GetComponent<Room>();
+		if(IsInBounds(x, y) && _map[y, x] != null) {
+			return _map[y, x].GetComponent<Room>();
 		} else {
 			return null;
 		}
@@ -426,7 +439,7 @@ public class MapGenerator : MonoBehaviour {
 
 	// whether a the specified indices are in the bounds of the map
 	bool IsInBounds(int x, int y) {
-		return x >= 0 && x < map.GetLength(1) && y >= 0 && y < map.GetLength(0);
+		return x >= 0 && x < _map.GetLength(1) && y >= 0 && y < _map.GetLength(0);
 	}
 	bool IsInBounds(Vector2 pos) {
 		return IsInBounds((int)pos.x, (int)pos.y);
@@ -437,7 +450,8 @@ public class MapGenerator : MonoBehaviour {
 		if(r.IsOpenInitially() || r.gameObject.tag == "StartRoom") {
 			// return the first direction where there's a door in that direction with no room beyond it
 			foreach(Room.direction d in r.doors) {
-				if(RoomAt(r.coords + directions[(int)d]) == null) {
+				Vector2 newCoords = r.coords + directions[(int)d];
+				if(RoomAt(newCoords) == null && IsInBounds(newCoords)) {
 					return d;
 				}
 			}
@@ -450,8 +464,7 @@ public class MapGenerator : MonoBehaviour {
 	bool IsOpenStill(Room r) {
 		if(r.type == Room.area.INTERSECTION) {
 			// area intersections are considered open when they are connected to less than 2 rooms
-			// (i.e., there are still at least 2 rooms left in its doors array)
-			return ((AreaIntersection)r).conductors.Count >= 2;
+			return ((AreaIntersection)r).conductors.Count < 2 && (int)GetOpenDirection(r) != -1;
 		}
 		return GetOpenDirection(r) != (Room.direction)(-1);
 	}
@@ -499,11 +512,13 @@ public class MapGenerator : MonoBehaviour {
 
 	// get a list of all rooms that can fit at a specified location
 	// exclude rooms with a frequency of 0 (start and end, bigroom parts)
-	List<GameObject> GetFittingRooms(int x, int y, List<GameObject> list) {
+	List<GameObject> GetFittingRooms(int x, int y, List<GameObject> roomList) {
 		List<GameObject> fits = new List<GameObject>();
-		foreach(GameObject o in list) {
+		foreach(GameObject o in roomList) {
 			Room thisRoom = o.GetComponent<Room>();
-			if(CanFitAt(x, y, thisRoom) && thisRoom.frequency > 0) fits.Add(o);
+			if(CanFitAt(x, y, thisRoom) && thisRoom.frequency > 0) {
+				fits.Add(o);
+			}
 		}
 		return fits;
 	}
@@ -521,5 +536,5 @@ public class MapGenerator : MonoBehaviour {
 		if(d.y < 0) return Room.direction.UP;
 		return Room.direction.DOWN;
 	}
-	#endregion
+#endregion
 }

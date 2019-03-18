@@ -4,6 +4,7 @@ using UnityEngine;
 
 /* A collection of helper methods that would make me a bad programmer if they
  * were scattered among other files.
+ * aka scripts that should be built into unity but aren't for no reason
  */
 
 public class Helper {
@@ -62,5 +63,14 @@ public class Helper {
 		vec.x = Mathf.Cos(angle * toRotate.x) - Mathf.Sin(angle * toRotate.z);
 		vec.z = Mathf.Sin(angle * toRotate.x) + Mathf.Cos(angle * toRotate.z);
 		output = vec;
+	}
+
+	public static Transform RecursiveFind(Transform t, string s) {
+		if(t.name == s) return t;
+		foreach(Transform child in t) {
+			Transform found = RecursiveFind(child, s);
+			if(found != null) return found;
+		}
+		return null;
 	}
 }
