@@ -122,7 +122,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9e18555088b6c54eac8629aa7c737a9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 0
+  type: 1
   frequency: 0.1
   limit: -1
   indep: 1
@@ -138,12 +138,24 @@ MonoBehaviour:
   downExclude: []
   distFromStart: 0
   coords: {x: 0, y: 0}
+  walls:
+  - areaType: 0
+    wallPrefab: {fileID: 0}
+  - areaType: 1
+    wallPrefab: {fileID: 0}
+  - areaType: 2
+    wallPrefab: {fileID: 618918544713117353, guid: 01516c66c998a504c91402732496ef5c,
+      type: 3}
+  - areaType: 3
+    wallPrefab: {fileID: 618918544713117353, guid: 01516c66c998a504c91402732496ef5c,
+      type: 3}
   conductors: 
   conductorObjects:
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
   - {fileID: 0}
+  connectedAreas: 00000000000000000000000000000000
 --- !u!1001 &6188646227023846460
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -71,7 +71,7 @@ public class MapGenerator : MonoBehaviour {
 		flyingPlane.transform.localScale = new Vector3(gridSize.x * roomSize / 10, 1, gridSize.y * roomSize / 10);
 	}
 
-	void Start () {
+	void Start() {
 		if(instance == null) instance = this;
 		else {
 			Debug.LogError("There are multiple MapGenerators in the scene.");
@@ -297,7 +297,8 @@ public class MapGenerator : MonoBehaviour {
 				if(!IsInBounds(newCoords + directions[(int)d])) return false;    // there's a doorway into the edge of the map
 			}
 		}
-#region check constraints of surrounding rooms
+
+		#region check constraints of surrounding rooms
 		Room left = RoomAt(x - 1, y);
 		if(left != null) {
 			if(!left.CanHave(r, Room.direction.RIGHT)) {
@@ -322,7 +323,8 @@ public class MapGenerator : MonoBehaviour {
 				return false;
 			}
 		}
-#endregion
+		#endregion
+
 		// if this room takes up more than one space, check if it can fit where we're trying to put it
 		if(r.IsBig()) {
 			// check each coordinate we're about to place a room, and if they all work then continue
@@ -370,11 +372,7 @@ public class MapGenerator : MonoBehaviour {
 		_map[y, x].transform.SetParent(transform);
 		if(thisRoom is AreaIntersection) {
 			intersections.Add((AreaIntersection)thisRoom);
-			((AreaIntersection)thisRoom).conductors.Add(Room.GetOppositeDirection(DirectionTo(open[0], thisRoom)));
 		}
-
-		// remove any adjacent rooms from open list if they've been closed by placing this room
-		// (we've already done logic to confirm we're fitting this room to other doorways)
 
 		Room.direction[] doorDirecs = { Room.direction.LEFT, Room.direction.RIGHT, Room.direction.UP, Room.direction.DOWN };
 
@@ -386,9 +384,17 @@ public class MapGenerator : MonoBehaviour {
 				if(adj != null) {
 					// there is a room here
 
+					// handle this room being area intersection
+					if(thisRoom is AreaIntersection && adj.doors.Contains(Room.GetOppositeDirection(d))) {
+						((AreaIntersection)thisRoom).conductors.Add(d);
+						((AreaIntersection)thisRoom).connectedAreas[(int)d] = adj.type;
+					}
+
 					// handle adjacent room being area intersection
 					if(adj is AreaIntersection) {
-						((AreaIntersection)adj).conductors.Add(Room.GetOppositeDirection(d));
+						Room.direction dOpp = Room.GetOppositeDirection(d);
+						((AreaIntersection)adj).conductors.Add(dOpp);
+						((AreaIntersection)adj).connectedAreas[(int)dOpp] = thisRoom.type;
 					}
 
 					// if adjacent room was closed by this, remove it from open list
@@ -464,6 +470,9 @@ public class MapGenerator : MonoBehaviour {
 	bool IsOpenStill(Room r) {
 		if(r.type == Room.area.INTERSECTION) {
 			// area intersections are considered open when they are connected to less than 2 rooms
+			//if(!(r is AreaIntersection)) {
+			//	Debug.Log("You are stupid.");
+			//}
 			return ((AreaIntersection)r).conductors.Count < 2 && (int)GetOpenDirection(r) != -1;
 		}
 		return GetOpenDirection(r) != (Room.direction)(-1);

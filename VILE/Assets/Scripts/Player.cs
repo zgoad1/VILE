@@ -388,7 +388,8 @@ public class Player : Controllable {
 			lightning.Play();       // start particles
 			head.Play();
 			burst.Play();
-			transform.rotation = GameController.mainCam.transform.rotation;
+			//transform.rotation = GameController.mainCam.transform.rotation;
+			transform.forward = GameController.mainCam.horizontalForward;
 			GameController.camControl.SetZoomTransform(sprintCam, 0.1f);
 			GameController.camControl.ScreenShake(1.5f);
 			if(gracePeriodCR != null) StopCoroutine(gracePeriodCR);

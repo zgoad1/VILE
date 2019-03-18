@@ -65,6 +65,7 @@ MonoBehaviour:
   direction: 0
   zoomTransform_in: {fileID: 4384802550129583324}
   zoomTransform_out: {fileID: 3641103568246335525}
+  room: {fileID: 0}
 --- !u!114 &843041499
 MonoBehaviour:
   m_ObjectHideFlags: 0

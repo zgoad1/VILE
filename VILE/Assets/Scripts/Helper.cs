@@ -10,7 +10,7 @@ using UnityEngine;
 public class Helper {
 	public static float AngleBetween(Transform me, Transform other) {
 		return (
-			me.transform.localEulerAngles.y + Mathf.Atan2 (
+			me.transform.eulerAngles.y + Mathf.Atan2 (
 				me.transform.position.z - other.transform.position.z, 
 				me.transform.position.x - other.transform.position.x
 			) / Mathf.PI * 180 + 360

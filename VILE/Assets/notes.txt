@@ -1,3 +1,6 @@
+ENVIRONMENTS:
+- All environments MUST have all types of intersections - Corners, T, hallways, and 4-ways.
+
 ADDING ENEMIES:
 - GroundTest should be placed at "feet"
 - Make sure GroundTest intersects ground when enemy is "standing"

@@ -7,12 +7,17 @@ using UnityEngine;
  */
 
 public class AreaIntersection : Room {
+
+	[Space]
+	public AreaWall[] walls;
 	
-	public List<direction> conductors = new List<direction>();
-	public Conductor[] conductorObjects = new Conductor[4];
+	[HideInInspector] public List<direction> conductors = new List<direction>();
+	[HideInInspector] public Conductor[] conductorObjects = new Conductor[4];
+	[HideInInspector] public area[] connectedAreas = new area[4];
 
 	public void PlaceConductors() {
 		foreach(direction d in conductors) {
+			#region Place conductor ports & tunnels
 			Vector3 newLocalPos = GameController.conductorPrefab.transform.position;
 			newLocalPos.x += MapGenerator.directions[(int)d].x * MapGenerator.roomSize / 2;
 			newLocalPos.z += -MapGenerator.directions[(int)d].y * MapGenerator.roomSize / 2;
@@ -24,6 +29,15 @@ public class AreaIntersection : Room {
 			c.transform.up = newForward;
 			c.transform.SetParent(transform);
 			conductorObjects[(int)d] = c;
+			#endregion
+
+			#region Place walls
+			Vector3 outward = new Vector3(MapGenerator.directions[(int)d].x, 0, -MapGenerator.directions[(int)d].y);
+			AreaWall areaWall = System.Array.Find(walls, aw => aw.areaType == connectedAreas[(int)d]);
+			GameObject wall = Instantiate(areaWall.wallPrefab, transform.position + outward * MapGenerator.roomSize / 2 + Vector3.up * c.transform.position.y, Quaternion.identity);
+			wall.transform.forward = outward;
+			wall.transform.SetParent(transform);
+			#endregion
 		}
 	}
 }

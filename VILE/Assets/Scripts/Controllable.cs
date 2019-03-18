@@ -222,7 +222,13 @@ public class Controllable : Targetable {
 			tempForward.y = 0;
 			tempForward.Normalize();
 		}
+		if(transform.forward.y != 0) {
+			Debug.Log("cat");
+		}
 		transform.forward = Vector3.Slerp(transform.forward, tempForward, 0.2f);
+		if(transform.forward.y != 0) {
+			Debug.Log("cat");
+		}
 		prevPosition = transform.position;
 	}
 	// Set player's direction while attacking based on target

@@ -4,6 +4,14 @@ using UnityEngine;
 
 public class MainCamera : MonoBehaviour {
 
+	public Vector3 horizontalForward {
+		get {
+			Vector3 temp = transform.forward;
+			temp.y = 0;
+			return temp;
+		}
+	}
+
 	private Animator anim;
 	private Transform iParent;
 
