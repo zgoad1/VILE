@@ -31,6 +31,7 @@ public class Player : Controllable {
 	protected bool disableSprint = false;
 	protected bool airAttacksEnabled = false;
 	private PlayerReticle reticle;
+	private float rechargeTo = 20;	// amount of stamina to recharge automatically
 
 	[HideInInspector] public bool possessing = false;
 	[HideInInspector] public Enemy possessed = null;
@@ -149,7 +150,9 @@ public class Player : Controllable {
 			}
 		}
 
-		if(stamina <= 20 - rechargeFactor) stamina += rechargeFactor;
+		if(stamina <= rechargeTo - rechargeFactor) {
+			stamina = Mathf.Max(rechargeTo, stamina + rechargeFactor * 60 * Time.deltaTime);
+		}
 
 		// home in on an enemy to possess it
 		if(sprinting && CanPossessTarget()) {

@@ -1,0 +1,39 @@
+#!/bin/bash
+
+EXT=${1:-cs}
+DIR=${2:-.}
+OUT=${3:-_ALL_SCRIPTS_${EXT}.txt}
+FILES=0
+
+
+
+function get_lines {
+	wc -l $1 | awk '{print $1}'
+}
+
+# Clear output file
+rm $OUT 2> /dev/null
+
+# Recursively search for .cs files and output them to OUT
+for file in $(find $DIR -name \*.${EXT})
+do
+	# Format the filenames and line counts in a pretty way
+	entry_file=$(printf "%-50s" "$file")
+	entry_file=${entry_file// /.}
+	entry_lines=$(printf "%5d" "$(get_lines $file)")
+	entry_lines=${entry_lines// /.}
+
+	printf "%s%s lines\n" "$entry_file" "$entry_lines"
+
+	cat $file >> $OUT
+
+	let FILES+=1
+done
+
+echo
+
+# Get average
+LINES=$(get_lines $OUT)
+let AVG=LINES/FILES
+
+echo "$LINES lines of code among $FILES files, averaging $AVG per file"

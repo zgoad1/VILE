@@ -10,6 +10,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Floor_001__tex_tunnel_straight_003
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Floor__tex_tunnel_straight
     second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
   - first:
@@ -20,8 +25,18 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Metal_001__tex_tunnel_straight_003
+    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Metal__tex_tunnel_straight
     second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sides_001__tex_tunnel_straight_003
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -30,8 +45,38 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: WallLights_001__tex_tunnel_straight_002
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: WallLights__tex_tunnel_straight_001
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls_001__tex_tunnel_straight_001
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Walls_002__tex_tunnel_straight_002
+    second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Walls__tex_tunnel_straight
     second: {fileID: 2100000, guid: f840aa066a61e3b438121c5f3a41c5b1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dark_001__tex_tunnel_straight_002
+    second: {fileID: 2100000, guid: c1646b4de84bb5f4abbb5d78fbd1e959, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: dark_002__tex_tunnel_straight_001
+    second: {fileID: 2100000, guid: c1646b4de84bb5f4abbb5d78fbd1e959, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -126,8 +171,6 @@ ModelImporter:
     secondaryUVHardAngle: 88
     secondaryUVPackMargin: 4
     useFileScale: 1
-    previousCalculatedGlobalScale: 10
-    hasPreviousCalculatedGlobalScale: 1
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
@@ -140,7 +183,7 @@ ModelImporter:
   importAnimation: 1
   copyAvatar: 0
   humanDescription:
-    serializedVersion: 2
+    serializedVersion: 3
     human: []
     skeleton: []
     armTwist: 0.5
@@ -150,6 +193,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
+    globalScale: 10
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 1

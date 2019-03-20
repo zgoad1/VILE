@@ -13,7 +13,6 @@
 - reticle distance limit visualization
 - other enemies
 - win & lose conditions
-- basic cutscenes
 - saving data
 
 **Optimization**
@@ -38,9 +37,9 @@
 ## Bugs
 
 **- A -**
-- Seed 646 is broken - no fitting room exists
 
 **- B -**
+- Stamina replenishes too fast
 - Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
 - Sliding and then flying will continue your slide when you start falling again
 - Pausing while going through a conductor resets the animation
@@ -55,8 +54,7 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
+- Tunnel corners and T's don't have animated materials
 - Reticle fades in when targeting even when it's already faded in
 - Enemy HP bars sometimes get stuck on the screen
-- 4-way intersection (tunnel) does not have floor backfaces or sides
-- Dead end (tunnel) does not have floor sides
 - Tess Claws show up for one frame at their previous position when enabled
