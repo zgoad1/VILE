@@ -81,7 +81,7 @@ public class Controllable : Targetable {
 	public bool onGround = false;	// defaults to always true for characters without GroundTests
 	[HideInInspector] public Vector3 velocity = Vector3.zero;	// direction and speed of attempted movement
 	[HideInInspector] public Vector3 calculatedVelocity = Vector3.zero;			// actual tracked velocity of the object
-	protected bool onSlope = false;
+	public bool onSlope = false;
 	protected Vector3 prevPosition;
 	protected Vector3 hitNormal = Vector3.zero;
 	protected Quaternion playerRot = Quaternion.identity;
@@ -202,6 +202,7 @@ public class Controllable : Targetable {
 		if(onSlope) {
 			velocity.x += -yMove.y * hitNormal.x * (1f - slideFriction);
 			velocity.z += -yMove.y * hitNormal.z * (1f - slideFriction);
+			onSlope = false;
 		}
 
 		// apply knockback if it was called from an animation event
@@ -222,13 +223,7 @@ public class Controllable : Targetable {
 			tempForward.y = 0;
 			tempForward.Normalize();
 		}
-		if(transform.forward.y != 0) {
-			Debug.Log("cat");
-		}
 		transform.forward = Vector3.Slerp(transform.forward, tempForward, 0.2f);
-		if(transform.forward.y != 0) {
-			Debug.Log("cat");
-		}
 		prevPosition = transform.position;
 	}
 	// Set player's direction while attacking based on target

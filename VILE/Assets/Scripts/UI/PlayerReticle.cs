@@ -33,7 +33,7 @@ public class PlayerReticle : MonoBehaviour {
 		Reset();
 	}
 	
-	void LateUpdate () {
+	void Update () {
 		// set position based on target
 		if(player.target != null) {
 			newPos = player.target.screenCoords + originOffset;
@@ -95,10 +95,12 @@ public class PlayerReticle : MonoBehaviour {
 	}
 
 	private void Reappear() {
-		if(disappearing || aboutToDisappear) {
+		if(aboutToDisappear) {
 			StopCoroutine("WaitToDisappear");
-			disappearing = false;
 			aboutToDisappear = false;
+		}
+		if(disappearing) { 
+			disappearing = false;
 			newColor.a = 0.3f;
 		}
 	}

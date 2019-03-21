@@ -193,6 +193,12 @@ public class GameController : MonoBehaviour {
 
 			#endregion
 
+			// debug
+			if(Input.GetKeyDown(KeyCode.LeftControl)) {
+				Debug.Log("Enabling player");
+				player.enabled = true;	// causes camera animation to loop
+			}
+
 			mainCamCam.fieldOfView = Mathf.Lerp(mainCamCam.fieldOfView, ifov, 0.2f * 60 * Time.deltaTime);
 			frames++;
 		}

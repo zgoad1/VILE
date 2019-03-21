@@ -9,15 +9,29 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class GroundTest : MonoBehaviour {
 
-	public LayerMask groundLayers = 512;
+	public LayerMask groundLayers;
 	protected Controllable parent;
 	protected List<Collider> grounds = new List<Collider>();
 	public bool onGround = false;
 	private bool aboutToLeave = false;
 
+
+
+	protected virtual void Land() {
+		parent.onGround = true;
+		parent.anim.SetBool("isOnGround", true);
+		parent.yMove.y = 0;
+	}
+
+	protected virtual void Leave() {
+		parent.onGround = false;
+		parent.anim.SetBool("isOnGround", false);
+	}
+
 	private void Reset() {
 		parent = GetComponentInParent<Controllable>();
 		GetComponent<Collider>().isTrigger = true;
+		groundLayers = 1 << LayerMask.NameToLayer("Solid");
 	}
 
 	public void PublicReset() {
@@ -67,16 +81,6 @@ public class GroundTest : MonoBehaviour {
 
 	private bool LayerIsGround(int layer) {
 		return groundLayers == (groundLayers | (1 << layer));
-	}
-
-	protected virtual void Land() {
-		parent.onGround = true;
-		parent.anim.SetBool("isOnGround", true);
-		parent.yMove.y = 0;
-	}
-	protected virtual void Leave() {
-		parent.onGround = false;
-		parent.anim.SetBool("isOnGround", false);
 	}
 
 	/* Wait a bit to avoid triggering extra land animations, which can break things

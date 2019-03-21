@@ -41,7 +41,6 @@
 **- B -**
 - Stamina replenishes too fast
 - Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
-- Sliding and then flying will continue your slide when you start falling again
 - Pausing while going through a conductor resets the animation
 - You can sometimes jump while air attacking
 - Sprinting can sometimes fuse you with a wall
@@ -54,7 +53,5 @@
 - Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
-- Tunnel corners and T's don't have animated materials
-- Reticle fades in when targeting even when it's already faded in
 - Enemy HP bars sometimes get stuck on the screen
 - Tess Claws show up for one frame at their previous position when enabled

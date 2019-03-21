@@ -216,7 +216,7 @@ public class Player : Controllable {
 		if(reticle != null) reticle.gameObject.SetActive(true);
 	}
 	private void OnDisable() {
-		if(reticle != null) reticle.gameObject.SetActive(false);
+		if(reticle != null && !GameController.paused) reticle.gameObject.SetActive(false);
 	}
 
 	#region Targeting
