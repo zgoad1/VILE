@@ -445,7 +445,6 @@ GameObject:
   - component: {fileID: 8538295267098871221}
   - component: {fileID: 1373532031906684946}
   - component: {fileID: 8499942672387344979}
-  - component: {fileID: 7434999387373279661}
   m_Layer: 2
   m_Name: Rails_
   m_TagString: Untagged
@@ -513,20 +512,6 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!64 &7434999387373279661
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 274569052393772163}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Convex: 0
-  m_CookingOptions: 14
-  m_Mesh: {fileID: -7109814282941578497, guid: fdef82831660b424bbd5cd482d2d1a87, type: 3}
 --- !u!1 &829012053217722945
 GameObject:
   m_ObjectHideFlags: 0

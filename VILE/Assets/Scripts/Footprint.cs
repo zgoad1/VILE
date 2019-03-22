@@ -9,6 +9,7 @@ public class Footprint : PooledObject {
 	public float duration = 2f;
 	private Vector3 iScale;
 	private Vector3 newScale = Vector3.one;
+	private Vector3 newPos;
 
 	private Material material {
 		get {
@@ -27,10 +28,11 @@ public class Footprint : PooledObject {
 
 	public override void Restart() {
 		base.Restart();
+		transform.localScale = iScale;
 		transform.forward = -foot.transform.right;
 		transform.position = foot.position + offset;
+		newPos = transform.position;
 		newColor = Color.white;
-		transform.localScale = iScale;
 		StopCoroutine("FadeOut");
 		StartCoroutine("FadeOut");
 	}
@@ -38,6 +40,10 @@ public class Footprint : PooledObject {
 	private IEnumerator FadeOut() {
 		float frame = 1f / 60f;
 		for(float i = 0; i < duration; i += frame) {
+			transform.position = newPos;				// Move back to where we're supposed to be
+														// because Unity likes to try to reset our Y
+														// position every frame for literally no reason
+
 			float func = 1f / (10f * (i + 0.01f)) + (i / 1) * 5;
 			newScale.x = iScale.x * func;
 			newScale.z = iScale.z * func;

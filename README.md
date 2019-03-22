@@ -8,6 +8,7 @@
 
 ## To Do
 - close-up version of attack2 if the target is close enough
+- sprint attacks
 - average, everyday room designs
 - advanced room designs
 - reticle distance limit visualization
@@ -37,21 +38,19 @@
 ## Bugs
 
 **- A -**
+- Seed 2192: no fitting room error
 
 **- B -**
+- Map Generator seems to heavily favor default area
 - Stamina replenishes too fast
 - Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
-- Pausing while going through a conductor resets the animation
-- You can sometimes jump while air attacking
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying
-- you can attack while sprinting (turn into a feature)
 - robots can get stuck on corner barrier posts
-- CR's animation places it at origin
 - camera turning uses too much deltatime
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
-- Unpossessing an enemy still doesn't always align you with the direction you're facing
 
 **- C -**
 - Enemy HP bars sometimes get stuck on the screen
 - Tess Claws show up for one frame at their previous position when enabled
+- Unpossessing an enemy still doesn't always align you with the direction you're facing

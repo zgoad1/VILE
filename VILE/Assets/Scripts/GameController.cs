@@ -193,12 +193,6 @@ public class GameController : MonoBehaviour {
 
 			#endregion
 
-			// debug
-			if(Input.GetKeyDown(KeyCode.LeftControl)) {
-				Debug.Log("Enabling player");
-				player.enabled = true;	// causes camera animation to loop
-			}
-
 			mainCamCam.fieldOfView = Mathf.Lerp(mainCamCam.fieldOfView, ifov, 0.2f * 60 * Time.deltaTime);
 			frames++;
 		}
@@ -222,6 +216,7 @@ public class GameController : MonoBehaviour {
 		paused = true;
 		Controllable[] characters = FindObjectsOfType<Controllable>();
 		foreach(Controllable c in characters) {
+			c.wasEnabled = c.enabled;
 			c.enabled = false;
 			if(c.anim != null) c.anim.speed = 0;
 		}
@@ -235,7 +230,7 @@ public class GameController : MonoBehaviour {
 		paused = false;
 		Controllable[] characters = FindObjectsOfType<Controllable>();
 		foreach(Controllable c in characters) {
-			c.enabled = true;
+			c.enabled = c.wasEnabled;
 			if(c.anim != null) c.anim.speed = 1;
 		}
 		player.readInput = true;

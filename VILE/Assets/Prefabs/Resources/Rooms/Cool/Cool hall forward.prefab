@@ -25,8 +25,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ae9c602c54674d46a093e2088ef0a0c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  type: 2
-  frequency: 0.1
+  type: 4
+  frequency: 0.5
   limit: -1
   indep: 1
   necessary: 0
@@ -79,7 +79,7 @@ PrefabInstance:
     - target: {fileID: -927199367670048503, guid: 666d625a0d68ef34bbc2e41e65d53d33,
         type: 3}
       propertyPath: m_Name
-      value: Hall forward complicated
+      value: Cool hall forward
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: 666d625a0d68ef34bbc2e41e65d53d33,
         type: 3}

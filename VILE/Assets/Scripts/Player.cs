@@ -125,9 +125,9 @@ public class Player : Controllable {
 		SetVelocity();
 
 		// Jumping
-		if(Input.GetButtonDown("Jump") && sprinting && !attacking) {
+		if(Input.GetButton("Jump") && sprinting && !attacking) {
 			yMove.y = 1;
-			StartCoroutine("EnableAirAttacks");
+			StartCoroutine("EnableAirAttacks");	// TODO: Move this to the single frame when jump is pressed
 		}
 
 		CommonUpdate();
@@ -530,10 +530,10 @@ public class Player : Controllable {
 	}
 
 	private void AnimFunc_FootstepL() {
-		if(GetRoomType() == Room.area.HALLS) GameController.InstantiateFromPool(footprintPrefabL, transform);
+		if(GetRoomType() == Room.area.COOL && !sprinting) GameController.InstantiateFromPool(footprintPrefabL, transform);
 	}
 	private void AnimFunc_FootstepR() {
-		if(GetRoomType() == Room.area.HALLS) GameController.InstantiateFromPool(footprintPrefabR, transform);
+		if(GetRoomType() == Room.area.COOL && !sprinting) GameController.InstantiateFromPool(footprintPrefabR, transform);
 	}
 
 	#endregion

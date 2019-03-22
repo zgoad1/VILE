@@ -109,11 +109,7 @@ public class Controllable : Targetable {
 	protected bool hurtAnimPlaying = false; // used to determine where char should face during velocity change
 	protected bool toBeKnockedBack = false;
 	protected Vector3 knockbackForce = Vector3.zero;
-	/**Camera is not affected by the target.
-	 * The target only affects where you face when you're attacking.
-	 * target can only change when you're not attacking.
-	 * target updates every non-attacking frame to the enemy nearest to the center of the screen.
-	 */
+	[HideInInspector] public bool wasEnabled = true;	// for returning Controllables to their previous state after pausing
 
 	protected static Controllable currentPlayer;
 	[HideInInspector] public Targetable target;
@@ -170,9 +166,9 @@ public class Controllable : Targetable {
 		hitNormal = hit.normal;
 		// notOnSlope = we're on ground level enough to walk on OR we're hitting a straight-up wall
 		onSlope = !(Vector3.Angle(Vector3.up, hitNormal) <= cc.slopeLimit || Vector3.Angle(Vector3.up, hitNormal) >= 89);
-		if(hit.point.y > transform.position.y + 4f && Mathf.Sqrt(Mathf.Pow(transform.position.x - hit.point.x, 2f) + Mathf.Pow(transform.position.z - hit.point.z, 2f)) < 2f * transform.localScale.x) {
+		if(hit.point.y > transform.position.y + cc.height / 2) {
 			// hit something going up
-			yMove.y = Mathf.Min(0f, velocity.y);
+			yMove.y = Mathf.Min(0f, yMove.y);
 		}
 	}
 

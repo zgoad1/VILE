@@ -299,29 +299,49 @@ public class MapGenerator : MonoBehaviour {
 		}
 
 		#region check constraints of surrounding rooms
-		Room left = RoomAt(x - 1, y);
+
+		// LEFT
+		Vector2 leftCoords = new Vector2(x - 1, y);
+		Room left = RoomAt(leftCoords);
 		if(left != null) {
 			if(!left.CanHave(r, Room.direction.RIGHT)) {
 				return false;
 			}
+		} else if(r.doors.Contains(Room.direction.LEFT)) {
+			if(IsTypeConflict(leftCoords, r.type)) return false;
 		}
-		Room right = RoomAt(x + 1, y);
+
+		// RIGHT
+		Vector2 rightCoords = new Vector2(x + 1, y);
+		Room right = RoomAt(rightCoords);
 		if(right != null) {
 			if(!right.CanHave(r, Room.direction.LEFT)) {
 				return false;
 			}
+		} else if(r.doors.Contains(Room.direction.RIGHT)) {
+			if(IsTypeConflict(rightCoords, r.type)) return false;
 		}
-		Room up = RoomAt(x, y - 1);
+
+		// UP
+		Vector2 upCoords = new Vector2(x, y - 1);
+		Room up = RoomAt(upCoords);
 		if(up != null) {
 			if(!up.CanHave(r, Room.direction.DOWN)) {
 				return false;
 			}
+		} else if(r.doors.Contains(Room.direction.UP)) {
+			if(IsTypeConflict(upCoords, r.type)) return false;
 		}
-		Room down = RoomAt(x, y + 1);
+
+		// DOWN
+		Vector2 downCoords = new Vector2(x, y + 1);
+		Room down = RoomAt(downCoords);
 		if(down != null) {
 			if(!down.CanHave(r, Room.direction.UP)) {
 				return false;
 			}
+		} else if(r.doors.Contains(Room.direction.DOWN)) {
+			if(IsTypeConflict(downCoords, r.type)) return false;
 		}
 		#endregion
 
@@ -355,6 +375,14 @@ public class MapGenerator : MonoBehaviour {
 					return false;
 			}
 		}
+
+		#region check for AreaIntersection conflicts
+		// for each door direction, check if there's a space in that direction
+		// if so, check if the spaces surrounding that space are occupied by:
+		// - at least one of a different area type besides intersection
+		// - at least one AreaIntersection
+		#endregion
+
 		return true;
 	}
 	bool CanFitAt(Vector2 coords, Room r, bool ignoreRoomHere = false) {
@@ -544,6 +572,26 @@ public class MapGenerator : MonoBehaviour {
 		}
 		if(d.y < 0) return Room.direction.UP;
 		return Room.direction.DOWN;
+	}
+
+	// determine if obscure conditions hold that would require us to place a dead end next to this spot
+	bool IsTypeConflict(Vector2 coords, Room.area type) {
+		// If we have a door in this direction, we can't fit if both of these are true:
+		// - there is a room connected to this space that is of a different area (excluding intersection)
+		// - there is a room connected to this space that is an AreaIntersection
+		bool differentArea = false;
+		bool areaIntersection = false;
+		foreach(Vector2 d in directions) {
+			Room roomHere = RoomAt(coords + d);
+			if(roomHere != null) {
+				if(roomHere.type == Room.area.INTERSECTION) {
+					areaIntersection = true;
+				} else if(roomHere.type != type) {
+					differentArea = true;
+				}
+			}
+		}
+		return differentArea && areaIntersection;
 	}
 #endregion
 }

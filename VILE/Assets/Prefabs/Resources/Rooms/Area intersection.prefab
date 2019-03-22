@@ -123,7 +123,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 1
-  frequency: 0.1
+  frequency: 0.075
   limit: -1
   indep: 1
   necessary: 0
@@ -148,6 +148,9 @@ MonoBehaviour:
       type: 3}
   - areaType: 3
     wallPrefab: {fileID: 618918544713117353, guid: 01516c66c998a504c91402732496ef5c,
+      type: 3}
+  - areaType: 4
+    wallPrefab: {fileID: 1973008923309309505, guid: 066d72c16d70e4d4bbbf1523bf628e8c,
       type: 3}
   conductors: 
   conductorObjects:

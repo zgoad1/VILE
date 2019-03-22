@@ -50,7 +50,7 @@ public class Room : MonoBehaviour {
 	}
 
 	public enum area {
-		NONE, INTERSECTION, HALLS, TUNNELS
+		NONE, INTERSECTION, HALLS, TUNNELS, COOL
 	}
 
 

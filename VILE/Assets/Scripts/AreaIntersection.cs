@@ -34,7 +34,7 @@ public class AreaIntersection : Room {
 			#region Place walls
 			Vector3 outward = new Vector3(MapGenerator.directions[(int)d].x, 0, -MapGenerator.directions[(int)d].y);
 			AreaWall areaWall = System.Array.Find(walls, aw => aw.areaType == connectedAreas[(int)d]);
-			GameObject wall = Instantiate(areaWall.wallPrefab, transform.position + outward * MapGenerator.roomSize / 2 + Vector3.up * c.transform.position.y, Quaternion.identity);
+			GameObject wall = Instantiate(areaWall.wallPrefab, transform.position + outward * MapGenerator.roomSize / 2, Quaternion.identity);
 			wall.transform.forward = outward;
 			wall.transform.SetParent(transform);
 			#endregion

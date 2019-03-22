@@ -25,6 +25,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Metal
+    second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Metal_001__tex_tunnel_straight_003
     second: {fileID: 2100000, guid: 9e8c64495e096544e8020113e81d2862, type: 2}
   - first:
