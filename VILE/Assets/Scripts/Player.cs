@@ -73,8 +73,8 @@ public class Player : Controllable {
 	}
 
 	protected override void Update() {
-		// check if we fell off the map
-		if(transform.position.y < -1) transform.position = iPos;
+		// recover from falling off the map
+		if(Input.GetKeyDown(KeyCode.LeftControl)) transform.position = iPos;
 
 		if(!possessing) {
 			// normal, non-possessing update method

@@ -7,11 +7,12 @@
 - On dying enemy parts models, read/write must be enabled or collisions will not work in builds
 
 ## To Do
+- Pods that drop from the sky and release enemies, and ceiling hatches for said pods
+- Tess's attack2 needs colliders still
 - close-up version of attack2 if the target is close enough
 - sprint attacks
 - average, everyday room designs
 - advanced room designs
-- reticle distance limit visualization
 - other enemies
 - win & lose conditions
 - saving data
@@ -41,8 +42,8 @@
 - Seed 2192: no fitting room error
 
 **- B -**
-- Map Generator seems to heavily favor default area
-- Stamina replenishes too fast
+- It's easy for one area type to gain a monopoly over the map
+- Stamina replenishes too fast (leave it for now for debugging)
 - Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
 - Sprinting can sometimes fuse you with a wall
 - If Tess is attacked while rising into the air (attack1d), she goes flying

@@ -112,19 +112,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 50, y: 100.00001, z: 3}
   m_Center: {x: 25, y: 50.000004, z: -38.5}
---- !u!65 &4597225841821833752
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3522569595637156518}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 3, y: 100.00001, z: 50}
-  m_Center: {x: -38.5, y: 50.000004, z: 25}
 --- !u!65 &2775931039712777436
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -138,6 +125,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 90, y: 1, z: 90}
   m_Center: {x: 5.0000057, y: 99.5, z: 5}
+--- !u!65 &4597225841821833752
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3522569595637156518}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3, y: 100.00001, z: 50}
+  m_Center: {x: -38.5, y: 50.000004, z: 25}
 --- !u!1001 &6987091589639658413
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -151,6 +151,16 @@ PrefabInstance:
       value: Hall corner UR
       objectReference: {fileID: 0}
     - target: {fileID: -927199367670048503, guid: d0571f213318bf54a9b172c5f74ce526,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -2587663862927850501, guid: d0571f213318bf54a9b172c5f74ce526,
+        type: 3}
+      propertyPath: m_Layer
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: -3452698876176494325, guid: d0571f213318bf54a9b172c5f74ce526,
         type: 3}
       propertyPath: m_Layer
       value: 9
@@ -210,15 +220,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -3452698876176494325, guid: d0571f213318bf54a9b172c5f74ce526,
+    - target: {fileID: 7862506531525410200, guid: d0571f213318bf54a9b172c5f74ce526,
         type: 3}
-      propertyPath: m_Layer
-      value: 9
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: -2587663862927850501, guid: d0571f213318bf54a9b172c5f74ce526,
+    - target: {fileID: 8388063918083465480, guid: d0571f213318bf54a9b172c5f74ce526,
         type: 3}
-      propertyPath: m_Layer
-      value: 9
+      propertyPath: m_CastShadows
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d0571f213318bf54a9b172c5f74ce526, type: 3}
