@@ -124,7 +124,8 @@ public class MapGenerator : MonoBehaviour {
 				canFit = GetFittingRooms(newCoords, roomsList);
 			}
 			do {
-				success = TryPlaceRoom(newCoords, GetRandomRoom(canFit));
+				GameObject r = GetRandomRoom(canFit);
+				success = TryPlaceRoom(newCoords, r);
 			} while(!success);
 
 			// set distFromStart to that of the previous room plus one

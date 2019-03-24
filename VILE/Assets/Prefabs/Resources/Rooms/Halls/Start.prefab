@@ -312,10 +312,12 @@ MonoBehaviour:
   leftList: []
   rightList: []
   upList:
-  - {fileID: 114548349527728278, guid: 34be8c64ee3ab564fadc8ce2d6d32f3c, type: 3}
-  - {fileID: 114088669476800118, guid: ec85478e33842744cacba6a4ed60929a, type: 3}
-  - {fileID: 2246074038592132405, guid: 12f39612411b8fa41b5551b494b16f25, type: 3}
-  - {fileID: 3442403961350107459, guid: d0f1b7d231ed00d43b6985a543205a3a, type: 3}
+  - {fileID: 2861795775521642692, guid: 41ab5fecd3bc3a344953fc30474a376e, type: 3}
+  - {fileID: 5006590280925831303, guid: a8968e03adfe89a4f91e000f653b664c, type: 3}
+  - {fileID: 2557703906884902187, guid: 2ed08ff0ee4395943a150d109a85ac61, type: 3}
+  - {fileID: 412882065871753122, guid: 0eb5ea3ecb9086f4aab2fcf643dffc2c, type: 3}
+  - {fileID: 7508193494696220707, guid: 750fb3459395d7942acdda3a6f5c0f9b, type: 3}
+  - {fileID: 6068224642519789576, guid: df16ff2f5c4fb7d4a8a95fa8b9943627, type: 3}
   downList: []
   leftExclude: []
   rightExclude: []
@@ -3394,8 +3396,61 @@ ParticleSystem:
     inWorldSpace: 0
     randomizePerFrame: 0
   ExternalForcesModule:
+    serializedVersion: 2
     enabled: 0
-    multiplier: 1
+    multiplierCurve:
+      serializedVersion: 2
+      minMaxState: 0
+      scalar: 1
+      minScalar: 1
+      maxCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
+      minCurve:
+        serializedVersion: 2
+        m_Curve:
+        - serializedVersion: 3
+          time: 0
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        - serializedVersion: 3
+          time: 1
+          value: 1
+          inSlope: 0
+          outSlope: 0
+          tangentMode: 0
+          weightedMode: 0
+          inWeight: 0.33333334
+          outWeight: 0.33333334
+        m_PreInfinity: 2
+        m_PostInfinity: 2
+        m_RotationOrder: 4
     influenceFilter: 0
     influenceMask:
       serializedVersion: 2
