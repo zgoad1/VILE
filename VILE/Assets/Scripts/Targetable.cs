@@ -22,6 +22,8 @@ public class Targetable : MonoBehaviour {
 
 	public static List<Targetable> onScreen = new List<Targetable>();
 
+
+
 	protected virtual void Reset() {
 		CamLookat camLookOb = GetComponentInChildren<CamLookat>();
 		if(camLookOb == null) {

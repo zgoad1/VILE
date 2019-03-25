@@ -81,7 +81,7 @@ public class Controllable : Targetable {
 	public bool onGround = false;	// defaults to always true for characters without GroundTests
 	[HideInInspector] public Vector3 velocity = Vector3.zero;	// direction and speed of attempted movement
 	[HideInInspector] public Vector3 calculatedVelocity = Vector3.zero;			// actual tracked velocity of the object
-	public bool onSlope = false;
+	[HideInInspector] public bool onSlope = false;
 	protected Vector3 prevPosition;
 	protected Vector3 hitNormal = Vector3.zero;
 	protected Quaternion playerRot = Quaternion.identity;

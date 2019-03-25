@@ -7,7 +7,8 @@
 - On dying enemy parts models, read/write must be enabled or collisions will not work in builds
 
 ## To Do
-- Pods that drop from the sky and release enemies, and ceiling hatches for said pods
+- Make collisions with SmallParts exert forces on them
+- Change the items of GameController's object pool to each have their own amounts
 - Tess's attack2 needs colliders still
 - close-up version of attack2 if the target is close enough
 - sprint attacks
@@ -40,8 +41,19 @@
 
 **- A -**
 - Seed 2192: no fitting room error
+- Observed once: Tess gets stuck after killing a FlashEye in mid-air
 
 **- B -**
+- Pods need a proper Restart as PooledObjects
+- FlashEye is too fast as AI and too slow as Player, and also seems to eventually just choose a direction and go that way forever, and also never attacks
+- Pod dispensers should call CreateNewPod based on how close the player is
+	- If player is within 3 * radius and we don't already have a pod, do it
+- Pods should not be destroyed on death because they're pooled objects
+- Killing a pod while standing on it (via stomping) causes Tess's gravity to be removed???
+	- Might be because destroying a gameobject doesn't call OnTriggerExit (which messes up GroundTest)
+- Fencers no longer go after Tess
+- Fencers can't raycast angled downward
+	- When they're in the pod, raised up a bit, they can't see Tess until she starts climbing up
 - It's easy for one area type to gain a monopoly over the map
 - Stamina replenishes too fast (leave it for now for debugging)
 - Traveling into a tunnel dead end via Conductor will slam dunk you into oblivion.
@@ -52,6 +64,10 @@
 - Unpossessing enemies whilst attacking with them was problematic and given a hasty fix
 
 **- C -**
+- Reticle wraps around the screen if you look behind while your target is in front
+- Pods don't calculate bounds correctly after their doors animate
+- Some AreaIntersections only have one Conductor and should be replaced with that area type's dead end
+- Tess's behavior when emerging from a Conductor is sometimes erratic
 - Enemy HP bars sometimes get stuck on the screen
 - Tess Claws show up for one frame at their previous position when enabled
 - Unpossessing an enemy still doesn't always align you with the direction you're facing

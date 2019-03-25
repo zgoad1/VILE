@@ -5,6 +5,8 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerTracker))]
 public class Enemy : Controllable {
 
+	public bool canBePossessed = true;
+
 	protected static Player player;
 	protected static Vector3 HpBarOffset = new Vector3(-100, 64, 0);
 	[Tooltip("Damage to apply every frame in which the player is possessing this enemy.")]
@@ -16,9 +18,10 @@ public class Enemy : Controllable {
 	protected bool sawPlayer = false;
 	protected ParticleSystem stunSparks;    // needed to stop the effect if we're possessed
 	protected bool haveStoppedStunSparks = true;
+	protected TargetableRenderer tRenderer;
 
 	// debug
-	public Vector3 playerPoint;
+	//public Vector3 playerPoint;
 
 	public bool CanSeePlayer() {
 		if(checkedForPlayer) return sawPlayer;
@@ -26,28 +29,27 @@ public class Enemy : Controllable {
 		RaycastHit hit;
 		if(Physics.Raycast(transform.position, GameController.playerTarget.position - transform.position, out hit, sightLength, GameController.defaultLayerMask)) {
 			sawPlayer = hit.transform.gameObject.GetComponent<Player>() != null;
-			playerPoint = hit.point;
+			//playerPoint = hit.point;
 			return sawPlayer;
 		}
 		sawPlayer = false;
 		return false;
 	}
 
-	private void OnDrawGizmos() {
-		Gizmos.color = Color.blue;
-		Gizmos.DrawSphere(playerPoint, 0.5f);
-	}
+	//private void OnDrawGizmos() {
+	//	Gizmos.color = Color.blue;
+	//	Gizmos.DrawSphere(playerPoint, 0.5f);
+	//}
 
 	protected override void Reset() {
 		base.Reset();
 
 		if(renderer != null) {
-			TargetableRenderer cr;
-			cr = renderer.GetComponent<TargetableRenderer>();
-			if(cr == null) {
-				cr = renderer.gameObject.AddComponent<TargetableRenderer>();
+			tRenderer = renderer.GetComponent<TargetableRenderer>();
+			if(tRenderer == null) {
+				tRenderer = renderer.gameObject.AddComponent<TargetableRenderer>();
 			}
-			cr.parent = this;
+			tRenderer.parent = this;
 		} else {
 			Debug.LogWarning("You have an Enemy with a weird renderer (not mesh)");
 		}
@@ -95,6 +97,12 @@ public class Enemy : Controllable {
 		hpBar.maxValue = maxHP;
 		hpBar.gameObject.SetActive(false);
 		hpBar.transform.SetParent(GameController.UICanvas.transform);
+	}
+
+	protected virtual void OnDisable() {
+		onScreen.Remove(this);
+		isOnScreen = false;
+		Player.targets.Remove(this);
 	}
 
 	public override void SetTarget() {

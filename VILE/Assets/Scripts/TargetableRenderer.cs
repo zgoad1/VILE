@@ -6,6 +6,8 @@ public class TargetableRenderer : MonoBehaviour {
 
 	public Targetable parent;
 
+
+
 	private void Reset() {
 		parent = GetComponentInParent<Targetable>();
 	}
@@ -17,16 +19,20 @@ public class TargetableRenderer : MonoBehaviour {
 	}
 
 	protected void OnBecameVisible() {
-		Targetable.onScreen.Add(parent);
-		parent.isOnScreen = true;
+		if(parent.enabled) {
+			Targetable.onScreen.Add(parent);
+			parent.isOnScreen = true;
+		}
 		//Debug.Log(parent + " became visible");
 		//Debug.Log("visible! Controllable.onScreen.count: " + Controllable.onScreen.Count);
 	}
 
 	protected void OnBecameInvisible() {
-		Targetable.onScreen.Remove(parent);
-		parent.isOnScreen = false;
-		Player.targets.Remove(parent);
+		if(parent.enabled) {
+			Targetable.onScreen.Remove(parent);
+			parent.isOnScreen = false;
+			Player.targets.Remove(parent);
+		}
 		//Debug.Log(parent + " disappeared");
 		//Debug.Log("INvisible! Controllable.onScreen.count: " + Controllable.onScreen.Count);
 	}

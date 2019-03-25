@@ -17,6 +17,8 @@ public class SpawnPoint : MonoBehaviour {
 
 	private void OnBecameVisible() {
 		SpawnObject();
+		enabled = false;
+		GetComponent<BillboardRenderer>().enabled = false;
 	}
 
 	void SpawnObject() {
@@ -43,10 +45,9 @@ public class SpawnPoint : MonoBehaviour {
 				currentSum += spawnables[i].likelihood;
 			}
 		}
-		enabled = false;
-		GetComponent<BillboardRenderer>().enabled = false;
 	}
 
+#if UNITY_EDITOR
 	/* Draw the SpawnPoint graphic
 	 */
 	private void OnDrawGizmos() {
@@ -56,7 +57,6 @@ public class SpawnPoint : MonoBehaviour {
 
 	/* Draw all the meshes and child meshes of each of the Spawnables
 	 */
-#if UNITY_EDITOR
 	private void OnDrawGizmosSelected() {
 		Transform cam = UnityEditor.SceneView.GetAllSceneCameras()[0].transform;
 		Gizmos.color = Color.white;

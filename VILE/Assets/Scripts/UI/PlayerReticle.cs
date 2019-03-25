@@ -49,7 +49,7 @@ public class PlayerReticle : MonoBehaviour {
 		image.enabled = true;
 		if(player.target != null) {
 			image.sprite = targetSprite;
-			if(player.target is Controllable && ((Controllable)player.target).control == Controllable.state.STUNNED) {
+			if(player.target is Enemy && ((Enemy)player.target).control == Controllable.state.STUNNED && ((Enemy)player.target).canBePossessed) {
 				int newFrames = GameController.frames / 2;
 				if(newFrames % 2 == 0) {
 					image.enabled = false;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class PlayerTracker : MonoBehaviour {
-	public Vector3 playerPosition;
+	[HideInInspector] public Vector3 playerPosition;
 
 	protected virtual void Start() {
 		playerPosition = transform.position;

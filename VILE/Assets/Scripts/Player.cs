@@ -38,7 +38,7 @@ public class Player : Controllable {
 	[HideInInspector] public Vector3 iPos = Vector3.zero;
 
 	// debug
-	//public Vector3 targetRayHitPoint, targetRayStart, targetRayEnd;
+	public Vector3 targetRayHitPoint, targetRayStart, targetRayEnd;
 
 	public static List<Targetable> targets = new List<Targetable>();
 
@@ -261,7 +261,7 @@ public class Player : Controllable {
 							minScore = compositeScore;
 							newTarget = t;
 						}
-						//targetRayHitPoint = hit.point;
+						targetRayHitPoint = hit.point;
 					} else {
 						// If this linecast fails when it shouldn't, the enemy character's collider is probably too small
 					}
@@ -567,7 +567,11 @@ public class Player : Controllable {
 	}
 
 	public bool CanPossessTarget() {
-		return canPossess && (target is Conductor || target is Enemy && ((Enemy)target).control == state.STUNNED);
+		return canPossess && 
+			(target is Conductor || 
+				target is Enemy && 
+				((Enemy)target).control == state.STUNNED && 
+				((Enemy)target).canBePossessed);
 	}
 
 	private IEnumerator EnableAirAttacks() {
