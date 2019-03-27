@@ -86,7 +86,7 @@ public class GameController : MonoBehaviour {
 	private static List<GameObject> objectPool = new List<GameObject>();
 
 	private static float ifov;
-	private static bool isLevel = false;    // whether we're currently in the playable level
+	public static bool isLevel = false;    // whether we're currently in the playable level
 	[HideInInspector] public static GameObject stunSparksPrefab;
 
 
@@ -115,9 +115,11 @@ public class GameController : MonoBehaviour {
 		stunSparksPrefab = objectList.Find(g => g.name == "StunSparks");
 		enemyLayer = LayerMask.NameToLayer("Enemies");
 		solidLayer = LayerMask.NameToLayer("Solid");
-		enemyParent = GameObject.Find("Enemies").transform;
-		objectPoolParent = GameObject.Find("Object Pool").transform;
-		clawRendererParent = GameObject.Find("Claw Renderers").transform;
+		if(isLevel) {
+			enemyParent = GameObject.Find("Enemies").transform;
+			objectPoolParent = GameObject.Find("Object Pool").transform;
+			clawRendererParent = GameObject.Find("Claw Renderers").transform;
+		}
 	}
 
 	// Use this for initialization

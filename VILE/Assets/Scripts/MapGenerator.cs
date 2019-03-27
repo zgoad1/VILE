@@ -72,14 +72,22 @@ public class MapGenerator : MonoBehaviour {
 	}
 
 	void Start() {
-		if(instance == null) instance = this;
-		else {
+		if(instance == null) {
+			instance = this;
+			DontDestroyOnLoad(gameObject);
+			OnLevelWasLoaded(0);
+		} else {
 			Debug.LogError("There are multiple MapGenerators in the scene.");
-			Destroy(this);
+			Destroy(gameObject);
 		}
-		GenerateMap(seed);
 	}
-	
+
+	private void OnLevelWasLoaded(int level) {
+		if(GameController.isLevel) {
+			GenerateMap(seed, gridSize);
+		}
+	}
+
 	public void DestroyMap() {
 		// destroy old map
 		Room[] toDestroy = GetComponentsInChildren<Room>();
@@ -93,7 +101,7 @@ public class MapGenerator : MonoBehaviour {
 		}
 	}
 	
-	public void GenerateMap(string seed) {
+	public void GenerateMap(string seed, Vector2 gridSize) {
 		FindObjectOfType<GameController>().FindPlayer();
 		Reset();
 		DestroyMap();
@@ -144,7 +152,7 @@ public class MapGenerator : MonoBehaviour {
 
 		// try again if we made too few rooms
 		if(roomsMade < minRooms) {
-			GenerateMap(seed == "random" ? seed : seed + "_");
+			GenerateMap(seed == "random" ? seed : seed + "_", gridSize);
 		} else {
 			// place exit room as close to the desired position as possible, kinda
 			List<GameObject> endRooms = new List<GameObject>();
@@ -199,14 +207,19 @@ public class MapGenerator : MonoBehaviour {
 	void SetMapSeed(string seed) {
 		UnityEngine.Random.InitState((int)(Time.realtimeSinceStartup * 1000 + Time.time * 1000));
 		int seedInt = 0;
-		if(seed == "random") { 
-			seed = "" + Mathf.RoundToInt(UnityEngine.Random.Range(0, 10000) % 10000);
-			Debug.Log("Random seed: " + seed);
+		if(seed == "random") {
+			seed = GetRandomSeed();
 		}
 		for(int i = 0; i < seed.Length; i++) {
 			seedInt += seed[i] * (i + 1);
 		}
 		UnityEngine.Random.InitState(seedInt);
+	}
+
+	public static string GetRandomSeed() {
+		string seed = "" + Mathf.RoundToInt(UnityEngine.Random.Range(0, 10000) % 10000);
+		Debug.Log("Random seed: " + seed);
+		return seed;
 	}
 
 	/* Randomly pick a room from a list that satisfies:

@@ -8,7 +8,7 @@ class MapGenEditor : Editor {
 		MapGenerator ob = (MapGenerator)target;
 		GUILayout.BeginHorizontal();
 		if(GUILayout.Button("Generate"))
-			ob.GenerateMap(ob.seed);
+			ob.GenerateMap(ob.seed, ob.gridSize);
 		var style = new GUIStyle(GUI.skin.button);
 		style.normal.textColor = Color.red;
 		if(GUILayout.Button("Destroy", style))
