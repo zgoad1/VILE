@@ -70,6 +70,9 @@ public class Player : Controllable {
 		Cursor.visible = false;
 
 		SetPlayer();
+
+		// debug
+		FindObjectOfType<AudioManager>().Play("Laser");
 	}
 
 	protected override void Update() {

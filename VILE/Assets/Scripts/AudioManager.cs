@@ -8,13 +8,9 @@ public class AudioManager : MonoBehaviour {
     public static AudioManager instance;
 
     [SerializeField] private Sound[] sounds;
-	private static int amount = 0;
-	[HideInInspector] public int number;	//why is this public again?
 
 	// Use this for initialization
 	void Awake () {
-		number = amount;
-		amount++;
 		
         if(instance == null) {
             instance = this;
@@ -28,6 +24,7 @@ public class AudioManager : MonoBehaviour {
 				s.source.volume = s.volume;
 				s.source.pitch = s.pitch;
 				s.source.loop = s.loop;
+				Debug.Log("Adding audio source: " + s.source.clip.name);
 			}
 		} else {
             Destroy(gameObject);
@@ -36,16 +33,15 @@ public class AudioManager : MonoBehaviour {
 		}
 	}
 
-	private void Update() {
-	}
-
 	public void Play(string name) {
 		Sound sound = Array.Find(sounds, s => s.name == name);
 		if(sound != null) {
-			//Debug.Log("Playing sound: " + sound.name + "\nSource: " + sound.source);
+			Debug.Log("Playing sound: " + sound.name + "\nSource: " + sound.source);
 			sound.source.Play();
+			AudioListener.volume = 100;
+			Debug.Log("Volume: " + AudioListener.volume);
 		} else {
-			Debug.LogError("AUDIO: could not find sound: " + name + "\nProbably because you aren't using the first audio manager in the Sketchbook scene\naka this isn't a bug");
+			Debug.LogError("AUDIO: could not find sound: " + name);
 		}
 	}
 
@@ -54,7 +50,7 @@ public class AudioManager : MonoBehaviour {
 		if(sound != null) {
 			sound.source.Stop();
 		} else {
-			Debug.LogError("AUDIO: could not find sound: " + name + "\nProbably because you aren't using the first audio manager in the Sketchbook scene\naka this isn't a bug");
+			Debug.LogError("AUDIO: could not find sound: " + name);
 		}
 	}
 
@@ -87,7 +83,7 @@ public class AudioManager : MonoBehaviour {
 	}
 
 	private void PrintSources(string str) {
-		Debug.Log(str + "(#" + number + ")");
+		Debug.Log(str);
 		foreach(Sound s in sounds) {
 			Debug.Log("SOUND: " + s.name + "\nSOURCE: " + s.source);
 		}

@@ -45,6 +45,7 @@
 - Observed once: Tess gets stuck after killing a FlashEye in mid-air
 
 **- B -**
+- Pods can be knocked through walls by stomping
 - Pods need a proper Restart as PooledObjects
 - FlashEye is too fast as AI and too slow as Player, and also seems to eventually just choose a direction and go that way forever, and also never attacks
 - Pod dispensers should call CreateNewPod based on how close the player is

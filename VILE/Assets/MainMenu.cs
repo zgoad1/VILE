@@ -63,8 +63,9 @@ public class MainMenu : MonoBehaviour {
 		for(int i = 0; i < mapData.Count; i++) {
 			GameObject newPanelObject = Instantiate(mapPanelPrefab, contentPane.transform);
 			RectTransform panelRect = newPanelObject.GetComponent<RectTransform>();
-			panelRect.localPosition = new Vector3(panelRect.localPosition.x, -105 - (i + 1) * 205, panelRect.localPosition.z);
+			panelRect.localPosition = new Vector3(panelRect.localPosition.x, -105 - (mapData.Count - i) * 205, panelRect.localPosition.z);
 			MapPanel newPanel = newPanelObject.GetComponent<MapPanel>();
+			newPanel.index = i;
 			newPanel.SetValues(mapData[i]);
 			mapPanels[i] = newPanelObject;
 		}

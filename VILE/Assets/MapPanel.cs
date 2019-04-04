@@ -8,9 +8,9 @@ public class MapPanel : MonoBehaviour {
 
 	public TextMeshProUGUI mapInfo, scoreInfo, timeInfo;
 	public static int numAttributes = 7;    // number of string attributes
+	public int index;
 
 	private string seed, width, height, score, scoreDate, time, timeDate;
-	private int index;
 	private MainMenu _menu;
 	private MainMenu menu {
 		get {
